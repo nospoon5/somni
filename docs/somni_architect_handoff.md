@@ -11,15 +11,15 @@ It should remain aligned with:
 
 ## Current Builder Objective
 
-The project is still in early Stage 2.
+The project is past the auth and onboarding foundations.
 
 The immediate builder priorities are:
 
 1. Keep the schema and docs aligned
-2. Finalize the Supabase migration
-3. Build auth screens and auth actions
-4. Build onboarding
-5. Build the corpus uploader
+2. Apply the retrieval SQL migration in Supabase for pgvector RPC matching
+3. Begin Stage 5 usage limits and billing integration
+4. Verify entitlement behavior against subscription state
+5. Keep the implementation plan and handoff aligned with the live app state
 
 ## Technical Decisions
 
@@ -31,22 +31,22 @@ The immediate builder priorities are:
 | Security | RLS plus server-side ownership checks | Do not rely only on redirects |
 | Styling | Vanilla CSS | No Tailwind for Somni feature work unless explicitly requested |
 | Chat model | Gemini `gemini-2.5-flash` | Streaming responses |
-| Embeddings | Gemini embeddings stored as `vector(768)` | Match the architecture and migration |
+| Embeddings | Gemini `gemini-embedding-001` stored as `vector(768)` | Match the architecture and migration |
 | Billing | Stripe | Checkout plus Customer Portal |
 
 ## Route Plan
 
 | Route | Status |
 | --- | --- |
-| `/` | Needs real Somni landing page |
-| `/login` | To build |
-| `/signup` | To build |
-| `/onboarding` | To build |
-| `/dashboard` | To build |
-| `/chat` | To build |
-| `/sleep` | To build |
-| `/profile` | To build |
-| `/billing` | To build |
+| `/` | Built and styled for Somni |
+| `/login` | Built and connected to Supabase auth action |
+| `/signup` | Built and connected to Supabase auth action |
+| `/onboarding` | Built with multi-step form and DB writes |
+| `/dashboard` | Built with first-pass sleep score summary |
+| `/chat` | Built with streaming chat shell |
+| `/sleep` | Built with start/end actions and recent history |
+| `/profile` | Not started |
+| `/billing` | Not started |
 
 ## API and Server Work Plan
 
@@ -169,10 +169,10 @@ The next practical coding pass should not start with chat.
 
 The right order is:
 
-1. Auth UI
-2. Onboarding
-3. Sleep logging
-4. Corpus uploader
-5. Chat
+1. Apply and verify the retrieval SQL migration in Supabase
+2. Retrieval validation checks with sample prompts
+3. Prompt assembly and Gemini server route logic
+4. Message persistence and safety metadata
+5. Chat UI integration
 
-That order keeps the product grounded in real user and baby context before the AI layer is built.
+That order keeps the AI layer grounded in real, retrievable source material before UI chat work begins.

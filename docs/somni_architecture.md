@@ -53,7 +53,7 @@ The data model may support future expansion where doing so is low cost, but the 
 | Auth and DB | Supabase |
 | Vector Search | pgvector in Supabase Postgres |
 | LLM | Gemini `gemini-2.5-flash` |
-| Embeddings | Gemini embeddings, stored as `vector(768)` for this project |
+| Embeddings | Gemini `gemini-embedding-001` embeddings, stored as `vector(768)` for this project |
 | Payments | Stripe Checkout and Customer Portal |
 | Styling | Vanilla CSS with design tokens and component styles |
 | PWA | Manifest plus service worker |
@@ -504,4 +504,3 @@ This document should be used to align:
 - `supabase/migrations/*.sql`
 - auth and onboarding code
 - the corpus uploader script
-

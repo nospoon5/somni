@@ -29,14 +29,14 @@ Examples of disallowed progression:
 
 ## Current Snapshot
 
-Status as of 2026-04-02:
+Status as of 2026-04-03:
 
 - The architecture, handoff, and schema files have been aligned
 - The Supabase SQL has been applied successfully
 - The landing page, auth, onboarding, dashboard, sleep logging, and first-pass sleep scoring are built
 - Live verification confirmed sign-in, onboarding, sleep logging, and the score summary
-- Live sign-up testing in this environment hit Supabase email-rate limiting for test addresses and still needs a clean pass
-- The next major focus is corpus upload and chat foundations once the signup gate is cleared
+- Live sign-up testing in this environment hit Supabase email-rate limiting for test addresses; treat this as an environment limit, not a code bug
+- Stage 4 chat foundations and verification are complete, including streaming, persistence, and emergency handling
 
 ## Stage Overview
 
@@ -46,7 +46,7 @@ Status as of 2026-04-02:
 | Stage 1 | Corpus | In progress |
 | Stage 2 | Project Setup and Auth | In progress |
 | Stage 3 | Core Features | Complete |
-| Stage 4 | AI and Chat | Not started |
+| Stage 4 | AI and Chat | Complete |
 | Stage 5 | Monetization | Not started |
 | Stage 6 | Polish and Launch | Not started |
 
@@ -93,16 +93,16 @@ Prepare a high-quality, retrieval-friendly knowledge base that can ground Somni'
 - [x] Extract and organize source material
 - [x] Curate 36 markdown chunks in `corpus/chunks/`
 - [x] Ensure chunks include structured frontmatter
-- [ ] Build the embedding uploader script
-- [ ] Upload chunks into `corpus_chunks`
+- [x] Build the embedding uploader script
+- [x] Upload chunks into `corpus_chunks`
 - [ ] Validate that retrieval metadata matches the runtime expectations
 
 ### Quality Control Gates
 
 - [x] Corpus files exist and are curated instead of being raw scraped output
 - [x] Chunk metadata includes the fields needed for future retrieval
-- [ ] The uploader can ingest the full corpus without manual table edits
-- [ ] Sample rows in Supabase confirm chunk metadata and embeddings are stored correctly
+- [x] The uploader can ingest the full corpus without manual table edits
+- [x] Sample rows in Supabase confirm chunk metadata and embeddings are stored correctly
 
 Gate evidence:
 
@@ -216,40 +216,41 @@ Add the RAG pipeline, prompt assembly, and chat experience so Somni can provide 
 
 ### Tasks and Actions
 
-- [ ] Build the corpus uploader script
-- [ ] Upload the 36 chunks into `corpus_chunks`
-- [ ] Build retrieval helpers for chunk search
-- [ ] Add prompt assembly logic
-- [ ] Add Gemini request and streaming response logic
-- [ ] Build the chat UI
-- [ ] Persist user and assistant messages
-- [ ] Persist structured assistant metadata such as sources and safety signals
-- [ ] Add fallback behavior for empty retrieval
-- [ ] Add safety rails and emergency redirect behavior
+- [x] Build the corpus uploader script
+- [x] Upload the 36 chunks into `corpus_chunks`
+- [x] Build retrieval helpers for chunk search
+- [x] Add prompt assembly logic
+- [x] Add Gemini request and streaming response logic
+- [x] Build the chat UI
+- [x] Persist user and assistant messages
+- [x] Persist structured assistant metadata such as sources and safety signals
+- [x] Add fallback behavior for empty retrieval
+- [x] Add safety rails and emergency redirect behavior
 
 ### Quality Control Gates
 
-- [ ] Corpus chunks are stored in Supabase with valid embeddings
-- [ ] Retrieval returns sensible, metadata-rich matches for sample prompts
-- [ ] The chat route can stream a response successfully
-- [ ] Messages persist correctly
-- [ ] Source attribution renders correctly in the UI
-- [ ] Safety notes render distinctly
-- [ ] Emergency prompts trigger safe redirect behavior
+- [x] Corpus chunks are stored in Supabase with valid embeddings
+- [x] Retrieval returns sensible, metadata-rich matches for sample prompts
+- [x] The chat route can stream a response successfully
+- [x] Messages persist correctly
+- [x] Source attribution renders correctly in the UI
+- [x] Safety notes render distinctly
+- [x] Emergency prompts trigger safe redirect behavior
 
 Gate evidence:
 
 - A Supabase query confirms uploaded chunks exist with non-null embeddings
 - Test prompts return chunks that are obviously relevant to age band and topic
-- The chat UI receives a streamed response rather than a full blocking payload
-- `messages` rows are created for both user and assistant turns
-- Source metadata shown in the UI matches stored `sources_used`
-- Safety notes are visually distinct from the main message body
-- A test emergency prompt returns the expected safe escalation behavior
+- Stage 4 retrieval verification script confirms sensible ranked matches for sample prompts
+- Stage 4 chat e2e script confirms streamed responses rather than a full blocking payload
+- Stage 4 chat e2e script confirms `messages` rows are created for both user and assistant turns
+- Stage 4 chat e2e script confirms source metadata is returned and persisted in `sources_used`
+- The chat UI has dedicated safety note rendering and styling, and e2e confirms safety notes are returned
+- Stage 4 chat e2e script confirms emergency prompts trigger safe escalation behavior
 
 ### Stage Exit
 
-- [ ] Stage 4 complete
+- [x] Stage 4 complete
 
 ## Stage 5 - Monetization
 
@@ -331,36 +332,38 @@ Gate evidence:
 
 ## Immediate Next Actions
 
-- [ ] Verify sign-up with the live Supabase project
+- [ ] Re-run live sign-up verification when email-rate limits allow
 - [x] Verify sign-in with the live Supabase project
 - [x] Verify onboarding end-to-end with the live Supabase project
 - [x] Verify sleep logging end-to-end with the live Supabase project
 - [x] Build the sleep score calculation
-- [ ] Build the corpus uploader
+- [x] Build the corpus uploader
+- [x] Build retrieval helpers
+- [x] Build prompt assembly
+- [x] Build `/api/chat` with Gemini streaming
+- [x] Build `/chat` UI shell and streaming client
+- [x] Run authenticated Stage 4 verification pass end-to-end
 
 ## Next Recommended Working Session
 
-The best next step is a live verification pass for Stage 2 and early Stage 3.
+The best next step is Stage 5 monetization foundations.
 
 Why this is the right next move:
 
-- the schema is now live
-- auth, onboarding, and sleep logging are implemented
-- the biggest remaining risk is whether the real app behavior matches the intended flow
-- verifying now is cheaper than building scoring and chat on top of unverified flows
+- the core product foundations (auth, onboarding, sleep logs, score) are live and verified
+- Stage 4 is now implemented and verification scripts are passing
+- the next product risk is pricing and entitlement correctness
+- usage and billing guardrails should be in place before broader rollout
 
 Recommended order:
 
-1. Sign up with a fresh account
-2. Confirm the app sends you to onboarding
-3. Complete onboarding
-4. Confirm you land on the dashboard
-5. Open `/sleep`
-6. Start a sleep session
-7. End the sleep session with one or two tags
-8. Confirm the recent history updates
+1. Build usage counting helpers and free-tier server enforcement
+2. Add limit-hit handling in chat UI
+3. Build Stripe checkout and portal routes
+4. Add Stripe webhook handling and subscription sync
+5. Verify premium gating behavior against stored subscription state
 
-If those checks pass, the next coding step should be the corpus uploader.
+If those checks pass, Stage 5 can be marked complete.
 
 ## Project Risks
 

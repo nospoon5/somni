@@ -39,7 +39,7 @@ Create a strict, trusted, Australian-aligned baby sleep knowledge base that powe
 
 | Parameter | Value | Rationale |
 |-----------|-------|-----------|
-| Embedding model | `text-embedding-004` (Gemini) | Matches our LLM provider, good quality, cost-effective |
+| Embedding model | `gemini-embedding-001` (Gemini) | Current supported Gemini embedding model for `embedContent` |
 | Chunk size | 300-500 tokens | Short enough for precise retrieval, long enough for meaningful context |
 | Chunk overlap | 50 tokens | Prevents cutting mid-thought at chunk boundaries |
 | Storage | pgvector (Supabase) | Native integration, no separate vector DB needed |

@@ -160,9 +160,15 @@ export default async function DashboardPage() {
                 ? `${baby.name}'s profile is set up and ready for real sleep data.`
                 : 'Your profile is set up and ready for real sleep data.'}
             </p>
-            <Link className={styles.inlineLink} href="/sleep">
-              Open sleep logging
-            </Link>
+            <p className={styles.linkGroup}>
+              <Link className={styles.inlineLink} href="/sleep">
+                Open sleep logging
+              </Link>
+              {' | '}
+              <Link className={styles.inlineLink} href="/chat">
+                Open coaching chat
+              </Link>
+            </p>
           </article>
 
           <article className={styles.panel}>

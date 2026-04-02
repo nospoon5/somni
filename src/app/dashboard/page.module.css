@@ -164,6 +164,10 @@
   line-height: 1.7;
 }
 
+.linkGroup {
+  margin-top: 16px;
+}
+
 .inlineLink {
   display: inline-flex;
   margin-top: 16px;
@@ -171,6 +175,10 @@
   text-decoration: underline;
   text-decoration-color: rgba(216, 187, 125, 0.55);
   text-underline-offset: 4px;
+}
+
+.linkGroup .inlineLink {
+  margin-top: 0;
 }
 
 @media (min-width: 820px) {
