@@ -1,0 +1,95 @@
+.page {
+  min-height: 100vh;
+  padding: 24px 18px 40px;
+}
+
+.card {
+  width: min(1080px, 100%);
+  margin: 0 auto;
+  padding: 28px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--surface-card-border);
+  background: var(--surface-card);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow-strong);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: var(--color-gold-300);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.76rem;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  letter-spacing: -0.04em;
+}
+
+.subtitle {
+  margin: 14px 0 0;
+  max-width: 40rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.logoutButton {
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(227, 235, 244, 0.16);
+  background: rgba(251, 247, 239, 0.06);
+  color: var(--text-primary);
+}
+
+.grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.panel {
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  background: rgba(251, 247, 239, 0.06);
+}
+
+.panel h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.panel p {
+  margin: 12px 0 0;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.inlineLink {
+  display: inline-flex;
+  margin-top: 16px;
+  color: var(--color-cream-50);
+  text-decoration: underline;
+  text-decoration-color: rgba(216, 187, 125, 0.55);
+  text-underline-offset: 4px;
+}
+
+@media (min-width: 820px) {
+  .card {
+    padding: 36px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

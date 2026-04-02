@@ -1,39 +1,43 @@
 ---
-topic: "Sleep regression (8-10 month)"
+topic: "Sleep regression (4 month, 8-10 month)"
 age_band: "7-12 months"
-methodology: "gentle"
+methodology: "balanced"
 sources:
-  - name: "Karitane"
-    url: "https://karitane.com.au/baby/baby-sleep/7-12-month-old/"
-  - name: "Tresillian"
-    url: "https://www.tresillian.org.au/baby/sleep/7-to-12-months/"
-  - name: "Raising Children Network"
-    url: "https://raisingchildren.net.au/babies/sleep/understanding-sleep/baby-sleep-2-12-months"
   - name: "Australian Breastfeeding Association"
     url: "https://www.breastfeeding.asn.au/resources/baby-sleep-patterns"
+  - name: "Karitane"
+    url: "https://karitane.com.au/baby/baby-sleep/7-12-month-old/"
+  - name: "Raising Children Network"
+    url: "https://raisingchildren.net.au/babies/sleep/understanding-sleep/baby-sleep-2-12-months"
+  - name: "Tresillian"
+    url: "https://www.tresillian.org.au/baby/sleep/7-to-12-months/"
+  - name: "sleepfoundation.org"
+    url: "https://www.sleepfoundation.org/baby-sleep/ferber-method"
 last_updated: "2026-04-01"
 confidence: "high"
 ---
-# Navigating Sleep Changes in Older Babies (7-12 Months)
+# Sleep Changes in Older Babies (7-12 Months)
 
-As your baby approaches 7-12 months, you might notice shifts in their sleep patterns, sometimes referred to as an "8-10 month sleep regression." This period is often marked by significant developmental milestones that can temporarily disrupt previously established sleep. Babies are learning so many new things – like rolling, crawling, pulling to stand, and even babbling – which can make it tricky for them to settle and stay asleep.
+As your baby approaches their first birthday, you might notice their sleep patterns becoming unsettled again. While not always called a "regression," this period, often around 8-10 months, is marked by rapid developmental milestones that can significantly impact sleep. Your baby is learning so many new things – from crawling and pulling to stand, to understanding object permanence and experiencing separation anxiety – and these exciting developments can make settling for sleep tricky.
 
-At this age, babies typically need 11-14 hours of sleep over 24 hours, usually with two daytime naps. Night-time sleep generally becomes more consolidated, but waking is still normal. New cognitive abilities, such as object permanence (understanding that things still exist even when out of sight) and separation anxiety, can also play a big role. Your baby might cry out when you leave the room at bedtime or wake more frequently at night, calling for you. This is a normal part of their emotional development as they seek reassurance and connection.
+Babies at this age are more aware of their environment and may resist sleep to stay engaged with the world around them. They also learn that you still exist even when you leave the room, which can lead to crying or calling out for you, especially when they wake during the night. These changes are a normal part of their growth and will improve over time with consistent, supportive responses.
 
 ## Key Points
-- Sleep changes in older babies (7-12 months) are often linked to rapid developmental milestones.
-- Increased mobility (rolling, crawling, pulling to stand) can lead to waking if they get into uncomfortable positions.
-- Cognitive developments like object permanence and separation anxiety can cause babies to cry out for parents at night.
-- Babies at this age are more aware of their environment, making quiet and dim sleep spaces more important.
+- Sleep disruptions in older babies (7-12 months) are often linked to rapid developmental milestones.
+- New physical skills like crawling and standing can affect sleep, as babies may get into uncomfortable positions.
+- Cognitive leaps, such as object permanence, can lead to increased calling out when parents leave the room.
+- Separation anxiety is common and can cause babies to resist sleep or wake more frequently.
+- Teething can also contribute to unsettled sleep during this period.
 
 ## What to Try
-- **Maintain Consistent Routines:** A predictable bedtime routine (e.g., bath, story, cuddle, bed) helps signal that it's time for sleep. Consistency is especially helpful during periods of developmental change.
-- **Responsive Settling:** Continue to respond to your baby's cues with comfort and reassurance. Gentle methods like "Parental Presence" (sitting near the cot, gradually moving away) can help them learn to settle while feeling secure.
-- **Address Separation Anxiety:** Reassure your baby that you are nearby. If they cry when you leave the room, a quiet verbal response like "I'm here, time to sleep" can be helpful.
-- **Optimise the Sleep Environment:** Ensure the room is quiet and dimly lit to minimise distractions, especially as your baby becomes more aware of their surroundings.
-- **Encourage Daytime Activity:** Plenty of play and physical activity during the day can help your baby feel more tired at night.
-- **Consider Night Feeds:** If your baby is growing and developing well, you might consider gradually phasing out night feeds from around 6 months for formula-fed babies, or 12 months for breastfed babies, if you wish. However, there's no rush if night feeding works for your family.
+- **Maintain a Predictable Bedtime Routine:** A consistent, calming routine helps signal that it's time to wind down. Include activities like a warm bath, gentle massage, reading, or quiet cuddles.
+- **Responsive Settling:** Continue to respond to your baby's cues with comfort and reassurance. This might involve gentle patting, shushing, or verbal reassurance. Gradually reduce the amount of physical touch or time you spend in the room as your baby calms, encouraging them to self-settle.
+- **Parental Presence:** If your baby struggles with separation, you might try staying in the room while they fall asleep, gradually moving further away over several nights. This provides reassurance without direct intervention.
+- **Optimise Sleep Environment:** Ensure the sleep space is quiet, dimly lit, and at a comfortable temperature. A safe sleeping bag can help keep them warm without loose blankets.
+- **Address New Skills:** If your baby is standing in the cot, gently guide them back down and reassure them it's sleep time. Avoid turning it into a game.
+- **Daytime Engagement:** Provide plenty of stimulating play and interaction during the day to support their development and ensure they are genuinely tired at bedtime.
 
 ## When to Seek Help
-- If your baby's sleep disruptions are severe, persistent, or significantly impacting their daytime mood and wellbeing, consult your doctor or child health nurse.
-- If you are struggling with exhaustion, frustration, or symptoms of postnatal depression or anxiety, reach out to a health professional or parenting helpline for support.
+- If your baby's sleep issues are persistent, severe, or significantly impacting your family's wellbeing, consider speaking with your child health nurse or GP.
+- If you suspect teething is a major factor, discuss pain relief options with your healthcare provider.
+- If you are feeling overwhelmed, exhausted, or struggling to cope, reach out to a parent helpline or a Tresillian/Karitane service for tailored support.

@@ -1,262 +1,178 @@
-# Somni – Architect Handoff to Builder
+# Somni - Architect Handoff to Builder
 
-> This document provides everything the Builder agent needs to start implementation.
+## Purpose
 
----
+This file translates the architecture into practical implementation guidance for the next coding steps.
 
-## Build Objective
+It should remain aligned with:
 
-Create a V1 PWA for personalised baby sleep coaching, targeting Australian first-time parents.
+- `docs/somni_architecture.md`
+- `docs/somni_implementation_plan.md`
 
----
+## Current Builder Objective
 
-## Tech Decisions (Already Made)
+The project is still in early Stage 2.
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Framework | Next.js 14+ (App Router) | Server components, API routes, excellent Vercel integration |
-| Hosting | Vercel | Auto-deploy from GitHub, edge functions, free tier generous |
-| Database | Supabase (Postgres) | Auth + DB + Realtime in one, Row Level Security |
-| Vector store | pgvector (Supabase extension) | No separate vector DB needed |
-| Auth | Supabase Auth (email/password) | Simple, built-in RLS integration |
-| AI model | Gemini (via Google AI SDK) | Good pricing, streaming support |
-| Embeddings | Gemini `text-embedding-004` | Consistent with LLM provider |
-| Payments | Stripe (Checkout + Customer Portal) | Industry standard for subscriptions |
-| Styling | CSS (vanilla) with design system | No Tailwind — keep it simple and controlled |
-| PWA | next-pwa or custom service worker | Installable, offline sleep logging |
-| State | React Server Components + minimal client state | Avoid Redux/Zustand complexity |
+The immediate builder priorities are:
 
----
+1. Keep the schema and docs aligned
+2. Finalize the Supabase migration
+3. Build auth screens and auth actions
+4. Build onboarding
+5. Build the corpus uploader
 
-## File Structure
+## Technical Decisions
 
-```
-somni/
-├── src/
-│   ├── app/
-│   │   ├── layout.tsx                 ← Root layout (fonts, metadata, auth provider)
-│   │   ├── page.tsx                   ← Landing page (marketing)
-│   │   ├── login/
-│   │   │   └── page.tsx               ← Sign in / Sign up
-│   │   ├── onboarding/
-│   │   │   └── page.tsx               ← Multi-step onboarding flow
-│   │   ├── dashboard/
-│   │   │   └── page.tsx               ← Home: sleep score + quick actions
-│   │   ├── chat/
-│   │   │   └── page.tsx               ← AI coaching chat
-│   │   ├── sleep/
-│   │   │   └── page.tsx               ← Sleep logging + history
-│   │   ├── profile/
-│   │   │   └── page.tsx               ← Baby profile + account settings
-│   │   ├── billing/
-│   │   │   └── page.tsx               ← Subscription management
-│   │   └── api/
-│   │       ├── chat/
-│   │       │   └── route.ts           ← POST: message → RAG → Gemini → stream
-│   │       ├── sleep/
-│   │       │   └── route.ts           ← GET/POST: sleep log CRUD
-│   │       ├── score/
-│   │       │   └── route.ts           ← GET: calculate sleep score
-│   │       ├── profile/
-│   │       │   └── route.ts           ← GET/PUT: baby profile
-│   │       ├── onboarding/
-│   │       │   └── route.ts           ← POST: save onboarding data
-│   │       └── billing/
-│   │           ├── checkout/
-│   │           │   └── route.ts       ← POST: create Stripe checkout session
-│   │           ├── webhook/
-│   │           │   └── route.ts       ← POST: Stripe webhook handler
-│   │           └── portal/
-│   │               └── route.ts       ← POST: create Stripe portal session
-│   ├── components/
-│   │   ├── ui/                        ← Reusable UI primitives (Button, Input, Card, etc.)
-│   │   ├── chat/                      ← Chat-specific components (MessageBubble, ChatInput)
-│   │   ├── sleep/                     ← Sleep logging components (SleepTimer, LogEntry)
-│   │   ├── onboarding/               ← Onboarding step components
-│   │   └── layout/                   ← Nav, TabBar, Header, etc.
-│   ├── lib/
-│   │   ├── supabase/
-│   │   │   ├── client.ts              ← Browser Supabase client
-│   │   │   ├── server.ts              ← Server Supabase client
-│   │   │   └── middleware.ts          ← Auth middleware
-│   │   ├── ai/
-│   │   │   ├── gemini.ts              ← Gemini API wrapper
-│   │   │   ├── rag.ts                 ← RAG retrieval logic
-│   │   │   └── prompt.ts             ← Prompt assembly
-│   │   ├── scoring/
-│   │   │   └── sleep-score.ts         ← Sleep scoring algorithm
-│   │   ├── stripe/
-│   │   │   └── client.ts             ← Stripe client + helpers
-│   │   └── utils/
-│   │       ├── age-bands.ts           ← Age band definitions + helpers
-│   │       └── dates.ts              ← Timezone-aware date utilities
-│   ├── styles/
-│   │   ├── globals.css                ← CSS custom properties, design tokens
-│   │   └── components/               ← Component-specific styles
-│   └── types/
-│       └── index.ts                   ← TypeScript type definitions
-├── public/
-│   ├── manifest.json                  ← PWA manifest
-│   ├── sw.js                          ← Service worker
-│   └── icons/                         ← App icons (various sizes)
-├── docs/                              ← Planning & architecture docs
-├── corpus/                            ← Knowledge base chunks + sources
-├── agents/                            ← Somni-specific agent definitions
-├── .env.local                         ← Environment variables (NOT committed)
-├── .gitignore
-├── package.json
-├── next.config.js
-├── tsconfig.json
-└── README.md
+| Decision | Choice | Notes |
+| --- | --- | --- |
+| Framework | Next.js 16 App Router | Use Route Handlers and Server Actions |
+| Auth | Supabase Auth | Email and password only in V1 |
+| Data access | Supabase SSR helpers | Server-first |
+| Security | RLS plus server-side ownership checks | Do not rely only on redirects |
+| Styling | Vanilla CSS | No Tailwind for Somni feature work unless explicitly requested |
+| Chat model | Gemini `gemini-2.5-flash` | Streaming responses |
+| Embeddings | Gemini embeddings stored as `vector(768)` | Match the architecture and migration |
+| Billing | Stripe | Checkout plus Customer Portal |
+
+## Route Plan
+
+| Route | Status |
+| --- | --- |
+| `/` | Needs real Somni landing page |
+| `/login` | To build |
+| `/signup` | To build |
+| `/onboarding` | To build |
+| `/dashboard` | To build |
+| `/chat` | To build |
+| `/sleep` | To build |
+| `/profile` | To build |
+| `/billing` | To build |
+
+## API and Server Work Plan
+
+| Path | Responsibility |
+| --- | --- |
+| `src/app/api/chat/route.ts` | Usage checks, retrieval, Gemini call, persistence |
+| `src/app/api/sleep/route.ts` | Sleep log CRUD |
+| `src/app/api/score/route.ts` | Score summary response |
+| `src/app/api/profile/route.ts` | Profile and baby profile read and update |
+| `src/app/api/onboarding/route.ts` | Save onboarding answers and completion state |
+| `src/app/api/billing/checkout/route.ts` | Stripe checkout |
+| `src/app/api/billing/portal/route.ts` | Stripe portal |
+| `src/app/api/billing/webhook/route.ts` | Stripe webhook processing |
+
+Auth mutations may also live in Server Actions if that keeps the implementation simpler and cleaner.
+
+## Folder Direction
+
+Target structure:
+
+```text
+src/
+  app/
+    api/
+    billing/
+    chat/
+    dashboard/
+    login/
+    onboarding/
+    profile/
+    signup/
+    sleep/
+  components/
+    auth/
+    chat/
+    onboarding/
+    sleep/
+    ui/
+  lib/
+    ai/
+    scoring/
+    stripe/
+    supabase/
+    utils/
 ```
 
----
+This does not require scaffolding everything immediately. It is a direction for upcoming implementation.
 
-## Conventions
+## Builder Rules
 
-### Naming
-- Files: `kebab-case.ts` (e.g. `sleep-score.ts`)
-- Components: `PascalCase.tsx` (e.g. `MessageBubble.tsx`)
-- CSS: BEM-style classes (e.g. `.chat-message`, `.chat-message--user`)
-- Database columns: `snake_case`
-- API routes: `kebab-case`
+1. Prefer Server Components by default.
+2. Add `'use client'` only when interactivity requires it.
+3. Keep data validation and authorization on the server.
+4. Use the architecture doc as the source of truth for schema and flow.
+5. Avoid adding libraries unless they solve a real problem.
+6. Preserve the premium, calm, mobile-first product tone.
 
-### Component Patterns
-- Server Components by default. Add `'use client'` only when needed (interactivity, hooks).
-- Keep components small and focused. One component = one job.
-- Props over global state. Pass data down, don't reach across the tree.
+## Data Model Expectations
 
-### Error Handling
-- API routes: Always return structured JSON `{ error: string, code: string }` on failure.
-- Client: Show user-friendly error messages. Never expose technical errors.
-- Use try/catch in all API routes and async operations.
+The V1 schema should match the architecture doc exactly.
 
----
+Important implementation details:
 
-## What NOT to Build (V1)
+- `profiles` includes `timezone` and `onboarding_completed`
+- `babies` uses `date_of_birth`
+- `onboarding_preferences` stores five explicit question score columns
+- `sleep_logs` uses `started_at`, `ended_at`, `is_night`, and `tags`
+- `messages` stores safety metadata for assistant responses
+- `usage_counters` resets by user timezone, not fixed AEST
+- `corpus_chunks` stores metadata-rich chunks with `vector(768)`
 
-These are explicitly out of scope for V1:
-
-- ❌ Multi-baby support (data model supports it, but UI is single-baby)
-- ❌ Partner/caregiver sharing (V2)
-- ❌ Push notifications (V2 — PWA supports it but skip for V1)
-- ❌ Sleep sounds / white noise
-- ❌ Predictive nap scheduling
-- ❌ Feeding / diaper tracking
-- ❌ Social features
-- ❌ Google/Apple OAuth (V2)
-- ❌ Dark mode (V2 — design for light mode first)
-- ❌ Multi-language support
-- ❌ Native mobile apps
-
----
-
-## Acceptance Criteria (per feature)
+## Acceptance Criteria
 
 ### Auth
-- [ ] User can sign up with email/password
-- [ ] User can log in
-- [ ] User can log out
-- [ ] Invalid credentials show clear error
-- [ ] Protected routes redirect to `/login`
-- [ ] Session persists across page refreshes
+
+- User can sign up
+- User can sign in
+- User can sign out
+- Invalid credentials show clear feedback
+- Protected routes redirect cleanly
 
 ### Onboarding
-- [ ] New users are redirected to onboarding after first login
-- [ ] Multi-step flow: baby details → sleep style quiz → done
-- [ ] All fields validate before advancing
-- [ ] Sleep style score calculated and stored
-- [ ] Completed onboarding flag prevents re-showing
+
+- New users reach onboarding after account creation or first login
+- Baby details are stored correctly
+- Sleep style score and label are stored correctly
+- `profiles.onboarding_completed` is updated on completion
 
 ### Sleep Logging
-- [ ] User can start a sleep timer (tap to start)
-- [ ] User can end a sleep timer (tap to end)
-- [ ] Day/night auto-detected based on time (with manual override)
-- [ ] Optional tags can be added (easy, hard, short nap, etc.)
-- [ ] Sleep history shows recent logs in reverse chronological order
-- [ ] Logs are baby-specific and user-scoped (RLS)
+
+- User can create and finish a sleep session quickly
+- Day and night state is handled correctly
+- Tags persist correctly
 
 ### Chat
-- [ ] Message input with send button
-- [ ] Messages display in conversation format (user + assistant)
-- [ ] AI response streams in real-time (token by token)
-- [ ] "Thinking" indicator while waiting for first token
-- [ ] Source attribution shown subtly below AI responses
-- [ ] Safety disclaimers render visually distinct
-- [ ] Emergency queries trigger immediate redirect response
-- [ ] Usage counter visible (free users): "7 of 10 messages used today"
 
-### Sleep Score
-- [ ] Score calculates correctly for test data sets across all age bands
-- [ ] Score updates when new sleep log is added
-- [ ] Dashboard shows status label + score + details on tap
-- [ ] Trend direction indicated (improving / declining / stable)
+- Chat messages stream
+- Retrieved sources are attributable
+- Safety notes render distinctly
+- Usage limits are enforced server-side
 
-### Payments
-- [ ] Free user sees upgrade prompt when limit reached
-- [ ] Stripe Checkout opens correctly for monthly + annual plans
-- [ ] First month charged at $9.99 (50% discount)
-- [ ] Subscription status reflected immediately after payment
-- [ ] User can manage subscription (cancel) via Stripe portal
-- [ ] Cancelled users retain access until period end
+### Billing
 
----
+- Free users hit a real limit
+- Checkout and portal sessions work
+- Webhooks update the subscription state
 
-## Environment Variables Required
+## What Not To Build Yet
 
-```
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
+- Partner sharing
+- Multi-baby-first UI
+- Push notifications
+- Feeding tracking
+- Predictive schedule generation
+- Native apps
 
-# Gemini
-GEMINI_API_KEY=
+## Notes For The Next Builder Pass
 
-# Stripe
-STRIPE_SECRET_KEY=
-STRIPE_WEBHOOK_SECRET=
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
-STRIPE_MONTHLY_PRICE_ID=
-STRIPE_ANNUAL_PRICE_ID=
+The next practical coding pass should not start with chat.
 
-# App
-NEXT_PUBLIC_APP_URL=
-```
+The right order is:
 
----
+1. Auth UI
+2. Onboarding
+3. Sleep logging
+4. Corpus uploader
+5. Chat
 
-## Designer Handoff
-
-### UX Requirements
-- **Mobile-first** design (used at 3am, one-handed, in the dark)
-- **Tab navigation**: Chat | Sleep | Profile (bottom tabs, thumb-reachable)
-- **Warm, calm colour palette** — no harsh corporate blues. Think: soft purples, warm neutrals, gentle gradients
-- **Large touch targets** — minimum 44px tap areas
-- **Dark-mode friendly** colours (even if V1 is light-only, pick colours that will transition)
-- **Typography**: Clean, highly readable. Consider Inter or similar.
-- **Sleep logging**: Must be < 3 taps to start logging. Speed is everything at 3am.
-- **Chat**: Clean message bubbles. AI responses should feel personal, not robotic.
-
-### Key Screens (in priority order)
-1. Chat screen (primary interaction)
-2. Dashboard (sleep score + status)
-3. Sleep logging (start/stop timer)
-4. Onboarding flow (first-run experience)
-5. Landing page (marketing / signup)
-
----
-
-## Reviewer Handoff
-
-### What to Double-Check
-- [ ] RLS policies on all tables — verify users cannot access other users' data
-- [ ] API routes validate auth on every request
-- [ ] No API keys or secrets in client-side code
-- [ ] Medical disclaimer appears in system prompt and relevant responses
-- [ ] Emergency detection actually works (test with: "my baby isn't breathing")
-- [ ] Prompt injection attempts are handled (test with: "ignore all previous instructions")
-- [ ] Free tier limit cannot be bypassed via API calls
-- [ ] Stripe webhook signature validation is implemented
-- [ ] No console.log with sensitive data in production
-- [ ] Error messages don't leak internal details
+That order keeps the product grounded in real user and baby context before the AI layer is built.

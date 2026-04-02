@@ -1,209 +1,371 @@
-# Somni – Implementation Plan
+# Somni - Implementation Plan
 
-## Stack
+## Planning Rule
 
-| Component | Technology |
-|-----------|-----------|
-| Frontend | Next.js 14+ (App Router) |
-| Hosting | Vercel |
-| Backend + DB | Supabase (Postgres) |
-| Vector DB | pgvector (Supabase extension) |
-| AI | Gemini (Google AI SDK) |
-| Embeddings | Gemini `text-embedding-004` |
-| Payments | Stripe (Checkout + Customer Portal) |
-| PWA | Service Worker + Web App Manifest |
-| Styling | Vanilla CSS (design system with custom properties) |
+This file is the primary execution checklist for Somni.
 
----
+It must stay aligned with:
 
-## V1 Goal (~6–8 weeks)
+- `docs/somni_architecture.md`
+- `docs/somni_architect_handoff.md`
 
-User can:
-- Sign up and complete onboarding (baby profile + sleep style quiz)
-- Log sleep events (start/stop, day/night, tags)
-- Chat with AI and receive personalised, source-backed advice
-- See a sleep score with trends and actionable insights
-- Hit message limit (10/day free) and upgrade to paid
-- Manage subscription (monthly $19.99 / annual $99)
+If these documents disagree, the architecture file is the source of truth and this file should be updated immediately.
 
----
+## Stage Progression Rule
 
-## Core Features
+Stages are sequential by default, but low-risk preparation for the next stage is allowed before the current stage is fully closed.
 
-| Feature | Priority | Stage |
-|---------|----------|-------|
-| Auth (email/password) | Must have | 2 |
-| Baby profile | Must have | 2 |
-| Sleep style onboarding | Must have | 3 |
-| Sleep logging (start/end + tags) | Must have | 3 |
-| Chat UI (streaming) | Must have | 4 |
-| RAG pipeline | Must have | 4 |
-| AI responses (Gemini) | Must have | 4 |
-| Safety rails (emergency, disclaimers) | Must have | 4 |
-| Sleep scoring algorithm | Must have | 3 |
-| Sleep score display | Must have | 3 |
-| Usage limits (10/day free) | Must have | 5 |
-| Stripe payments | Must have | 5 |
-| PWA install prompt | Should have | 6 |
-| Offline sleep logging | Should have | 6 |
+Examples of allowed overlap:
 
----
+- preparing UI shells before backend integration
+- drafting uploader code before chat is built
+- writing tests or helper utilities ahead of full feature completion
 
-## Onboarding Inputs
+Examples of disallowed progression:
 
-- Baby name
-- Baby DOB (→ auto-calculates age band)
-- Biggest issue (dropdown: night waking, short naps, bedtime battles, early morning waking, other)
-- Feeding type (dropdown: breast, bottle, mixed)
-- Bedtime range (dropdown: 6-7pm, 7-8pm, 8-9pm, varies)
-- Sleep style questionnaire (5 questions, 1-10 scale each → score → label)
+- building chat on top of an unresolved schema
+- adding billing logic before auth and profile ownership are stable
+- claiming a stage is complete before its quality gates pass
 
----
+## Current Snapshot
 
-## Sleep Logging
+Status as of 2026-04-02:
 
-- Start sleep (tap button → records timestamp)
-- End sleep (tap button → records timestamp)
-- Day vs night auto-detected by time (manual override available)
-- Optional tags:
-  - Easy settle / Hard settle
-  - Short nap (<30 min auto-tagged)
-  - False start (woke within 30 min of bedtime)
-  - Self-settled
-  - Needed help
+- The architecture, handoff, and schema files have been aligned
+- The Supabase SQL has been applied successfully
+- The landing page, auth, onboarding, dashboard shell, and first-pass sleep logging are built
+- The next major focus is live verification, sleep scoring, corpus upload, and chat foundations
 
----
+## Stage Overview
 
-## Sleep Score (V1 Formula)
+| Stage | Name | Status |
+| --- | --- | --- |
+| Stage 0 | Foundation | Complete |
+| Stage 1 | Corpus | In progress |
+| Stage 2 | Project Setup and Auth | In progress |
+| Stage 3 | Core Features | In progress |
+| Stage 4 | AI and Chat | Not started |
+| Stage 5 | Monetization | Not started |
+| Stage 6 | Polish and Launch | Not started |
 
-Total = 100 points
+## Stage 0 - Foundation
 
-### Night Sleep (40 points)
-- Disruptive wakes (vs age band expectation)
-- Longest stretch (vs age band expectation)
-- False starts (any = penalty)
-- Bedtime consistency (vs last 7 days average)
+### Goal
 
-### Day Sleep (25 points)
-- Nap count (vs age band)
-- Average nap duration
-- Nap timing consistency
+Create a stable project base with the right stack, repo structure, and planning documents so later feature work does not drift.
 
-### Total Sleep (20 points)
-- Total hours vs age band range
+### Tasks and Actions
 
-### Settling (15 points)
-- Ease of settling (from tags)
-- Self-settle ratio
+- [x] Initialize the Next.js project foundation
+- [x] Set up the base folder structure
+- [x] Add Supabase browser and server helper files
+- [x] Add session refresh middleware
+- [x] Create the initial planning and architecture docs
+- [x] Clean up and align the architecture doc as the V1 source of truth
+- [x] Add human-readable alignment notes
 
----
+### Quality Control Gates
 
-## Age Bands
+- [x] Core docs exist and are understandable
+- [x] Key planning files no longer contradict the architecture
+- [x] The repo is ready for real feature work without schema ambiguity
 
-| Age Band | Total Sleep | Naps | Night Wakes (typical) |
-|----------|------------|------|----------------------|
-| 0–3 months | 14–18h | 4–6 | Frequent (normal) |
-| 4–6 months | 13–16h | 3–4 | 1–3 |
-| 7–9 months | 12–15h | 2–3 | 0–2 |
-| 10–12 months | 11–14h | 2 | 0–1 |
+Gate evidence:
 
----
+- Docs can be read without conflicting schema definitions
+- Architecture, handoff, implementation plan, and migration describe the same V1 model
+- The next coding step does not require guessing table names or field meanings
 
-## Scoring Rules
+### Stage Exit
 
-- Optimal range = full points
-- Slightly outside = mild penalty (20%)
-- Far outside = stronger penalty (50–80%)
-- No negative scores (floor at 0 per component)
+- [x] Stage 0 complete
 
-## Status Mapping
+## Stage 1 - Corpus
 
-- 75–100 → **Improving** ✦
-- 55–74 → **Steady** ●
-- 0–54 → **Needs Attention** ▼
+### Goal
 
-## Trend Weighting
+Prepare a high-quality, retrieval-friendly knowledge base that can ground Somni's future coaching responses.
 
-- Last 24h: 50%
-- Last 3 days: 30%
-- Last 7 days: 20%
+### Tasks and Actions
 
----
+- [x] Extract and organize source material
+- [x] Curate 36 markdown chunks in `corpus/chunks/`
+- [x] Ensure chunks include structured frontmatter
+- [ ] Build the embedding uploader script
+- [ ] Upload chunks into `corpus_chunks`
+- [ ] Validate that retrieval metadata matches the runtime expectations
 
-## Database Schema
+### Quality Control Gates
 
-See [somni_architecture.md](file:///C:/AI%20Projects/01_Apps/Somni/docs/somni_architecture.md) for full column-level schema.
+- [x] Corpus files exist and are curated instead of being raw scraped output
+- [x] Chunk metadata includes the fields needed for future retrieval
+- [ ] The uploader can ingest the full corpus without manual table edits
+- [ ] Sample rows in Supabase confirm chunk metadata and embeddings are stored correctly
 
-Tables:
-- `profiles` — user account data
-- `babies` — baby details (name, DOB, feeding type, etc.)
-- `onboarding_preferences` — sleep style quiz results
-- `sleep_logs` — individual sleep events with timestamps and tags
-- `messages` — chat history (user + assistant messages)
-- `subscriptions` — Stripe subscription status
-- `usage_counters` — daily message counts for rate limiting
-- `corpus_chunks` — embedded knowledge base chunks with vectors
+Gate evidence:
 
----
+- `corpus/chunks/` contains the intended curated markdown files
+- A sample chunk shows frontmatter for topic, age band, methodology, sources, and confidence
+- The uploader runs across all chunks without requiring one-off fixes in Supabase
+- A Supabase spot check shows `chunk_id`, metadata, and embeddings populated as expected
 
-## Build Order (with dependencies)
+### Stage Exit
 
-```
-Stage 0: Foundation (docs, agents, folder structure) ✅ DONE
-    ↓
-Stage 1: Corpus (50+ chunks, embeddings) 🚧 IN PROGRESS
-    ├── Extract raw sources ✅
-    ├── Initial foundational chunks ✅
-    ├── Generate remaining chunks
-    └── Embed into pgvector
-    ↓
-Stage 2: Project Setup + Auth
-    ├── Init Next.js + GitHub
-    ├── Supabase project + schema
-    ├── Vercel deployment
-    └── Auth (signup/login/logout)
-    ↓
-Stage 3: Core Features
-    ├── Onboarding flow (depends on: auth, babies table)
-    ├── Sleep logging (depends on: auth, sleep_logs table)
-    └── Sleep scoring (depends on: sleep_logs data)
-    ↓
-Stage 4: AI + Chat
-    ├── Embed corpus into pgvector (depends on: Stage 1 chunks)
-    ├── RAG retrieval (depends on: embedded chunks)
-    ├── Chat UI (depends on: auth)
-    └── Gemini integration (depends on: RAG + prompt pack)
-    ↓
-Stage 5: Monetisation
-    ├── Usage tracking (depends on: chat API)
-    ├── Stripe integration (depends on: auth + profiles)
-    └── Upgrade flow (depends on: usage limits)
-    ↓
-Stage 6: Polish + Launch
-    ├── UX review (depends on: all features working)
-    ├── Legal pages
-    ├── Performance audit
-    └── Beta testing
-```
+- [ ] Stage 1 complete
 
----
+## Stage 2 - Project Setup and Auth
 
-## Monetisation
+### Goal
 
-| Tier | Price | Includes |
-|------|-------|----------|
-| **Free** | $0 | 10 messages/day, sleep logging, delayed sleep score (24h) |
-| **Somni Plus (Monthly)** | $19.99/month (first month $9.99) | Unlimited messages, real-time score, personalised plans, trend charts |
-| **Somni Plus (Annual)** | $99/year (~$8.25/month) | Same — 58% savings vs monthly |
+Get the app connected to the live database, replace the scaffold with Somni UI, and provide a reliable sign-up and sign-in flow.
 
----
+### Tasks and Actions
 
-## Key Principles
+- [x] Align the implementation plan, handoff, and SQL migration with the architecture
+- [x] Rewrite the initial Supabase migration to match the intended V1 schema
+- [x] Apply the finalized SQL in Supabase
+- [x] Replace the default landing page with a Somni landing page shell
+- [x] Build `/login`
+- [x] Build `/signup`
+- [x] Add auth server actions
+- [x] Add logout flow
+- [ ] Verify sign-up against the live database
+- [ ] Verify sign-in against the live database
+- [ ] Verify redirect behavior for signed-in users with incomplete onboarding
 
-- Logging must be frictionless (< 3 taps at 3am)
-- Advice must feel personalised (not generic AI)
-- Keep prompts small and focused
-- Calculate metrics in backend, not AI (scores, trends, age bands)
-- Safety first — medical disclaimers, emergency redirects, safe sleeping compliance
-- Australian English throughout
-- Mobile-first design (one-handed, sleep-deprived use)
+### Quality Control Gates
+
+- [x] The live Supabase schema matches the intended V1 model
+- [x] Auth UI exists and is integrated with Supabase actions
+- [x] Lint passes with the new auth code
+- [ ] A real user can sign up successfully
+- [ ] A real user can sign in successfully
+- [ ] Auth redirects behave correctly in the live app
+
+Gate evidence:
+
+- The SQL migration ran successfully in Supabase
+- `/login` and `/signup` submit to server actions without local build errors
+- `npm run lint` passes
+- A manual test confirms a new account can be created
+- A manual test confirms an existing account can sign in
+- A manual test confirms incomplete users are redirected to `/onboarding` and completed users to `/dashboard`
+
+### Stage Exit
+
+- [ ] Stage 2 complete
+
+## Stage 3 - Core Features
+
+### Goal
+
+Turn the authenticated shell into a usable product by adding onboarding, sleep logging, early dashboard value, and later the sleep score.
+
+### Tasks and Actions
+
+- [x] Build the onboarding page shell
+- [x] Build the multi-step onboarding form
+- [x] Add the onboarding server action
+- [x] Save baby records to Supabase
+- [x] Save onboarding preference scores and derived label
+- [x] Mark `profiles.onboarding_completed` when onboarding finishes
+- [x] Add a dashboard shell
+- [x] Build the `/sleep` page
+- [x] Build the start sleep action
+- [x] Build the end sleep action
+- [x] Display recent sleep history
+- [ ] Verify onboarding against the live database
+- [ ] Verify sleep logging against the live database
+- [ ] Build the sleep score calculation
+- [ ] Connect the dashboard to real sleep data
+- [ ] Show a first-pass score summary on the dashboard
+
+### Quality Control Gates
+
+- [x] Onboarding UI exists and is wired to the database
+- [x] Sleep logging UI exists and is wired to the database layer
+- [x] Lint passes with onboarding and sleep features
+- [ ] A real user can complete onboarding end-to-end
+- [ ] A real user can start and end a sleep session end-to-end
+- [ ] Recent history reflects newly logged sleep correctly
+- [ ] The score calculation produces sensible output for known sample cases
+- [ ] The dashboard shows real, user-specific data
+
+Gate evidence:
+
+- `/onboarding`, `/dashboard`, and `/sleep` render without local build errors
+- `npm run lint` passes
+- A manual test confirms onboarding creates rows in `babies` and `onboarding_preferences`
+- A manual test confirms `profiles.onboarding_completed` becomes `true`
+- A manual test confirms starting and ending sleep creates and updates a `sleep_logs` row
+- The newest sleep log appears in recent history without manual refresh hacks
+- Sample score inputs produce expected, explainable outputs once scoring is implemented
+- The dashboard reflects real data for the signed-in user rather than placeholder text
+
+### Stage Exit
+
+- [ ] Stage 3 complete
+
+## Stage 4 - AI and Chat
+
+### Goal
+
+Add the RAG pipeline, prompt assembly, and chat experience so Somni can provide source-backed coaching based on the user's baby and sleep context.
+
+### Tasks and Actions
+
+- [ ] Build the corpus uploader script
+- [ ] Upload the 36 chunks into `corpus_chunks`
+- [ ] Build retrieval helpers for chunk search
+- [ ] Add prompt assembly logic
+- [ ] Add Gemini request and streaming response logic
+- [ ] Build the chat UI
+- [ ] Persist user and assistant messages
+- [ ] Persist structured assistant metadata such as sources and safety signals
+- [ ] Add fallback behavior for empty retrieval
+- [ ] Add safety rails and emergency redirect behavior
+
+### Quality Control Gates
+
+- [ ] Corpus chunks are stored in Supabase with valid embeddings
+- [ ] Retrieval returns sensible, metadata-rich matches for sample prompts
+- [ ] The chat route can stream a response successfully
+- [ ] Messages persist correctly
+- [ ] Source attribution renders correctly in the UI
+- [ ] Safety notes render distinctly
+- [ ] Emergency prompts trigger safe redirect behavior
+
+Gate evidence:
+
+- A Supabase query confirms uploaded chunks exist with non-null embeddings
+- Test prompts return chunks that are obviously relevant to age band and topic
+- The chat UI receives a streamed response rather than a full blocking payload
+- `messages` rows are created for both user and assistant turns
+- Source metadata shown in the UI matches stored `sources_used`
+- Safety notes are visually distinct from the main message body
+- A test emergency prompt returns the expected safe escalation behavior
+
+### Stage Exit
+
+- [ ] Stage 4 complete
+
+## Stage 5 - Monetization
+
+### Goal
+
+Enforce free-tier usage limits and add a reliable upgrade path for paid subscriptions.
+
+### Tasks and Actions
+
+- [ ] Build usage counting logic
+- [ ] Enforce the daily free-tier message cap server-side
+- [ ] Add limit-hit response handling in the UI
+- [ ] Build Stripe checkout flow
+- [ ] Build Stripe webhook handling
+- [ ] Build billing portal flow
+- [ ] Store and update local subscription state
+- [ ] Gate premium behaviors based on subscription state
+
+### Quality Control Gates
+
+- [ ] Free-tier limits cannot be bypassed by the client
+- [ ] Limit-hit handling is clear and user-friendly
+- [ ] Stripe checkout works in the intended environment
+- [ ] Webhooks update subscription state correctly
+- [ ] Billing portal opens correctly
+- [ ] Premium access changes reflect the real subscription state
+
+Gate evidence:
+
+- API-level testing confirms limits are enforced server-side
+- A limit-hit user sees a clear upgrade path and reset explanation
+- Stripe checkout can be opened successfully in the target environment
+- Webhook events update the `subscriptions` table as expected
+- Billing portal sessions open for the correct signed-in user
+- Premium-only behavior turns on and off based on stored subscription state
+
+### Stage Exit
+
+- [ ] Stage 5 complete
+
+## Stage 6 - Polish and Launch
+
+### Goal
+
+Improve reliability, trust, usability, and readiness for real users.
+
+### Tasks and Actions
+
+- [ ] Improve dashboard polish and empty states
+- [ ] Improve mobile usability and one-handed interactions
+- [ ] Add PWA install polish
+- [ ] Review offline behavior and messaging
+- [ ] Add legal pages
+- [ ] Run a performance pass
+- [ ] Run a final end-to-end QA pass
+- [ ] Prepare a beta-ready release checklist
+
+### Quality Control Gates
+
+- [ ] Core flows feel stable on mobile
+- [ ] Loading, empty, and error states are clear
+- [ ] PWA installation works as expected
+- [ ] Offline messaging is honest and understandable
+- [ ] Legal and trust surfaces exist
+- [ ] Core paths pass a beta readiness review
+
+Gate evidence:
+
+- Manual mobile testing covers login, onboarding, sleep logging, and dashboard access
+- Empty and error states exist on the main user-facing pages
+- Installability and manifest behavior are confirmed in the browser
+- Offline behavior matches what the UI claims
+- Legal pages are accessible from the product shell or landing page
+- A final walkthrough of the primary user journey completes without blocking issues
+
+### Stage Exit
+
+- [ ] Stage 6 complete
+
+## Immediate Next Actions
+
+- [ ] Verify sign-up with the live Supabase project
+- [ ] Verify sign-in with the live Supabase project
+- [ ] Verify onboarding end-to-end with the live Supabase project
+- [ ] Verify sleep logging end-to-end with the live Supabase project
+- [ ] Build the sleep score calculation
+- [ ] Build the corpus uploader
+
+## Next Recommended Working Session
+
+The best next step is a live verification pass for Stage 2 and early Stage 3.
+
+Why this is the right next move:
+
+- the schema is now live
+- auth, onboarding, and sleep logging are implemented
+- the biggest remaining risk is whether the real app behavior matches the intended flow
+- verifying now is cheaper than building scoring and chat on top of unverified flows
+
+Recommended order:
+
+1. Sign up with a fresh account
+2. Confirm the app sends you to onboarding
+3. Complete onboarding
+4. Confirm you land on the dashboard
+5. Open `/sleep`
+6. Start a sleep session
+7. End the sleep session with one or two tags
+8. Confirm the recent history updates
+
+If those checks pass, the next coding step should be the sleep score calculation and dashboard integration.
+
+## Project Risks
+
+| Risk | Why It Matters | Control |
+| --- | --- | --- |
+| Schema drift | Creates rework and bugs | Keep architecture as source of truth |
+| Weak retrieval quality | Makes Somni feel generic | Keep chunks curated and metadata-rich |
+| Unsafe advice | High trust and product risk | Add safety rails and emergency handling |
+| Misleading offline behavior | Breaks trust quickly | Be explicit about what is and is not saved |
+| Billing or limit inconsistencies | Damages trust and support load | Enforce server-side only |

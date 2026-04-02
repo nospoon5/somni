@@ -1,45 +1,51 @@
 ---
-topic: "Overtiredness vs Undertiredness"
+topic: "Overtiredness vs. Undertiredness"
 age_band: "all ages"
 methodology: "balanced"
 sources:
-  - name: "Raising Children Network"
-    url: "https://raisingchildren.net.au/newborns/sleep/understanding-sleep/newborn-sleep"
-  - name: "Tresillian"
-    url: "https://www.tresillian.org.au/baby/sleep/sleep-cycles/"
+  - name: "Australian Breastfeeding Association"
+    url: "https://www.breastfeeding.asn.au/resources/baby-sleep-patterns"
   - name: "Karitane"
     url: "https://karitane.com.au/newborn/infant-sleep/"
-  - name: "Australian Breastfeeding Association"
-    url: "https://www.breastfeeding.asn.au/resources/helping-baby-sleep"
+  - name: "Raising Children Network"
+    url: "https://raisingchildren.net.au/newborns/sleep/understanding-sleep/tired-signs"
+  - name: "Tresillian"
+    url: "https://www.tresillian.org.au/newborn/sleep/"
+  - name: "Murdoch Children's Research Institute"
+    url: "https://www.mcri.edu.au/news/insights-and-opinions/why-hitting-the-hay-early-could-be-more-important-than-length-of-sleep"
+  - name: "Pampers"
+    url: "https://www.pampers.com/en-us/baby/sleep/article/cry-it-out-method"
+  - name: "Huckleberry"
+    url: "https://huckleberrycare.com/blog/cry-it-out-method-aka-extinction-method-is-it-right-for-your-baby"
+  - name: "drcraigcanapari.com"
+    url: "https://drcraigcanapari.com/cry-it-out-sleep-training-explained-how-to-use-cio-to-sleep-train-a-baby/"
 last_updated: "2026-04-01"
 confidence: "high"
 ---
-# Overtiredness vs. Undertiredness: Finding Your Baby's Sleep Sweet Spot
+# Overtiredness vs. Undertiredness in Babies
 
-Navigating your baby's sleep can sometimes feel like a balancing act, especially when trying to understand if they're overtired or not quite ready for sleep. Both states can make settling challenging, but recognising the difference can help you support your little one towards more restful sleep.
+Understanding your baby's unique sleep cues and needs is a big part of helping them settle well. Often, when babies struggle with sleep, it can be linked to being either overtired or not quite tired enough. Finding that sweet spot where they're ready for sleep, but not beyond it, can make a world of difference for everyone in the family.
 
-An **overtired** baby has been awake for too long and missed their natural sleep window. Instead of easily drifting off, their body might produce stimulating hormones, making it harder for them to calm down and fall asleep. This can lead to fussiness, crying, and a longer, more difficult settling process. When a baby is overtired, they may become distressed, making it harder for them to settle into sleep. Keeping a baby up during the day, for example, is unlikely to lead to longer or easier night-time sleep; it often has the opposite effect.
+When a baby is overtired, it means they've been awake for too long. This can make it much harder for them to settle down, leading to increased fussiness, crying, and a generally unsettled demeanour. It might seem logical to keep a baby up longer hoping they'll be more tired, but this often backfires, resulting in poorer sleep quality and more frequent night wakings. Research suggests that overtiredness can even elevate stress hormone levels in babies.
 
-On the other hand, an **undertired** baby simply isn't ready for sleep yet. If you try to put them down too early, they might resist settling, lie awake in their cot, or even protest with grizzling or crying because they're not sleepy enough. They might prefer to play or interact rather than rest.
+On the flip side, an undertired baby is simply not ready for sleep. If you put your little one down too early, perhaps after a very long nap or if their bedtime is earlier than their natural rhythm, they might resist settling, take a long time to fall asleep, or even play in their cot. This can be frustrating for parents who are trying to establish a consistent routine.
 
-The key is to observe your baby's unique tired signs and respond promptly, helping them find that 'just right' window for sleep.
+Every baby is different, and their "wake windows" (the time they can comfortably stay awake between sleeps) change as they grow. Paying close attention to their individual tired signs is key to navigating these challenges.
 
 ## Key Points
-- **Overtiredness** occurs when a baby has been awake for too long, making settling more difficult due to increased stimulation.
-- **Undertiredness** means a baby isn't sleepy enough to fall asleep easily, leading to resistance or prolonged settling.
-- Recognising your baby's individual tired cues is crucial for successful settling.
-- Both overtiredness and undertiredness can result in fussiness and difficulty falling asleep.
+- **Overtiredness** makes it harder for babies to settle, leading to more crying and disrupted sleep.
+- **Undertiredness** means a baby isn't ready for sleep, causing resistance at bedtime.
+- **Tired signs** are crucial indicators for when your baby is ready for sleep.
+- **Wake windows** change with age; understanding them helps time sleep correctly.
+- Both overtiredness and undertiredness can lead to unsettled behaviour and impact family wellbeing.
 
 ## What to Try
-- **Learn Your Baby's Tired Signs:** Watch for cues like yawning, frowning, eye-rubbing, jerky movements, fussiness, or staring into space. For newborns, this might be as soon as 1-1.5 hours after waking.
-- **Respond Promptly:** As soon as you notice tired signs, begin your calming pre-sleep routine. Delaying can lead to overtiredness.
-- **Create a Calming Routine:** Establish a consistent bedtime routine that signals it's time to wind down. This could include a warm bath, gentle massage, quiet stories, or soft singing.
-- **Adjust Wake Windows:** Pay attention to how long your baby is comfortably awake between sleeps. If they're resisting sleep, they might need a slightly longer wake window. If they're becoming very fussy quickly, try shortening the wake window.
-- **Dim the Environment:** Reduce stimulation by dimming lights and lowering noise levels as you prepare your baby for sleep.
-- **Gentle Settling:** Use responsive settling techniques like holding, rocking, patting, or gentle 'shushing' sounds to help your baby relax into sleep.
+- **Watch for Tired Signs**: Look for cues like yawning, frowning, grizzling, rubbing eyes, jerky movements, fussiness, or becoming clingy. Crying is often a late sign of overtiredness.
+- **Follow Age-Appropriate Wake Windows**: Learn the typical awake times for your baby's age and adjust your routine accordingly.
+- **Create a Calming Bedtime Routine**: A consistent, soothing routine helps signal to your baby that it's time to wind down for sleep.
+- **Be Flexible with Bedtime**: While consistency is good, be prepared to adjust bedtime slightly based on your baby's daytime naps and tired cues. If naps were short, an earlier bedtime might be needed.
+- **Reduce Stimulation**: When you notice tired signs, take your baby to their sleep space, dim the lights, and engage in quiet activities to help them transition to sleep.
+- **Avoid Keeping Them Up Late**: Resist the urge to keep your baby awake longer, as this often leads to overtiredness and more difficult settling.
 
 ## When to Seek Help
-- If you consistently struggle to identify your baby's tired signs or find that no matter what you try, your baby is always either overtired or undertired.
-- If your baby's sleep difficulties are significantly impacting your own wellbeing or mental health.
-- If you have concerns about your baby's overall health, growth, or development, which might be contributing to sleep challenges.
-- Always consult your child and family health nurse or GP if you're worried about your baby's sleep patterns or behaviour.
+- If you're consistently struggling to identify your baby's sleep needs or if sleep problems are causing significant stress for your family, reach out to your child and family health nurse or GP. They can help rule out any underlying medical reasons for sleep difficulties and offer tailored support.

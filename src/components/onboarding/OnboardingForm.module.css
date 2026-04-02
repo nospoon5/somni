@@ -1,0 +1,186 @@
+.form {
+  width: min(100%, 760px);
+  padding: 28px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--surface-card-border);
+  background: var(--surface-card);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow-strong);
+}
+
+.progressRow {
+  display: grid;
+  gap: 12px;
+}
+
+.progressStep {
+  color: var(--color-gold-300);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.progressTrack {
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(251, 247, 239, 0.08);
+}
+
+.progressFill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--color-gold-300), var(--color-coral-300));
+  transition: width 180ms ease;
+}
+
+.stepSection {
+  margin-top: 22px;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  letter-spacing: -0.04em;
+}
+
+.subtitle {
+  margin: 14px 0 0;
+  max-width: 42rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.fieldGrid {
+  display: grid;
+  gap: 16px;
+  margin-top: 26px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field span {
+  color: var(--text-secondary);
+  font-size: 0.94rem;
+}
+
+.field input,
+.field select {
+  min-height: 52px;
+  padding: 0 16px;
+  border: 1px solid rgba(227, 235, 244, 0.12);
+  border-radius: var(--radius-md);
+  background: rgba(251, 247, 239, 0.08);
+  color: var(--text-primary);
+}
+
+.field select option {
+  color: var(--text-dark);
+}
+
+.stylePreview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: center;
+  margin-top: 26px;
+  padding: 16px 18px;
+  border-radius: var(--radius-lg);
+  background: rgba(251, 247, 239, 0.08);
+}
+
+.stylePreviewLabel {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.questionList {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.questionCard {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  background: rgba(251, 247, 239, 0.06);
+}
+
+.questionText {
+  line-height: 1.6;
+}
+
+.sliderRow {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  color: var(--text-muted);
+}
+
+.sliderRow input {
+  width: 100%;
+}
+
+.sliderValue {
+  color: var(--color-cream-50);
+  font-weight: 700;
+}
+
+.error {
+  margin: 18px 0 0;
+  padding: 13px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(215, 155, 141, 0.18);
+  color: #ffd9d0;
+  line-height: 1.6;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.primaryButton,
+.secondaryButton {
+  min-height: 50px;
+  padding: 0 20px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.primaryButton {
+  border: 0;
+  background: linear-gradient(135deg, var(--color-cream-50), var(--color-gold-300));
+  color: var(--text-dark);
+}
+
+.secondaryButton {
+  border: 1px solid rgba(227, 235, 244, 0.16);
+  background: rgba(251, 247, 239, 0.06);
+  color: var(--text-primary);
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled {
+  opacity: 0.7;
+}
+
+@media (min-width: 720px) {
+  .form {
+    padding: 36px;
+  }
+
+  .fieldGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

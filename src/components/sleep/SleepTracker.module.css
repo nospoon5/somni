@@ -1,0 +1,210 @@
+.layout {
+  display: grid;
+  gap: 20px;
+}
+
+.card,
+.historyCard {
+  padding: 28px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--surface-card-border);
+  background: var(--surface-card);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow-strong);
+}
+
+.kicker {
+  margin: 0 0 12px;
+  color: var(--color-gold-300);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.76rem;
+}
+
+.title,
+.historyTitle {
+  margin: 0;
+  letter-spacing: -0.04em;
+}
+
+.title {
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.subtitle,
+.emptyState,
+.logNotes {
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+
+.subtitle {
+  margin: 14px 0 0;
+  max-width: 40rem;
+}
+
+.singleAction {
+  margin-top: 24px;
+}
+
+.primaryButton {
+  min-width: 180px;
+  min-height: 54px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--color-cream-50), var(--color-gold-300));
+  color: var(--text-dark);
+  font-weight: 700;
+}
+
+.activeSummary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  align-items: center;
+  margin-top: 24px;
+  padding: 16px 18px;
+  border-radius: var(--radius-lg);
+  background: rgba(251, 247, 239, 0.08);
+  color: var(--text-secondary);
+}
+
+.activeSummary strong {
+  color: var(--text-primary);
+}
+
+.endForm {
+  margin-top: 4px;
+}
+
+.tagGrid {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.tagOption {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: rgba(251, 247, 239, 0.06);
+}
+
+.tagOption input {
+  width: 18px;
+  height: 18px;
+}
+
+.notesField {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.notesField span {
+  color: var(--text-secondary);
+}
+
+.notesField textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid rgba(227, 235, 244, 0.12);
+  border-radius: var(--radius-md);
+  background: rgba(251, 247, 239, 0.08);
+  color: var(--text-primary);
+  resize: vertical;
+}
+
+.error,
+.success {
+  margin: 14px 0 0;
+  padding: 13px 14px;
+  border-radius: var(--radius-sm);
+  line-height: 1.6;
+}
+
+.error {
+  background: rgba(215, 155, 141, 0.18);
+  color: #ffd9d0;
+}
+
+.success {
+  background: rgba(142, 182, 160, 0.2);
+  color: #dff3e8;
+}
+
+.historyHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.historyList {
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 14px;
+}
+
+.historyItem {
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  background: rgba(251, 247, 239, 0.06);
+}
+
+.historyMeta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+
+.historyMeta span {
+  color: var(--text-muted);
+}
+
+.historyDuration {
+  margin-top: 10px;
+  color: var(--color-cream-50);
+  font-weight: 700;
+}
+
+.logTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.logTags span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(251, 247, 239, 0.08);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+}
+
+.logNotes {
+  margin: 12px 0 0;
+}
+
+@media (min-width: 980px) {
+  .layout {
+    grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.8fr);
+    align-items: start;
+  }
+
+  .card,
+  .historyCard {
+    padding: 34px;
+  }
+
+  .tagGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

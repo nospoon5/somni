@@ -11,32 +11,36 @@ sources:
     url: "https://raisingchildren.net.au/babies/sleep/understanding-sleep/baby-sleep-2-12-months"
   - name: "Tresillian"
     url: "https://www.tresillian.org.au/baby/sleep/7-to-12-months/"
+  - name: "Pampers.com"
+    url: "https://www.pampers.com/en-us/baby/sleep/article/cry-it-out-method"
 last_updated: "2026-04-01"
 confidence: "high"
 ---
-# Baby Nap Schedules and Wake Windows (7-12 Months)
+# Nap Schedules and Wake Windows for 7-12 Month Olds
 
-As your baby approaches their first birthday, their sleep patterns continue to evolve, often becoming more consolidated at night. This period is filled with exciting developmental milestones, which can sometimes influence sleep.
+As your baby approaches their first birthday, their sleep patterns continue to evolve, often becoming more consolidated at night. This is a period of rapid development, with new motor skills and cognitive leaps that can sometimes impact sleep. While longer stretches of night sleep are more common, it's still normal for babies to wake during the night and need reassurance.
 
-Babies in this age range typically need between 11 to 14 hours of sleep over a 24-hour period. Daytime sleep usually settles into 2 naps, each potentially lasting up to 2 hours. While many babies will have their longest sleeps at night, often between 6 pm and 10 pm, it's still quite normal for them to wake once or more. Some babies might even wake 3-4 times a night, needing comfort or a feed to resettle. Closer to 12 months, some babies may start sleeping through the night more consistently.
+Babies aged 7-12 months typically need 11-14 hours of sleep over a 24-hour period. Daytime sleep usually consists of two naps, each lasting 1-2 hours. Night sleep becomes the longest stretch, with many babies sleeping 8-12 hours, though waking once or twice is still common. Bedtime usually falls between 6 pm and 10 pm.
 
-Wake windows are now longer, reflecting your baby's increased alertness and activity. For 6-8 month olds, these might be around 2.5 to 3 hours, extending to 3 to 4 hours for 9-12 month olds. New skills like crawling, pulling to stand, and even separation anxiety can impact sleep, as your baby might call out for you when they realise you're not there.
+Developmental milestones like crawling, pulling to stand, object permanence (knowing you exist even when out of sight), and separation anxiety can all affect sleep. Maintaining a consistent, responsive approach helps your baby feel secure and learn to navigate these changes.
 
 ## Key Points
-- Babies aged 7-12 months typically sleep 11-14 hours in 24 hours.
-- Daytime sleep usually consists of 2 naps, each lasting 30 minutes to 2 hours.
-- Night-time sleep is generally longer, but waking for comfort or feeds is still common.
-- Wake windows are 2.5-3 hours (6-8 months) and 3-4 hours (9-12 months).
-- Developmental milestones and separation anxiety can affect sleep patterns.
+- **Total Sleep:** 11-14 hours per 24 hours.
+- **Nap Duration:** Typically 2 naps per day, each lasting 1-2 hours.
+- **Wake Windows (7-9 months):** Approximately 2.5 to 3 hours.
+- **Wake Windows (10-12 months):** Approximately 3 to 4 hours.
+- **Night Sleep:** Longer stretches of 8-12 hours are common, but waking at least once is still normal. Bedtime often settles between 6 pm and 10 pm.
+- **Developmental Impact:** New skills and separation anxiety can temporarily disrupt sleep.
 
 ## What to Try
-- **Maintain a consistent bedtime routine:** A predictable sequence of calming activities like a bath, gentle massage, stories, and cuddles helps signal that it's time for sleep.
-- **Encourage self-settling:** Continue to place your baby in their cot drowsy but awake. If they wake, pause to see if they can resettle themselves. If not, use responsive settling techniques like gentle verbal reassurance, patting, or rocking, gradually reducing your intervention as they calm.
-- **Consider "Parental Presence" or "Camping Out":** If your baby struggles with separation at bedtime, these gentle methods involve staying in the room while they fall asleep, gradually moving further away over time.
-- **Address night feeds if desired:** For formula-fed babies over 6 months, or breastfed babies over 12 months (if growing well), you might consider gradually phasing out night feeds if you wish.
-- **Create a quiet sleep environment:** Ensure the room is quiet and dimly lit, especially as babies become more aware of their surroundings.
+- **Consistent Bedtime Routine:** A predictable evening routine (e.g., bath, gentle massage, stories, quiet cuddles, milk feed) helps signal that it's time for sleep. Consistency is key, even on weekends.
+- **Responsive Settling:** Continue to respond to your baby's cries and needs for comfort. This might involve gentle patting, shushing, or verbal reassurance. Gradually reducing your presence as they settle can encourage independent sleep. For babies over 6 months, "parental presence" (sitting near the cot, gradually moving away) can be a gentle way to support self-settling.
+- **Drowsy but Awake:** Aim to place your baby in their cot drowsy but awake to foster self-settling skills. If they become distressed, offer comfort and then try again.
+- **Manage Sleep Associations:** If your baby relies on specific habits (like feeding or rocking to sleep), consider gradually phasing them out. For formula-fed babies over 6 months, you can consider phasing out night feeds. For breastfed babies, this is usually considered from 12 months.
+- **Address Developmental Changes:** Be patient during periods of rapid development or separation anxiety. Offer extra reassurance and maintain consistency in your settling approach.
+- **Safe Sleep Environment:** Ensure your baby's cot is clear of loose bedding, pillows, or toys. Use a safe infant sleeping bag. Continue to place your baby on their back for sleep, but allow them to find their own comfortable position once they can roll easily both ways (typically 4-6 months). Room-sharing is recommended for at least the first 6-12 months.
 
 ## When to Seek Help
-- If your baby's sleep changes drastically and consistently, impacting their mood or your family's wellbeing.
-- If you're feeling overwhelmed, frustrated, or angry due to sleep challenges.
-- If you have concerns about your baby's development, such as persistent head-banging or excessive tiredness. Your child health nurse, GP, or an early parenting centre can offer tailored strategies and support.
+- If your baby's sleep problems are persistent, causing significant distress for your family, or affecting their daytime mood and development, consult your doctor or child health nurse.
+- If you are struggling with your own sleep and wellbeing, reach out to a parent helpline or early parenting centre for support.
+- If you are considering night weaning, especially for breastfed babies under 12 months, discuss it with your child and family health nurse or GP first.
