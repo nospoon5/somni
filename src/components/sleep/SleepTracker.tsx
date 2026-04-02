@@ -1,6 +1,7 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import type { SleepActionState } from '@/app/sleep/actions'
 import { endSleepAction, startSleepAction } from '@/app/sleep/actions'
 import styles from './SleepTracker.module.css'
@@ -61,6 +62,7 @@ function formatDuration(startedAt: string, endedAt: string | null) {
 }
 
 export function SleepTracker({ activeLog, recentLogs }: SleepTrackerProps) {
+  const router = useRouter()
   const [startState, startFormAction, startPending] = useActionState(
     startSleepAction,
     initialState
@@ -69,6 +71,12 @@ export function SleepTracker({ activeLog, recentLogs }: SleepTrackerProps) {
     endSleepAction,
     initialState
   )
+
+  useEffect(() => {
+    if (startState.success || endState.success) {
+      router.refresh()
+    }
+  }, [endState.success, router, startState.success])
 
   return (
     <div className={styles.layout}>

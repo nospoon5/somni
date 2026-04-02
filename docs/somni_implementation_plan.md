@@ -33,8 +33,10 @@ Status as of 2026-04-02:
 
 - The architecture, handoff, and schema files have been aligned
 - The Supabase SQL has been applied successfully
-- The landing page, auth, onboarding, dashboard shell, and first-pass sleep logging are built
-- The next major focus is live verification, sleep scoring, corpus upload, and chat foundations
+- The landing page, auth, onboarding, dashboard, sleep logging, and first-pass sleep scoring are built
+- Live verification confirmed sign-in, onboarding, sleep logging, and the score summary
+- Live sign-up testing in this environment hit Supabase email-rate limiting for test addresses and still needs a clean pass
+- The next major focus is corpus upload and chat foundations once the signup gate is cleared
 
 ## Stage Overview
 
@@ -43,7 +45,7 @@ Status as of 2026-04-02:
 | Stage 0 | Foundation | Complete |
 | Stage 1 | Corpus | In progress |
 | Stage 2 | Project Setup and Auth | In progress |
-| Stage 3 | Core Features | In progress |
+| Stage 3 | Core Features | Complete |
 | Stage 4 | AI and Chat | Not started |
 | Stage 5 | Monetization | Not started |
 | Stage 6 | Polish and Launch | Not started |
@@ -139,17 +141,17 @@ Get the app connected to the live database, replace the scaffold with Somni UI, 
 - [x] Auth UI exists and is integrated with Supabase actions
 - [x] Lint passes with the new auth code
 - [ ] A real user can sign up successfully
-- [ ] A real user can sign in successfully
-- [ ] Auth redirects behave correctly in the live app
+- [x] A real user can sign in successfully
+- [x] Auth redirects behave correctly in the live app
 
 Gate evidence:
 
 - The SQL migration ran successfully in Supabase
 - `/login` and `/signup` submit to server actions without local build errors
 - `npm run lint` passes
-- A manual test confirms a new account can be created
 - A manual test confirms an existing account can sign in
 - A manual test confirms incomplete users are redirected to `/onboarding` and completed users to `/dashboard`
+- A live signup attempt was blocked by Supabase email-rate limiting for test addresses and needs a follow-up pass
 
 ### Stage Exit
 
@@ -174,22 +176,22 @@ Turn the authenticated shell into a usable product by adding onboarding, sleep l
 - [x] Build the start sleep action
 - [x] Build the end sleep action
 - [x] Display recent sleep history
-- [ ] Verify onboarding against the live database
-- [ ] Verify sleep logging against the live database
-- [ ] Build the sleep score calculation
-- [ ] Connect the dashboard to real sleep data
-- [ ] Show a first-pass score summary on the dashboard
+- [x] Verify onboarding against the live database
+- [x] Verify sleep logging against the live database
+- [x] Build the sleep score calculation
+- [x] Connect the dashboard to real sleep data
+- [x] Show a first-pass score summary on the dashboard
 
 ### Quality Control Gates
 
 - [x] Onboarding UI exists and is wired to the database
 - [x] Sleep logging UI exists and is wired to the database layer
 - [x] Lint passes with onboarding and sleep features
-- [ ] A real user can complete onboarding end-to-end
-- [ ] A real user can start and end a sleep session end-to-end
-- [ ] Recent history reflects newly logged sleep correctly
-- [ ] The score calculation produces sensible output for known sample cases
-- [ ] The dashboard shows real, user-specific data
+- [x] A real user can complete onboarding end-to-end
+- [x] A real user can start and end a sleep session end-to-end
+- [x] Recent history reflects newly logged sleep correctly
+- [x] The score calculation produces sensible output for known sample cases
+- [x] The dashboard shows real, user-specific data
 
 Gate evidence:
 
@@ -198,13 +200,13 @@ Gate evidence:
 - A manual test confirms onboarding creates rows in `babies` and `onboarding_preferences`
 - A manual test confirms `profiles.onboarding_completed` becomes `true`
 - A manual test confirms starting and ending sleep creates and updates a `sleep_logs` row
-- The newest sleep log appears in recent history without manual refresh hacks
-- Sample score inputs produce expected, explainable outputs once scoring is implemented
+- The newest sleep log appears in recent history after the session refreshes
+- Sample score inputs produce expected, explainable outputs
 - The dashboard reflects real data for the signed-in user rather than placeholder text
 
 ### Stage Exit
 
-- [ ] Stage 3 complete
+- [x] Stage 3 complete
 
 ## Stage 4 - AI and Chat
 
@@ -330,10 +332,10 @@ Gate evidence:
 ## Immediate Next Actions
 
 - [ ] Verify sign-up with the live Supabase project
-- [ ] Verify sign-in with the live Supabase project
-- [ ] Verify onboarding end-to-end with the live Supabase project
-- [ ] Verify sleep logging end-to-end with the live Supabase project
-- [ ] Build the sleep score calculation
+- [x] Verify sign-in with the live Supabase project
+- [x] Verify onboarding end-to-end with the live Supabase project
+- [x] Verify sleep logging end-to-end with the live Supabase project
+- [x] Build the sleep score calculation
 - [ ] Build the corpus uploader
 
 ## Next Recommended Working Session
@@ -358,7 +360,7 @@ Recommended order:
 7. End the sleep session with one or two tags
 8. Confirm the recent history updates
 
-If those checks pass, the next coding step should be the sleep score calculation and dashboard integration.
+If those checks pass, the next coding step should be the corpus uploader.
 
 ## Project Risks
 

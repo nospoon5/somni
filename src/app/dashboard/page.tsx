@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { logoutAction } from '@/app/auth-actions'
 import { createClient } from '@/lib/supabase/server'
+import { calculateSleepScore } from '@/lib/scoring/sleep-score'
 import styles from './page.module.css'
 
 export default async function DashboardPage() {
@@ -26,20 +27,52 @@ export default async function DashboardPage() {
 
   const { data: baby } = await supabase
     .from('babies')
-    .select('id, name')
+    .select('id, name, date_of_birth')
     .eq('profile_id', user.id)
     .order('created_at', { ascending: true })
     .limit(1)
     .maybeSingle()
 
+  const { data: activeLog } = baby
+    ? await supabase
+        .from('sleep_logs')
+        .select('id, started_at, ended_at, is_night, tags')
+        .eq('baby_id', baby.id)
+        .is('ended_at', null)
+        .order('started_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+    : { data: null }
+
   const { data: recentSleepLogs } = baby
     ? await supabase
         .from('sleep_logs')
-        .select('id')
+        .select('id, started_at, ended_at, is_night, tags')
         .eq('baby_id', baby.id)
         .order('started_at', { ascending: false })
         .limit(7)
     : { data: [] }
+
+  const sleepScore = baby
+    ? calculateSleepScore(baby.date_of_birth, [
+        ...(recentSleepLogs ?? []).map((log) => ({
+          startedAt: log.started_at,
+          endedAt: log.ended_at,
+          isNight: log.is_night,
+          tags: log.tags ?? [],
+        })),
+        ...(activeLog
+          ? [
+              {
+                startedAt: activeLog.started_at,
+                endedAt: activeLog.ended_at,
+                isNight: activeLog.is_night,
+                tags: activeLog.tags ?? [],
+              },
+            ]
+          : []),
+      ])
+    : null
 
   return (
     <main className={styles.page}>
@@ -61,6 +94,62 @@ export default async function DashboardPage() {
               Sign out
             </button>
           </form>
+        </div>
+
+        <div className={styles.scorePanel}>
+          <div className={styles.scoreHeader}>
+            <div>
+              <p className={styles.scoreKicker}>Sleep score</p>
+              <h2 className={styles.scoreTitle}>
+                {sleepScore?.hasData
+                  ? `${sleepScore.totalScore}/100`
+                  : 'Waiting for first sleep log'}
+              </h2>
+            </div>
+            <span className={styles.scoreBadge}>
+              {sleepScore?.statusLabel ?? 'No sleep data yet'}
+            </span>
+          </div>
+
+          {sleepScore?.hasData ? (
+            <>
+              <p className={styles.scoreBody}>
+                Strongest area: <strong>{sleepScore.strongestArea}</strong>
+                {' · '}
+                Biggest challenge: <strong>{sleepScore.biggestChallenge}</strong>
+              </p>
+              <p className={styles.scoreFocus}>{sleepScore.tonightFocus}</p>
+
+              <div className={styles.metricGrid}>
+                <article className={styles.metricCard}>
+                  <span>Night sleep</span>
+                  <strong>{sleepScore.breakdown.nightSleep}/100</strong>
+                </article>
+                <article className={styles.metricCard}>
+                  <span>Day sleep</span>
+                  <strong>{sleepScore.breakdown.daySleep}/100</strong>
+                </article>
+                <article className={styles.metricCard}>
+                  <span>Total sleep</span>
+                  <strong>{sleepScore.breakdown.totalSleep}/100</strong>
+                </article>
+                <article className={styles.metricCard}>
+                  <span>Settling</span>
+                  <strong>{sleepScore.breakdown.settling}/100</strong>
+                </article>
+              </div>
+
+              <p className={styles.scoreMeta}>
+                Age band: {sleepScore.ageBand} · Observed {sleepScore.observedSleepHours}h
+                over the last 7 days · Target {sleepScore.targetSleepHours}h/day
+              </p>
+            </>
+          ) : (
+            <p className={styles.scoreBody}>
+              Start logging sleep and Somni will turn that history into a simple,
+              explainable score.
+            </p>
+          )}
         </div>
 
         <div className={styles.grid}>

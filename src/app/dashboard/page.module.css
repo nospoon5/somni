@@ -43,6 +43,95 @@
   line-height: 1.8;
 }
 
+.scorePanel {
+  margin-top: 26px;
+  padding: 22px;
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(180deg, rgba(216, 187, 125, 0.08), rgba(251, 247, 239, 0.04)),
+    rgba(251, 247, 239, 0.05);
+  border: 1px solid rgba(216, 187, 125, 0.12);
+}
+
+.scoreHeader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.scoreKicker {
+  margin: 0 0 10px;
+  color: var(--color-gold-300);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.76rem;
+}
+
+.scoreTitle {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3rem);
+  letter-spacing: -0.05em;
+}
+
+.scoreBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(227, 235, 244, 0.16);
+  background: rgba(251, 247, 239, 0.08);
+  color: var(--text-primary);
+}
+
+.scoreBody {
+  margin: 16px 0 0;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.scoreFocus {
+  margin: 12px 0 0;
+  padding: 14px 16px;
+  border-left: 3px solid rgba(216, 187, 125, 0.55);
+  background: rgba(251, 247, 239, 0.05);
+  border-radius: 14px;
+  color: var(--text-primary);
+  line-height: 1.7;
+}
+
+.metricGrid {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.metricCard {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(251, 247, 239, 0.05);
+}
+
+.metricCard span {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.metricCard strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 1.1rem;
+}
+
+.scoreMeta {
+  margin: 16px 0 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
 .logoutButton {
   min-height: 48px;
   padding: 0 18px;
@@ -87,6 +176,14 @@
 @media (min-width: 820px) {
   .card {
     padding: 36px;
+  }
+
+  .scorePanel {
+    padding: 28px;
+  }
+
+  .metricGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .grid {
