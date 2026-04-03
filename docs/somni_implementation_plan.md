@@ -304,7 +304,7 @@ Improve reliability, trust, usability, and readiness for real users.
 ### Tasks and Actions
 
 - [x] Improve dashboard polish and empty states
-- [ ] Improve mobile usability and one-handed interactions
+- [x] Improve mobile usability and one-handed interactions
 - [x] Add PWA install polish
 - [ ] Review offline behavior and messaging
 - [x] Add legal pages

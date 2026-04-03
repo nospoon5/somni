@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  padding: 1.15rem 0.95rem 2rem;
+  padding: 1.15rem 0.95rem 7.2rem;
   display: grid;
   gap: 1rem;
 }
@@ -38,7 +38,7 @@
 
 @media (max-width: 700px) {
   .page {
-    padding: 0.9rem 0.75rem 1.6rem;
+    padding: 0.9rem 0.75rem 6.9rem;
   }
 
   .header {
