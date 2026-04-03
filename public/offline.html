@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Offline | Somni</title>
+    <style>
+      :root {
+        --bg: #0d1730;
+        --card: rgba(15, 26, 47, 0.82);
+        --border: rgba(227, 235, 244, 0.14);
+        --text: #fbf7ef;
+        --muted: #d7dfeb;
+        --gold: #d8bb7d;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+        color: var(--text);
+        background: radial-gradient(circle at top, rgba(216, 187, 125, 0.16), transparent 34%),
+          radial-gradient(circle at 85% 20%, rgba(142, 182, 160, 0.18), transparent 26%),
+          linear-gradient(180deg, #0d1730 0%, #162544 44%, #f4ecdc 130%);
+        padding: 24px 18px 40px;
+        box-sizing: border-box;
+      }
+
+      .card {
+        width: min(720px, 100%);
+        margin: 0 auto;
+        padding: 26px 22px;
+        border-radius: 24px;
+        border: 1px solid var(--border);
+        background: var(--card);
+        backdrop-filter: blur(18px);
+        box-shadow: 0 24px 60px rgba(4, 10, 24, 0.32);
+      }
+
+      .eyebrow {
+        margin: 0 0 12px;
+        color: var(--gold);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        font-size: 0.76rem;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 6vw, 3rem);
+        letter-spacing: -0.04em;
+      }
+
+      p {
+        margin: 14px 0 0;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .hint {
+        margin-top: 18px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        border: 1px solid rgba(216, 187, 125, 0.2);
+        background: rgba(216, 187, 125, 0.08);
+        color: var(--text);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <p class="eyebrow">Somni</p>
+      <h1>You are offline</h1>
+      <p>
+        Somni needs an internet connection to sync your account and generate coaching
+        chat responses.
+      </p>
+      <p class="hint">
+        When you are back online, reopen Somni and try again. If something looks stuck,
+        fully close the tab and open it again.
+      </p>
+    </main>
+  </body>
+</html>
+

@@ -74,6 +74,8 @@ export default async function DashboardPage() {
       ])
     : null
 
+  const hasAnySleepData = Boolean((recentSleepLogs?.length ?? 0) > 0 || activeLog)
+
   return (
     <main className={styles.page}>
       <section className={styles.card}>
@@ -84,9 +86,16 @@ export default async function DashboardPage() {
               {profile.full_name ? `Welcome, ${profile.full_name}.` : 'Welcome to Somni.'}
             </h1>
             <p className={styles.subtitle}>
-              Your main shell is in place. Sleep logging is now live, and the next
-              layer is turning this into a richer nightly summary.
+              A calm snapshot of the last week, plus the fastest next steps for tonight.
             </p>
+            <div className={styles.actions}>
+              <Link className={styles.primaryAction} href="/sleep">
+                Log sleep
+              </Link>
+              <Link className={styles.secondaryAction} href="/chat">
+                Ask Somni
+              </Link>
+            </div>
           </div>
 
           <form action={logoutAction}>
@@ -115,7 +124,7 @@ export default async function DashboardPage() {
             <>
               <p className={styles.scoreBody}>
                 Strongest area: <strong>{sleepScore.strongestArea}</strong>
-                {' · '}
+                {' | '}
                 Biggest challenge: <strong>{sleepScore.biggestChallenge}</strong>
               </p>
               <p className={styles.scoreFocus}>{sleepScore.tonightFocus}</p>
@@ -140,8 +149,8 @@ export default async function DashboardPage() {
               </div>
 
               <p className={styles.scoreMeta}>
-                Age band: {sleepScore.ageBand} · Observed {sleepScore.observedSleepHours}h
-                over the last 7 days · Target {sleepScore.targetSleepHours}h/day
+                Age band: {sleepScore.ageBand} | Observed {sleepScore.observedSleepHours}h
+                over the last 7 days | Target {sleepScore.targetSleepHours}h/day
               </p>
             </>
           ) : (
@@ -174,12 +183,14 @@ export default async function DashboardPage() {
           <article className={styles.panel}>
             <h2>Recent activity</h2>
             <p>
-              {recentSleepLogs?.length
-                ? `You have ${recentSleepLogs.length} logged sleep session${recentSleepLogs.length === 1 ? '' : 's'} so far.`
-                : 'No sleep sessions logged yet. Your next useful step is to log your first sleep.'}
+              {activeLog
+                ? 'A sleep session is currently in progress.'
+                : hasAnySleepData
+                  ? `You have ${recentSleepLogs?.length ?? 0} logged sleep session${(recentSleepLogs?.length ?? 0) === 1 ? '' : 's'} so far.`
+                  : 'No sleep sessions logged yet. Log your first sleep and Somni will start spotting patterns.'}
             </p>
             <Link className={styles.inlineLink} href="/sleep">
-              Go to sleep page
+              {hasAnySleepData ? 'View sleep history' : 'Log your first sleep'}
             </Link>
           </article>
         </div>

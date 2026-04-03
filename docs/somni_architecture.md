@@ -91,6 +91,9 @@ High-level request flow:
 | `/sleep` | Sleep logging and recent history | Authenticated |
 | `/profile` | Account, baby profile, timezone, logout | Authenticated |
 | `/billing` | Subscription management | Authenticated |
+| `/privacy` | Privacy policy | Public |
+| `/terms` | Terms of service | Public |
+| `/disclaimer` | Medical and product disclaimer | Public |
 
 ## Server Endpoints
 

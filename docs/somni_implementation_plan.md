@@ -38,6 +38,7 @@ Status as of 2026-04-03:
 - A 2026-04-03 live sign-up recheck succeeded with a valid disposable email format and created the auth user successfully
 - Stage 4 chat foundations and verification are complete, including streaming, persistence, and emergency handling
 - Stage 5 usage enforcement is now built and verified, including server-side counting, limit responses, and premium gating from stored subscription state
+- Stage 6 polish work has started (dashboard empty-state polish, PWA install basics, and draft legal pages)
 - The live Supabase retrieval RPC migration `20260403_add_corpus_match_function.sql` is still not applied and the app remains on its fallback retrieval path
 
 ## Stage Overview
@@ -50,7 +51,7 @@ Status as of 2026-04-03:
 | Stage 3 | Core Features | Complete |
 | Stage 4 | AI and Chat | Complete |
 | Stage 5 | Monetization | In progress |
-| Stage 6 | Polish and Launch | Not started |
+| Stage 6 | Polish and Launch | In progress |
 
 ## Stage 0 - Foundation
 
@@ -301,11 +302,11 @@ Improve reliability, trust, usability, and readiness for real users.
 
 ### Tasks and Actions
 
-- [ ] Improve dashboard polish and empty states
+- [x] Improve dashboard polish and empty states
 - [ ] Improve mobile usability and one-handed interactions
-- [ ] Add PWA install polish
+- [x] Add PWA install polish
 - [ ] Review offline behavior and messaging
-- [ ] Add legal pages
+- [x] Add legal pages
 - [ ] Run a performance pass
 - [ ] Run a final end-to-end QA pass
 - [ ] Prepare a beta-ready release checklist

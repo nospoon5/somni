@@ -1,0 +1,73 @@
+.page {
+  min-height: 100vh;
+  padding: 24px 18px 40px;
+}
+
+.card {
+  width: min(860px, 100%);
+  margin: 0 auto;
+  padding: 26px 22px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--surface-card-border);
+  background: var(--surface-card);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow-strong);
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: var(--color-gold-300);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.76rem;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3rem);
+  letter-spacing: -0.04em;
+}
+
+.lede {
+  margin: 14px 0 0;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.draft {
+  margin: 18px 0 0;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(216, 187, 125, 0.2);
+  background: rgba(216, 187, 125, 0.08);
+  color: var(--text-primary);
+  line-height: 1.7;
+}
+
+.content {
+  margin-top: 20px;
+  color: var(--text-secondary);
+  line-height: 1.85;
+}
+
+.content h2 {
+  margin: 22px 0 10px;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+}
+
+.content ul {
+  margin: 10px 0 0;
+  padding-left: 1.2rem;
+}
+
+.content li {
+  margin-top: 8px;
+}
+
+@media (min-width: 820px) {
+  .card {
+    padding: 34px 34px;
+  }
+}
+
