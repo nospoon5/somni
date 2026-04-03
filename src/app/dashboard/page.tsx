@@ -112,7 +112,9 @@ export default async function DashboardPage() {
               <h2 className={styles.scoreTitle}>
                 {sleepScore?.hasData
                   ? `${sleepScore.totalScore}/100`
-                  : 'Waiting for first sleep log'}
+                  : activeLog
+                    ? 'Sleep in progress'
+                    : 'Ready when you are'}
               </h2>
             </div>
             <span className={styles.scoreBadge}>
@@ -154,10 +156,47 @@ export default async function DashboardPage() {
               </p>
             </>
           ) : (
-            <p className={styles.scoreBody}>
-              Start logging sleep and Somni will turn that history into a simple,
-              explainable score.
-            </p>
+            <>
+              <p className={styles.scoreBody}>
+                {activeLog
+                  ? 'When you end the current sleep session, Somni will start building a simple, explainable score from your history.'
+                  : 'Log your first sleep and Somni will turn that history into a simple, explainable score.'}
+              </p>
+
+              <div className={styles.emptySteps} aria-label="Getting started steps">
+                <div className={styles.step}>
+                  <span className={styles.stepNumber}>1</span>
+                  <div className={styles.stepBody}>
+                    <strong>Log the next sleep</strong>
+                    <span>
+                      Tap <em>Log sleep</em>, then press Start when sleep begins and End when your baby wakes.
+                    </span>
+                  </div>
+                </div>
+                <div className={styles.step}>
+                  <span className={styles.stepNumber}>2</span>
+                  <div className={styles.stepBody}>
+                    <strong>Add optional tags</strong>
+                    <span>
+                      If it helps later, add a quick tag like <em>feed</em> or <em>resettle</em>. Skip it if you’re tired.
+                    </span>
+                  </div>
+                </div>
+                <div className={styles.step}>
+                  <span className={styles.stepNumber}>3</span>
+                  <div className={styles.stepBody}>
+                    <strong>Ask Somni one focused question</strong>
+                    <span>
+                      Best format: baby age + what happened + what you’ve tried + what you want to change.
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <p className={styles.emptyTip}>
+                Tip: close enough is good enough. Consistency matters more than perfect timestamps.
+              </p>
+            </>
           )}
         </div>
 

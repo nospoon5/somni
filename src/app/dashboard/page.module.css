@@ -125,6 +125,54 @@
   line-height: 1.8;
 }
 
+.emptySteps {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(251, 247, 239, 0.05);
+  border: 1px solid rgba(227, 235, 244, 0.1);
+}
+
+.stepNumber {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(216, 187, 125, 0.16);
+  border: 1px solid rgba(216, 187, 125, 0.22);
+  color: var(--text-primary);
+  font-weight: 650;
+}
+
+.stepBody strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.stepBody span {
+  display: block;
+  margin-top: 6px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.emptyTip {
+  margin: 14px 0 0;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
 .scoreFocus {
   margin: 12px 0 0;
   padding: 14px 16px;
