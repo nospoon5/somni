@@ -37,7 +37,8 @@ Status as of 2026-04-03:
 - Live verification confirmed sign-up, sign-in, onboarding, sleep logging, and the score summary
 - A 2026-04-03 live sign-up recheck succeeded with a valid disposable email format and created the auth user successfully
 - Stage 4 chat foundations and verification are complete, including streaming, persistence, and emergency handling
-- Stage 5 usage enforcement is now built and verified, including server-side counting, limit responses, and premium gating from stored subscription state
+- Stage 5 monetization is built and sandbox-verified (usage enforcement, stored subscription gating, Stripe checkout, portal, and webhook sync)
+- Stage 5 is still open for two follow-ups: browser verification of the `/chat` limit-hit UI state, and applying the live Supabase retrieval RPC migration so chat can leave fallback mode
 - Stage 6 polish work has started (dashboard empty-state polish, PWA install basics, and draft legal pages)
 - The live Supabase retrieval RPC migration `20260403_add_corpus_match_function.sql` is still not applied and the app remains on its fallback retrieval path
 
@@ -349,21 +350,20 @@ Gate evidence:
 
 ## Next Recommended Working Session
 
-The next best step is finishing and verifying the remaining Stripe half of Stage 5.
+The next best step is closing the remaining operational risk in Stage 5.
 
 Why this is the right next move:
 
 - the free-tier enforcement and premium gating foundation is now in place
-- the next remaining entitlement risk is Stripe environment wiring and webhook correctness
-- checkout, portal, and webhook routes exist in code but still need sandbox verification
+- Stripe checkout, portal, and webhook sync have already been sandbox-verified
+- the remaining risk is user-visible limit-hit clarity plus live retrieval readiness
 
 Recommended order:
 
-1. Add Stripe sandbox env vars (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_MONTHLY`, `STRIPE_PRICE_ANNUAL`)
-2. Browser-check the limit-hit UI state from `/chat`
-3. Apply and verify the live Supabase retrieval SQL migration so chat can leave fallback mode
-4. If those pass, mark Stage 5 complete
-5. Start Stage 6 polish and launch work
+1. Browser-check the limit-hit UI state from `/chat` (visual clarity, upgrade actions, reset context)
+2. Apply and verify the live Supabase retrieval SQL migration so chat can leave fallback mode
+3. If those pass, mark Stage 5 complete
+4. Continue Stage 6 polish and launch work
 
 If those checks pass, the remaining Stage 5 boxes can be closed.
 
