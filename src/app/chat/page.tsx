@@ -1,6 +1,10 @@
 import { redirect } from 'next/navigation'
 import { ChatCoach } from '@/components/chat/ChatCoach'
 import { createClient } from '@/lib/supabase/server'
+import {
+  ensureSubscriptionRecord,
+  hasPremiumAccess,
+} from '@/lib/billing/subscriptions'
 import styles from './page.module.css'
 
 export default async function ChatPage() {
@@ -35,6 +39,16 @@ export default async function ChatPage() {
     redirect('/onboarding')
   }
 
+  const subscription = await ensureSubscriptionRecord({
+    profileId: user.id,
+    email: user.email ?? null,
+  })
+  const billingEnabled = Boolean(
+    process.env.STRIPE_SECRET_KEY &&
+      process.env.STRIPE_PRICE_MONTHLY &&
+      process.env.STRIPE_PRICE_ANNUAL
+  )
+
   return (
     <main className={styles.page}>
       <section className={styles.header}>
@@ -46,7 +60,13 @@ export default async function ChatPage() {
         </p>
       </section>
 
-      <ChatCoach babyName={baby.name} />
+      <ChatCoach
+        babyName={baby.name}
+        billingEnabled={billingEnabled}
+        subscriptionPlan={subscription.plan}
+        subscriptionStatus={subscription.status}
+        hasPremiumAccess={hasPremiumAccess(subscription)}
+      />
     </main>
   )
 }

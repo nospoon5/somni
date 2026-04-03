@@ -3,6 +3,16 @@ import { buildChatPrompt } from '@/lib/ai/prompt'
 import { retrieveRelevantChunks, type SleepMethodology } from '@/lib/ai/retrieval'
 import { checkEmergencyRisk, getEmergencyRedirectMessage } from '@/lib/ai/safety'
 import { calculateSleepScore, getAgeBand } from '@/lib/scoring/sleep-score'
+import {
+  buildDailyLimitPayload,
+  consumeChatQuota,
+  releaseChatQuota,
+  sanitizeTimezone,
+} from '@/lib/billing/usage'
+import {
+  ensureSubscriptionRecord,
+  hasPremiumAccess,
+} from '@/lib/billing/subscriptions'
 
 const CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || 'gemini-2.5-flash'
 const UUID_PATTERN =
@@ -223,7 +233,7 @@ export async function POST(request: Request) {
 
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
-    .select('id, full_name, onboarding_completed')
+    .select('id, email, full_name, onboarding_completed, timezone')
     .eq('id', user.id)
     .maybeSingle()
 
@@ -249,6 +259,21 @@ export async function POST(request: Request) {
 
   if (!baby) {
     return Response.json({ error: 'Baby profile missing' }, { status: 404 })
+  }
+
+  const timezone = sanitizeTimezone(profile.timezone)
+  const subscription = await ensureSubscriptionRecord({
+    profileId: user.id,
+    email: profile.email ?? user.email ?? null,
+  })
+
+  let quotaConsumed = false
+  if (!hasPremiumAccess(subscription)) {
+    const quota = await consumeChatQuota(user.id, timezone)
+    if (!quota.allowed) {
+      return Response.json(buildDailyLimitPayload(quota), { status: 429 })
+    }
+    quotaConsumed = true
   }
 
   const { data: preferences } = await supabase
@@ -282,6 +307,9 @@ export async function POST(request: Request) {
   })
 
   if (userInsert.error) {
+    if (quotaConsumed) {
+      await releaseChatQuota(user.id, timezone).catch(() => {})
+    }
     return Response.json({ error: userInsert.error.message }, { status: 500 })
   }
 
@@ -291,6 +319,8 @@ export async function POST(request: Request) {
   const stream = new ReadableStream<Uint8Array>({
     start(controller) {
       void (async () => {
+        let assistantPersisted = false
+
         try {
           if (safety.isEmergency) {
             const assistantMessage = getEmergencyRedirectMessage()
@@ -308,6 +338,7 @@ export async function POST(request: Request) {
               confidence: 'high',
               model: 'safety-guardrail',
             })
+            assistantPersisted = true
 
             controller.enqueue(
               encoder.encode(
@@ -397,6 +428,7 @@ export async function POST(request: Request) {
             confidence,
             model: CHAT_MODEL,
           })
+          assistantPersisted = true
 
           controller.enqueue(
             encoder.encode(
@@ -412,6 +444,10 @@ export async function POST(request: Request) {
           )
           controller.close()
         } catch (error) {
+          if (quotaConsumed && !assistantPersisted) {
+            await releaseChatQuota(user.id, timezone).catch(() => {})
+          }
+
           const messageText =
             error instanceof Error ? error.message : 'Chat failed unexpectedly'
           controller.enqueue(

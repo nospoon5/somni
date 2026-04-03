@@ -11,14 +11,14 @@ It should remain aligned with:
 
 ## Current Builder Objective
 
-The project is past the auth and onboarding foundations.
+The project is past the auth, onboarding, sleep, score, and chat foundations.
 
 The immediate builder priorities are:
 
 1. Keep the schema and docs aligned
 2. Apply the retrieval SQL migration in Supabase for pgvector RPC matching
-3. Begin Stage 5 usage limits and billing integration
-4. Verify entitlement behavior against subscription state
+3. Browser-verify the limit-hit state in `/chat`
+4. Verify entitlement behavior against stored subscription state and Stripe webhooks
 5. Keep the implementation plan and handoff aligned with the live app state
 
 ## Technical Decisions
@@ -165,14 +165,14 @@ Important implementation details:
 
 ## Notes For The Next Builder Pass
 
-The next practical coding pass should not start with chat.
+The next practical coding pass should not rebuild the usage cap work.
 
-The right order is:
+The right order now is:
 
-1. Apply and verify the retrieval SQL migration in Supabase
-2. Retrieval validation checks with sample prompts
-3. Prompt assembly and Gemini server route logic
-4. Message persistence and safety metadata
-5. Chat UI integration
+1. Browser-verify the limit-hit state in `/chat`
+2. Apply and verify the live Supabase retrieval SQL migration so chat can leave fallback mode
+3. If those pass, close Stage 5
+4. Begin Stage 6 polish and launch work
+5. Keep the docs aligned with the live app state
 
-That order keeps the AI layer grounded in real, retrievable source material before UI chat work begins.
+That order closes the remaining Stage 5 operational risk without reopening already-verified chat foundation work.

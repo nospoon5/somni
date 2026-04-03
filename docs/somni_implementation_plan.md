@@ -34,9 +34,11 @@ Status as of 2026-04-03:
 - The architecture, handoff, and schema files have been aligned
 - The Supabase SQL has been applied successfully
 - The landing page, auth, onboarding, dashboard, sleep logging, and first-pass sleep scoring are built
-- Live verification confirmed sign-in, onboarding, sleep logging, and the score summary
-- Live sign-up testing in this environment hit Supabase email-rate limiting for test addresses; treat this as an environment limit, not a code bug
+- Live verification confirmed sign-up, sign-in, onboarding, sleep logging, and the score summary
+- A 2026-04-03 live sign-up recheck succeeded with a valid disposable email format and created the auth user successfully
 - Stage 4 chat foundations and verification are complete, including streaming, persistence, and emergency handling
+- Stage 5 usage enforcement is now built and verified, including server-side counting, limit responses, and premium gating from stored subscription state
+- The live Supabase retrieval RPC migration `20260403_add_corpus_match_function.sql` is still not applied and the app remains on its fallback retrieval path
 
 ## Stage Overview
 
@@ -44,10 +46,10 @@ Status as of 2026-04-03:
 | --- | --- | --- |
 | Stage 0 | Foundation | Complete |
 | Stage 1 | Corpus | In progress |
-| Stage 2 | Project Setup and Auth | In progress |
+| Stage 2 | Project Setup and Auth | Complete |
 | Stage 3 | Core Features | Complete |
 | Stage 4 | AI and Chat | Complete |
-| Stage 5 | Monetization | Not started |
+| Stage 5 | Monetization | In progress |
 | Stage 6 | Polish and Launch | Not started |
 
 ## Stage 0 - Foundation
@@ -131,16 +133,16 @@ Get the app connected to the live database, replace the scaffold with Somni UI, 
 - [x] Build `/signup`
 - [x] Add auth server actions
 - [x] Add logout flow
-- [ ] Verify sign-up against the live database
-- [ ] Verify sign-in against the live database
-- [ ] Verify redirect behavior for signed-in users with incomplete onboarding
+- [x] Verify sign-up against the live database
+- [x] Verify sign-in against the live database
+- [x] Verify redirect behavior for signed-in users with incomplete onboarding
 
 ### Quality Control Gates
 
 - [x] The live Supabase schema matches the intended V1 model
 - [x] Auth UI exists and is integrated with Supabase actions
 - [x] Lint passes with the new auth code
-- [ ] A real user can sign up successfully
+- [x] A real user can sign up successfully
 - [x] A real user can sign in successfully
 - [x] Auth redirects behave correctly in the live app
 
@@ -151,11 +153,11 @@ Gate evidence:
 - `npm run lint` passes
 - A manual test confirms an existing account can sign in
 - A manual test confirms incomplete users are redirected to `/onboarding` and completed users to `/dashboard`
-- A live signup attempt was blocked by Supabase email-rate limiting for test addresses and needs a follow-up pass
+- A 2026-04-03 live signup recheck created a real auth user successfully with a valid disposable address and no code changes were required
 
 ### Stage Exit
 
-- [ ] Stage 2 complete
+- [x] Stage 2 complete
 
 ## Stage 3 - Core Features
 
@@ -260,32 +262,32 @@ Enforce free-tier usage limits and add a reliable upgrade path for paid subscrip
 
 ### Tasks and Actions
 
-- [ ] Build usage counting logic
-- [ ] Enforce the daily free-tier message cap server-side
+- [x] Build usage counting logic
+- [x] Enforce the daily free-tier message cap server-side
 - [ ] Add limit-hit response handling in the UI
-- [ ] Build Stripe checkout flow
-- [ ] Build Stripe webhook handling
-- [ ] Build billing portal flow
-- [ ] Store and update local subscription state
-- [ ] Gate premium behaviors based on subscription state
+- [x] Build Stripe checkout flow
+- [x] Build Stripe webhook handling
+- [x] Build billing portal flow
+- [x] Store and update local subscription state
+- [x] Gate premium behaviors based on subscription state
 
 ### Quality Control Gates
 
-- [ ] Free-tier limits cannot be bypassed by the client
+- [x] Free-tier limits cannot be bypassed by the client
 - [ ] Limit-hit handling is clear and user-friendly
-- [ ] Stripe checkout works in the intended environment
-- [ ] Webhooks update subscription state correctly
-- [ ] Billing portal opens correctly
-- [ ] Premium access changes reflect the real subscription state
+- [x] Stripe checkout works in the intended environment
+- [x] Webhooks update subscription state correctly
+- [x] Billing portal opens correctly
+- [x] Premium access changes reflect the real subscription state
 
 Gate evidence:
 
-- API-level testing confirms limits are enforced server-side
+- `node scripts/verify-stage5-usage-limit.mjs` confirms the 10th free message succeeds, the 11th returns `429` with reset context, and premium access bypasses the cap from stored subscription state
 - A limit-hit user sees a clear upgrade path and reset explanation
-- Stripe checkout can be opened successfully in the target environment
-- Webhook events update the `subscriptions` table as expected
-- Billing portal sessions open for the correct signed-in user
-- Premium-only behavior turns on and off based on stored subscription state
+- `node scripts/verify-stage5-stripe.mjs` confirms Stripe Checkout returns a valid Stripe-hosted checkout URL in sandbox mode
+- `node scripts/verify-stage5-stripe.mjs` confirms webhook events update the `subscriptions` table as expected
+- `node scripts/verify-stage5-stripe.mjs` confirms billing portal sessions open for the correct signed-in user in sandbox mode
+- Premium-only behavior turns on and off based on stored subscription state via the stored `subscriptions` row, verified in the Stage 5 usage script
 
 ### Stage Exit
 
@@ -332,7 +334,7 @@ Gate evidence:
 
 ## Immediate Next Actions
 
-- [ ] Re-run live sign-up verification when email-rate limits allow
+- [x] Re-run live sign-up verification when email-rate limits allow
 - [x] Verify sign-in with the live Supabase project
 - [x] Verify onboarding end-to-end with the live Supabase project
 - [x] Verify sleep logging end-to-end with the live Supabase project
@@ -346,24 +348,23 @@ Gate evidence:
 
 ## Next Recommended Working Session
 
-The best next step is Stage 5 monetization foundations.
+The next best step is finishing and verifying the remaining Stripe half of Stage 5.
 
 Why this is the right next move:
 
-- the core product foundations (auth, onboarding, sleep logs, score) are live and verified
-- Stage 4 is now implemented and verification scripts are passing
-- the next product risk is pricing and entitlement correctness
-- usage and billing guardrails should be in place before broader rollout
+- the free-tier enforcement and premium gating foundation is now in place
+- the next remaining entitlement risk is Stripe environment wiring and webhook correctness
+- checkout, portal, and webhook routes exist in code but still need sandbox verification
 
 Recommended order:
 
-1. Build usage counting helpers and free-tier server enforcement
-2. Add limit-hit handling in chat UI
-3. Build Stripe checkout and portal routes
-4. Add Stripe webhook handling and subscription sync
-5. Verify premium gating behavior against stored subscription state
+1. Add Stripe sandbox env vars (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_MONTHLY`, `STRIPE_PRICE_ANNUAL`)
+2. Browser-check the limit-hit UI state from `/chat`
+3. Apply and verify the live Supabase retrieval SQL migration so chat can leave fallback mode
+4. If those pass, mark Stage 5 complete
+5. Start Stage 6 polish and launch work
 
-If those checks pass, Stage 5 can be marked complete.
+If those checks pass, the remaining Stage 5 boxes can be closed.
 
 ## Project Risks
 

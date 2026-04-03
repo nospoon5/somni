@@ -20,11 +20,24 @@ type ChatMessage = {
 
 type ChatCoachProps = {
   babyName: string
+  billingEnabled: boolean
+  subscriptionPlan: 'free' | 'monthly' | 'annual'
+  subscriptionStatus: 'inactive' | 'trialing' | 'active' | 'past_due' | 'canceled'
+  hasPremiumAccess: boolean
 }
 
 type ParsedEvent = {
   event: string
   payload: unknown
+}
+
+type LimitState = {
+  message: string
+  upgradeHint: string
+  dailyLimit: number
+  used: number
+  resetAt: string
+  timezone: string
 }
 
 function nowId(prefix: string) {
@@ -57,7 +70,26 @@ function parseEventBlock(block: string): ParsedEvent | null {
   }
 }
 
-export function ChatCoach({ babyName }: ChatCoachProps) {
+function formatResetTime(resetAt: string, timezone: string) {
+  try {
+    return new Intl.DateTimeFormat('en-AU', {
+      timeZone: timezone,
+      weekday: 'short',
+      hour: 'numeric',
+      minute: '2-digit',
+    }).format(new Date(resetAt))
+  } catch {
+    return 'midnight'
+  }
+}
+
+export function ChatCoach({
+  babyName,
+  billingEnabled,
+  subscriptionPlan,
+  subscriptionStatus,
+  hasPremiumAccess,
+}: ChatCoachProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'welcome',
@@ -69,6 +101,70 @@ export function ChatCoach({ babyName }: ChatCoachProps) {
   const [conversationId, setConversationId] = useState<string | null>(null)
   const [isSending, setIsSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [limitState, setLimitState] = useState<LimitState | null>(null)
+  const [billingAction, setBillingAction] = useState<'monthly' | 'annual' | 'portal' | null>(null)
+
+  async function openCheckout(plan: 'monthly' | 'annual') {
+    if (!billingEnabled || billingAction) {
+      return
+    }
+
+    setError(null)
+    setBillingAction(plan)
+
+    try {
+      const response = await fetch('/api/billing/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ plan }),
+      })
+      const payload = await response.json().catch(() => null)
+
+      if (!response.ok || typeof payload?.url !== 'string') {
+        throw new Error(payload?.error ?? 'Unable to start checkout right now.')
+      }
+
+      window.location.assign(payload.url)
+    } catch (caughtError) {
+      const messageText =
+        caughtError instanceof Error ? caughtError.message : 'Unable to start checkout right now.'
+      setError(messageText)
+    } finally {
+      setBillingAction(null)
+    }
+  }
+
+  async function openPortal() {
+    if (!billingEnabled || billingAction) {
+      return
+    }
+
+    setError(null)
+    setBillingAction('portal')
+
+    try {
+      const response = await fetch('/api/billing/portal', {
+        method: 'POST',
+      })
+      const payload = await response.json().catch(() => null)
+
+      if (!response.ok || typeof payload?.url !== 'string') {
+        throw new Error(payload?.error ?? 'Unable to open billing settings right now.')
+      }
+
+      window.location.assign(payload.url)
+    } catch (caughtError) {
+      const messageText =
+        caughtError instanceof Error
+          ? caughtError.message
+          : 'Unable to open billing settings right now.'
+      setError(messageText)
+    } finally {
+      setBillingAction(null)
+    }
+  }
 
   async function submitMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -78,11 +174,18 @@ export function ChatCoach({ babyName }: ChatCoachProps) {
     }
 
     setError(null)
+    setLimitState(null)
     setIsSending(true)
     setDraft('')
 
     const userMessageId = nowId('user')
     const assistantMessageId = nowId('assistant')
+    const resetPendingMessages = () =>
+      setMessages((current) =>
+        current.filter(
+          (message) => message.id !== userMessageId && message.id !== assistantMessageId
+        )
+      )
 
     setMessages((current) => [
       ...current,
@@ -102,8 +205,35 @@ export function ChatCoach({ babyName }: ChatCoachProps) {
         }),
       })
 
+      if (response.status === 429) {
+        const payload = await response.json().catch(() => null)
+        resetPendingMessages()
+        setDraft(trimmed)
+        setLimitState({
+          message:
+            typeof payload?.message === 'string'
+              ? payload.message
+              : 'You have reached today’s free Somni chat limit.',
+          upgradeHint:
+            typeof payload?.upgradeHint === 'string'
+              ? payload.upgradeHint
+              : 'Somni Premium removes the daily chat cap.',
+          dailyLimit: typeof payload?.dailyLimit === 'number' ? payload.dailyLimit : 10,
+          used: typeof payload?.used === 'number' ? payload.used : 10,
+          resetAt:
+            typeof payload?.resetAt === 'string' ? payload.resetAt : new Date().toISOString(),
+          timezone:
+            typeof payload?.timezone === 'string' ? payload.timezone : 'Australia/Sydney',
+        })
+        return
+      }
+
       if (!response.ok || !response.body) {
         const payload = await response.json().catch(() => null)
+        setMessages((current) =>
+          current.filter((message) => message.id !== assistantMessageId)
+        )
+        setDraft(trimmed)
         throw new Error(payload?.error ?? `Chat request failed (${response.status})`)
       }
 
@@ -195,6 +325,10 @@ export function ChatCoach({ babyName }: ChatCoachProps) {
         }
       }
     } catch (caughtError) {
+      setMessages((current) =>
+        current.filter((message) => message.id !== assistantMessageId)
+      )
+      setDraft(trimmed)
       const messageText =
         caughtError instanceof Error ? caughtError.message : 'Unable to send message.'
       setError(messageText)
@@ -205,6 +339,74 @@ export function ChatCoach({ babyName }: ChatCoachProps) {
 
   return (
     <section className={styles.shell}>
+      <section className={styles.planCard}>
+        <div>
+          <p className={styles.planLabel}>Plan</p>
+          <p className={styles.planValue}>
+            {hasPremiumAccess
+              ? `Somni Premium (${subscriptionPlan})`
+              : 'Somni Free'}
+          </p>
+          <p className={styles.planBody}>
+            {hasPremiumAccess
+              ? 'Premium access is active, so your coaching chat is not capped.'
+              : 'Free access includes 10 coaching chats per day, resetting at midnight in your timezone.'}
+          </p>
+        </div>
+
+        {hasPremiumAccess ? (
+          <button
+            className={styles.secondaryButton}
+            type="button"
+            onClick={openPortal}
+            disabled={!billingEnabled || billingAction !== null}
+          >
+            {billingAction === 'portal' ? 'Opening...' : 'Manage billing'}
+          </button>
+        ) : (
+          <p className={styles.planMeta}>Status: {subscriptionStatus}</p>
+        )}
+      </section>
+
+      {limitState ? (
+        <section className={styles.limitCard}>
+          <p className={styles.limitLabel}>Daily limit reached</p>
+          <h2 className={styles.limitTitle}>You’ve used today’s free chats.</h2>
+          <p className={styles.limitBody}>{limitState.message}</p>
+          <p className={styles.limitMeta}>
+            Used {limitState.used} of {limitState.dailyLimit}. Resets{' '}
+            {formatResetTime(limitState.resetAt, limitState.timezone)} ({limitState.timezone}).
+          </p>
+          <p className={styles.limitHint}>{limitState.upgradeHint}</p>
+
+          <div className={styles.limitActions}>
+            <button
+              className={styles.sendButton}
+              type="button"
+              onClick={() => openCheckout('monthly')}
+              disabled={!billingEnabled || billingAction !== null}
+            >
+              {billingAction === 'monthly' ? 'Opening...' : 'Upgrade monthly'}
+            </button>
+            <button
+              className={styles.secondaryButton}
+              type="button"
+              onClick={() => openCheckout('annual')}
+              disabled={!billingEnabled || billingAction !== null}
+            >
+              {billingAction === 'annual' ? 'Opening...' : 'Upgrade annual'}
+            </button>
+          </div>
+
+          {!billingEnabled ? (
+            <p className={styles.limitMeta}>
+              Billing buttons will start working once Stripe is connected in the app
+              environment.
+            </p>
+          ) : null}
+        </section>
+      ) : null}
+
       <div className={styles.thread} aria-live="polite">
         {messages.map((message) => (
           <article
