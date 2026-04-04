@@ -27,9 +27,48 @@ New verified facts from 2026-04-04:
 - The fresh production sign-up created the expected `profiles`, `babies`, and `onboarding_preferences` rows in the same Supabase project used by the audited local environment.
 - No local-only Stage A product-code fix remains after the 2026-04-04 re-check. The live recovery was achieved by the Vercel env fix and redeploy on commit `f9e1271`.
 
+## Stage B Follow-up - 2026-04-04
+
+This follow-up reflects a fresh Stage B local, browser, Vercel, and API re-check.
+
+New verified facts from 2026-04-04:
+
+- Local `main` and `origin/main` are both at commit `254b7e7`.
+- The latest verified production deployment is `dpl_8wSb2o5V6bXyha7qc5bvauhsbQN2`, built from commit `254b7e7`.
+- Local `node scripts/verify-stage4-chat-e2e.mjs` passes.
+- `supabase/migrations/20260403_add_corpus_match_function.sql` is now applied in the intended Supabase project `glcrmmenotezedcmrwni`.
+- The remote `public.match_corpus_chunks` function now exists in the intended Supabase project.
+- Local `node scripts/verify-stage4-retrieval.mjs` now reports RPC mode against the intended Supabase project.
+- Live normal chat is currently broken for non-emergency use on production.
+- In a direct authenticated live call to `/api/chat`, production returns HTTP `200` but streams an SSE `error` event with detail `Missing GEMINI_API_KEY for retrieval embedding`.
+- In a real production browser run, the same live normal chat failure appears as the generic UI message `Something went wrong while generating advice. Please try again in a moment.`
+- Live capped free-user state is verified in a real production browser run.
+- The live capped state shows the daily-limit explanation, used count, reset time, and upgrade buttons.
+- In that same live browser run, the upgrade buttons are visibly disabled and the page states `Billing buttons will start working once Stripe is connected in the app environment.`
+- Direct authenticated live calls confirm `/api/billing/checkout` returns `503` with `Stripe checkout is not configured yet.`
+- Direct authenticated live calls confirm `/api/billing/portal` returns `503` with `Stripe billing is not configured yet.`
+- The intended Supabase project ref used by the audited local env is `glcrmmenotezedcmrwni`.
+
+## Stage B Completion Follow-up - 2026-04-04
+
+This follow-up reflects the final Stage B production re-check after the chat truncation fix was pushed from commit `c389cf8`.
+
+New verified facts from the final 2026-04-04 re-check:
+
+- Live normal chat now returns a complete non-emergency response on production.
+- A direct authenticated live call to `/api/chat` returned `200` and a complete response of about 2357 streamed characters, ending cleanly rather than mid-sentence.
+- The production truncation bug was caused by Gemini 2.5 Flash spending output budget on thinking tokens, and the pushed fix sets `thinkingBudget: 0` for this chat flow.
+- Live checkout entry now returns `200` and a real `checkout.stripe.com` URL.
+- Live checkout entry still persists a `stripe_customer_id` for the authenticated user.
+- Live portal entry now returns `200` and a real `billing.stripe.com` URL.
+- In a production browser run after promoting a temporary user to premium state, the chat page shows both `Somni Premium` and `Manage billing`.
+- Stage B exit criteria are now met.
+
 Still unverified or only partially verified as of 2026-04-04:
 
 - The exact Vercel `SUPABASE_SERVICE_ROLE_KEY` value was not read back directly from Vercel in this audit. Correct project targeting is inferred from the successful live chat recovery and matching production database writes, not from direct env inspection.
+- The exact production values of `GEMINI_API_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_PRICE_MONTHLY`, and `STRIPE_PRICE_ANNUAL` were not read back directly from Vercel in this audit. Their current production state is inferred from verified runtime and route behaviour, not from direct env inspection.
+- No remote `supabase_migrations.schema_migrations` table was found in the audited project during this Stage B pass, so migration-history parity with the repo remains unverified even though the retrieval RPC itself is now verified live in the database.
 
 ## Evidence Standard
 
@@ -39,27 +78,26 @@ Still unverified or only partially verified as of 2026-04-04:
 
 ## Verified Current Status Summary
 
-Somni is materially built, and the Stage A production recovery goals are now verified on the live deployment.
+Somni is materially built, Stage A remains closed, and Stage B is now verified on the live deployment.
 
 What is solid:
 
-- The latest verified production Vercel deployment is built from the current `main` commit `f9e1271`.
+- The latest verified production Vercel deployment is built from the current `main` commit `254b7e7`.
 - Local `npm run lint` passes.
 - Local `npm run build` passes.
 - Local core product flows work in the audited environment: auth redirects, dashboard load, sleep start/end, emergency chat handling, free-tier limit UI, and PWA registration basics.
 - Local Stage 4 and Stage 5 verification scripts pass.
-- Live sign-up, onboarding completion, sign-in, dashboard access, sleep start/end, and chat have now been re-verified on 2026-04-04 with browser and database evidence.
+- Live sign-up, onboarding completion, sign-in, dashboard access, sleep start/end, chat, capped-state billing prompts, checkout entry, and portal entry have now been re-verified on 2026-04-04 with browser and database evidence.
 
 What is not yet safe to call complete:
 
-- Retrieval is still running in fallback mode in the audited local Supabase environment. The `match_corpus_chunks` RPC migration is not active there.
 - Legal pages are still draft placeholders and not launch-ready.
 
 ## Verified Completed Work
 
 Only items below were directly verified in this audit.
 
-- Verified: latest production deployment matches commit `f9e1271` on `main`.
+- Verified: latest production deployment matches commit `254b7e7` on `main`.
 - Verified: landing page, login page, signup page, onboarding page, dashboard page, sleep page, chat page, legal pages, manifest route, and service worker route exist in the built app.
 - Verified: unauthenticated requests to `/dashboard`, `/sleep`, and `/chat` redirect to `/login` locally.
 - Verified: unauthenticated requests to `/dashboard`, `/sleep`, and `/chat` redirect to `/login` on the live deployment.
@@ -68,7 +106,8 @@ Only items below were directly verified in this audit.
 - Verified: local emergency chat flow returns the emergency-safe response in the browser.
 - Verified: local daily limit UI appears after a capped chat request and shows upgrade buttons.
 - Verified: local manifest loads and a service worker registration is created in the browser.
-- Verified: local Stage 4 retrieval verification script returns sensible results, but in fallback mode.
+- Verified: `20260403_add_corpus_match_function.sql` is applied in the intended Supabase project.
+- Verified: local Stage 4 retrieval verification script now reports RPC mode against the intended Supabase project.
 - Verified: local Stage 4 chat e2e verification script passes.
 - Verified: local Stage 5 usage-limit verification script passes.
 - Verified: local Stage 5 Stripe verification script passes.
@@ -76,6 +115,11 @@ Only items below were directly verified in this audit.
 - Verified: live sign-up can complete onboarding and land on `/dashboard` in a fresh browser run.
 - Verified: that fresh live onboarding run created matching `profiles`, `babies`, and `onboarding_preferences` rows in the audited Supabase project.
 - Verified: live `/chat` loads and live emergency chat returns a successful response after the Vercel production env fix and redeploy.
+- Verified: live normal chat returns a complete non-emergency response after the truncation fix.
+- Verified: live capped free-user UI shows the limit explanation, reset time, and upgrade buttons in a real browser.
+- Verified: live checkout entry returns a real Stripe Checkout URL.
+- Verified: live portal entry returns a real Stripe billing portal URL.
+- Verified: premium billing UI now shows `Somni Premium` and `Manage billing` in a real production browser run.
 
 ## Incomplete Work By Priority
 
@@ -83,17 +127,6 @@ Only items below were directly verified in this audit.
 
 1. No open Stage A P0 remains after the 2026-04-04 production re-check.
    Production chat, live sign-up, live sign-in, dashboard, and sleep are now all verified on the live deployment.
-
-### P1 - Required before calling AI/chat complete
-
-2. Apply and verify `20260403_add_corpus_match_function.sql` in the intended Supabase environment.
-   Retrieval currently works through fallback logic, not the intended RPC path.
-
-3. Re-verify the remaining live chat states beyond the emergency path.
-   The emergency path is now verified live. Normal chat and the capped free-user state still need their own explicit browser evidence.
-
-4. Verify live billing surfaces from the actual deployed app.
-   Local scripts prove the code path, but the deployed environment still needs browser-level verification for checkout entry, portal entry, and entitlement behaviour.
 
 ### P2 - Required before launch trust claims
 
@@ -111,11 +144,11 @@ Only items below were directly verified in this audit.
 
 ### Production safety
 
-- Low risk: the production recovery is verified, but Stage B still needs explicit browser evidence for the remaining non-emergency chat and billing states.
+- Low risk: Stage B production chat and billing entry paths are now verified live.
 
 ### Correctness
 
-- Medium risk: retrieval quality is being judged through fallback mode, not the intended pgvector RPC path.
+- Low risk: retrieval is now running through the intended pgvector RPC path in the audited Supabase project.
 - Medium risk: sleep logging only prevents duplicate active sessions in application code, not at the database level.
 
 ### Maintainability
@@ -245,10 +278,10 @@ Stage exit criteria:
 
 ## Short Practical Next Actions
 
-1. Apply `supabase/migrations/20260403_add_corpus_match_function.sql` to the intended environment and re-run retrieval verification until it reports RPC mode.
-2. Browser-test normal chat and the capped free-user chat state on the live deployment.
-3. Browser-test checkout entry and portal entry on the live deployment.
-4. Replace draft legal copy before any public beta invite.
+1. Replace draft legal copy with reviewed final copy.
+2. Update the remaining stale docs and README so they match the now-verified Stage B production state.
+3. Review public-facing wording for safety, offline, and install claims so Stage C can close cleanly.
+4. Keep retrieval and billing proof current by re-running the existing verification checks after any future environment or deployment change.
 
 ## What Should Stay Out Of Scope
 
