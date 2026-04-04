@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Somni',
-  description: 'Premium infant sleep coaching with calm, source-backed guidance.',
+  description: 'Calm infant sleep coaching with source-backed guidance.',
   applicationName: 'Somni',
   manifest: '/manifest.webmanifest',
   appleWebApp: {

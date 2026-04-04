@@ -17,8 +17,9 @@ export default function DisclaimerPage() {
         </p>
 
         <p className={styles.draft}>
-          Draft placeholder for review. This is not legal advice. Before launch,
-          replace this with reviewed copy that matches your product and jurisdiction.
+          Somni is a coaching tool, not a clinician, emergency service, or medical
+          device. If advice here ever conflicts with a health professional or local
+          safe-sleep guidance, follow that guidance.
         </p>
 
         <div className={styles.content}>
@@ -31,7 +32,7 @@ export default function DisclaimerPage() {
           <h2>Urgent help</h2>
           <p>
             If you think your baby is unwell, is struggling to breathe, has bluish
-            lips/skin, is unusually drowsy, or you have any urgent concern, seek
+            lips or skin, is unusually drowsy, or you have any urgent concern, seek
             immediate medical help. In Australia, call 000 for emergencies.
           </p>
 
@@ -46,7 +47,7 @@ export default function DisclaimerPage() {
           <ul>
             <li>
               Chat responses can be wrong or incomplete. Use your judgement and check
-              sources.
+              the source links when you need a second opinion.
             </li>
             <li>
               Somni aims to be calm and careful, but it cannot replace a clinician
@@ -56,12 +57,12 @@ export default function DisclaimerPage() {
 
           <h2>Internet connection</h2>
           <p>
-            Somni’s coaching chat requires an internet connection. If you are offline,
-            the app may not be able to respond or sync your latest changes.
+            Somni&apos;s coaching chat requires an internet connection. If you are
+            offline, the app may not be able to respond or sync your latest changes
+            until you are back online.
           </p>
         </div>
       </article>
     </main>
   )
 }
-

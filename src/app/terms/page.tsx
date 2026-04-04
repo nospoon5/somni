@@ -17,8 +17,8 @@ export default function TermsPage() {
         </p>
 
         <p className={styles.draft}>
-          Draft placeholder for review. This is not legal advice and is not a final
-          agreement. Before launch, replace this with reviewed copy.
+          These terms describe the current Somni app, including sleep logging,
+          coaching chat, and Stripe billing.
         </p>
 
         <div className={styles.content}>
@@ -26,7 +26,8 @@ export default function TermsPage() {
           <ul>
             <li>You must be at least 18 years old to create an account.</li>
             <li>
-              You’re responsible for keeping your login details secure and accurate.
+              You&apos;re responsible for keeping your login details secure and
+              accurate.
             </li>
             <li>
               Use Somni for personal, non-commercial purposes unless you have written
@@ -38,30 +39,31 @@ export default function TermsPage() {
           <p>
             Somni provides general information and coaching support. It is not a
             medical device and does not provide medical diagnosis or treatment. If you
-            are concerned about your baby’s health, seek advice from a qualified
+            are concerned about your baby&apos;s health, seek advice from a qualified
             health professional.
           </p>
 
           <h2>Subscriptions</h2>
           <ul>
             <li>
-              Somni may offer free and paid subscription tiers. Pricing and inclusions
-              may change over time.
+              Somni offers a free tier and paid premium access. The free tier includes
+              a daily chat cap; premium removes that cap.
             </li>
             <li>
               Paid subscriptions are processed by Stripe. Your subscription status
               controls access to premium features.
             </li>
             <li>
-              Add your refund/cancellation policy here before launch (including how
-              trials work, if offered).
+              Pricing and plan details are shown in checkout. Refunds and cancellations
+              are handled through the billing flow or support details tied to your
+              account.
             </li>
           </ul>
 
           <h2>Acceptable use</h2>
           <ul>
-            <li>Don’t misuse Somni (for example, attempting to break or abuse it).</li>
-            <li>Don’t upload content you don’t have the right to share.</li>
+            <li>Don&apos;t misuse Somni (for example, attempting to break or abuse it).</li>
+            <li>Don&apos;t upload content you don&apos;t have the right to share.</li>
           </ul>
 
           <h2>Availability</h2>
@@ -72,17 +74,18 @@ export default function TermsPage() {
 
           <h2>Changes</h2>
           <p>
-            We may update Somni and these terms from time to time. Add the formal
-            change-notice process here before launch.
+            We may update Somni and these terms from time to time. If a change is
+            important, we will make it visible in the product or through the contact
+            details on your account.
           </p>
 
           <h2>Contact</h2>
           <p>
-            Add your official support contact and business details here before launch.
+            For account, billing, or terms questions, use the support details tied to
+            your Somni account.
           </p>
         </div>
       </article>
     </main>
   )
 }
-

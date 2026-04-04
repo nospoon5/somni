@@ -7,19 +7,16 @@ This file translates the architecture into practical implementation guidance for
 It should remain aligned with:
 
 - `docs/somni_architecture.md`
-- `docs/somni_implementation_plan.md`
+- `docs/somni_implementation_plan_v2.md`
 
 ## Current Builder Objective
 
-The project is past the auth, onboarding, sleep, score, and chat foundations.
+The product foundations are in place. The current work is Stage C:
 
-The immediate builder priorities are:
-
-1. Keep the schema and docs aligned
-2. Apply the retrieval SQL migration in Supabase for pgvector RPC matching
-3. Browser-verify the limit-hit state in `/chat`
-4. Verify entitlement behavior against stored subscription state and Stripe webhooks
-5. Keep the implementation plan and handoff aligned with the live app state
+1. Keep the public copy honest and specific
+2. Replace any draft or placeholder trust/legal wording
+3. Keep README and handoff docs aligned with the real app
+4. Re-check the live public pages after wording changes
 
 ## Technical Decisions
 
@@ -42,26 +39,27 @@ The immediate builder priorities are:
 | `/login` | Built and connected to Supabase auth action |
 | `/signup` | Built and connected to Supabase auth action |
 | `/onboarding` | Built with multi-step form and DB writes |
-| `/dashboard` | Built with first-pass sleep score summary |
+| `/dashboard` | Built with sleep score summary |
 | `/chat` | Built with streaming chat shell |
 | `/sleep` | Built with start/end actions and recent history |
-| `/profile` | Not started |
-| `/billing` | Not started |
+| `/privacy` | Built |
+| `/terms` | Built |
+| `/disclaimer` | Built |
+| `/billing` | No standalone route in V1; billing lives in chat |
 
 ## API and Server Work Plan
 
 | Path | Responsibility |
 | --- | --- |
 | `src/app/api/chat/route.ts` | Usage checks, retrieval, Gemini call, persistence |
-| `src/app/api/sleep/route.ts` | Sleep log CRUD |
 | `src/app/api/score/route.ts` | Score summary response |
-| `src/app/api/profile/route.ts` | Profile and baby profile read and update |
-| `src/app/api/onboarding/route.ts` | Save onboarding answers and completion state |
+| `src/app/onboarding/actions.ts` | Save onboarding answers and completion state |
+| `src/app/sleep/actions.ts` | Sleep log start/end actions |
 | `src/app/api/billing/checkout/route.ts` | Stripe checkout |
 | `src/app/api/billing/portal/route.ts` | Stripe portal |
 | `src/app/api/billing/webhook/route.ts` | Stripe webhook processing |
 
-Auth mutations may also live in Server Actions if that keeps the implementation simpler and cleaner.
+Auth mutations also live in server actions where that keeps the implementation simpler and cleaner.
 
 ## Folder Direction
 
@@ -71,14 +69,15 @@ Target structure:
 src/
   app/
     api/
-    billing/
     chat/
     dashboard/
+    disclaimer/
     login/
     onboarding/
-    profile/
+    privacy/
     signup/
     sleep/
+    terms/
   components/
     auth/
     chat/
@@ -87,10 +86,9 @@ src/
     ui/
   lib/
     ai/
+    billing/
     scoring/
-    stripe/
     supabase/
-    utils/
 ```
 
 This does not require scaffolding everything immediately. It is a direction for upcoming implementation.
@@ -165,14 +163,13 @@ Important implementation details:
 
 ## Notes For The Next Builder Pass
 
-The next practical coding pass should not rebuild the usage cap work.
+The next practical coding pass should stay on Stage C copy and readiness work.
 
-The right order now is:
+Good next steps are:
 
-1. Browser-verify the limit-hit state in `/chat`
-2. Apply and verify the live Supabase retrieval SQL migration so chat can leave fallback mode
-3. If those pass, close Stage 5
-4. Begin Stage 6 polish and launch work
-5. Keep the docs aligned with the live app state
+1. Keep legal and trust pages specific and truthful
+2. Keep README and handoff docs aligned with the live app
+3. Browser-check public wording after any copy change
+4. Leave Stage D sign-off work for later
 
-That order closes the remaining Stage 5 operational risk without reopening already-verified chat foundation work.
+That order keeps the launch-trust pass focused without reopening already-verified product flows.

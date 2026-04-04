@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Somni',
     short_name: 'Somni',
-    description: 'Premium infant sleep coaching with calm, source-backed guidance.',
+    description: 'Calm infant sleep coaching with source-backed guidance.',
     start_url: '/dashboard',
     scope: '/',
     display: 'standalone',
@@ -33,4 +33,3 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
   }
 }
-

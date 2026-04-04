@@ -1,81 +1,58 @@
-# Somni – Product Context Summary
+# Somni - Product Context Summary
 
 ## Vision
 
 Somni is a sleep-first baby coaching PWA for first-time parents.
 
 Core promise:
-**Better baby sleep, personalised to your baby.**
-
-Value proposition:
-**"A sleep consultant in your pocket, for a fraction of the price, available at 3am."**
-
----
+**Calm, source-backed sleep guidance tailored to your baby.**
 
 ## Target Users
 
 ### Persona 1: Anxious New Mum
-- First-time mother, baby ~3 months old
-- Leaning towards gentle sleep approach
-- Active in Facebook parenting groups but finds conflicting advice overwhelming
-- Willing to pay for clarity and reassurance
-- Needs: "Tell me it's normal and what to try"
+- First-time mother, baby around 3 months old
+- Leaning towards a gentle sleep approach
+- Feels overwhelmed by conflicting advice
+- Needs reassurance and a clear next step
 
 ### Persona 2: Pragmatic Dad
-- First-time father, baby ~6 months old
+- First-time father, baby around 6 months old
 - Wants structure and quick results
-- Prefers fast-track or balanced approach
-- Time-poor, wants clear action steps
-- Needs: "Just tell me what to do tonight"
+- Prefers balanced or faster progress
+- Needs direct advice for tonight
 
 ### Persona 3: Sleep-Deprived Return-to-Work Parent
-- Baby ~9-12 months old, parent going back to work
-- Urgent need: baby must sleep better NOW
-- Has tried free advice (Google, Facebook groups) with mixed results
-- Comparing Somni to hiring a sleep consultant ($150-$500)
-- Needs: "Help me fix this before Monday"
-
----
+- Baby around 9-12 months old
+- Needs sleep to improve soon
+- Has already tried free advice without much clarity
+- Wants practical help before the week ahead
 
 ## Australia-First (V1) Implications
 
-- **Timezone**: AEST/AEDT handling in sleep log timestamps
-- **Date formats**: DD/MM/YYYY (not US format)
-- **Units**: Metric (°C for temperature references)
-- **Currency**: AUD for all pricing
-- **Safe sleeping**: Red Nose Australia guidelines as the authority
-- **Trusted sources**: Tresillian, Karitane, RCH Melbourne, Raising Children Network
-- **Health system**: Reference GP, maternal and child health nurse, not "pediatrician" (spell "paediatrician")
-- **Emergency**: 000 (not 911), Maternal and Child Health Line: 13 22 29
-- **Privacy**: Must comply with Australian Privacy Principles (APP). Consider ACCC guidelines for AI products.
-- **Content localisation**: Australian English spelling throughout (organised, colourful, paediatric)
-
----
+- Timezone handling uses AEST/AEDT-aware logic
+- Date formats should stay in Australian style where displayed to users
+- Units should stay metric
+- Safe sleep guidance should follow recognised Australian sources
+- Trusted sources include Red Nose Australia, Tresillian, Karitane, RCH Melbourne, and Raising Children Network
+- Health wording should use Australian English throughout
+- Emergency guidance should point to 000 in Australia
+- Privacy should be treated as an Australian Privacy Principles issue
 
 ## Core Differentiation
 
-- Sleep-only focus (tight wedge — not tracking feeding, diapers, milestones)
-- Personalised advice (based on logs + profile + sleep style)
-- Coaching system (not just chat — structured responses with action steps)
-- Australian-aligned sources (Red Nose, Tresillian, Karitane)
-- Friendly but trustworthy tone
-- AI coaching is conversational — competitors track data, Somni interprets it
-
----
+- Sleep-only focus rather than a broad baby tracker
+- Personalised advice based on logs, baby age, and sleep style
+- Coaching that explains the next step instead of just showing data
+- Australian-aligned sources and language
+- Calm but specific tone
 
 ## Core Product Loop
 
 1. Parent logs sleep
 2. Parent asks a question
-3. Somni interprets:
-   - baby age (age band)
-   - sleep style preference (gentle/balanced/fast-track)
-   - recent sleep patterns (last 3-7 days)
-   - sleep score and trends
+3. Somni interprets baby age, sleep style, and recent sleep patterns
 4. Somni responds with a personalised plan
-5. System adapts over time as more data is logged
-
----
+5. The system adapts as more data is logged
 
 ## Sleep Methodology Strategy
 
@@ -83,7 +60,7 @@ Somni groups approaches into 3 buckets:
 
 ### Gentle
 - Responsive, low crying, high involvement
-- Methods: pick-up/put-down, patting/shushing, gradual retreat
+- Methods: pick-up/put-down, patting, shushing, gradual retreat
 
 ### Balanced
 - Structured with check-ins
@@ -91,47 +68,43 @@ Somni groups approaches into 3 buckets:
 
 ### Fast-track
 - More direct, faster behaviour change, lower ongoing involvement
-- Methods: Extinction-based approaches with clear boundaries
+- Methods: extinction-based approaches with clear boundaries
 
 User-facing labels: **Gentle** | **Balanced** | **Fast-track**
 
----
-
 ## Sleep Style Questionnaire
 
-5 questions on a 1–10 scale each.
+5 questions on a 1-10 scale each.
 
 Stores:
-- `sleep_style_score` (average, 1–10)
+- `sleep_style_score` (average, 1-10)
 - `sleep_style_label` (derived from score)
 
 Mapping:
-- 1–3 = Gentle
-- 4–7 = Balanced
-- 8–10 = Fast-track
-
----
+- 1-3 = Gentle
+- 4-7 = Balanced
+- 8-10 = Fast-track
 
 ## Sleep Scoring Strategy
 
 ### User Display
 
 Status labels:
-- **Improving** (75–100)
-- **Steady** (55–74)
-- **Needs Attention** (0–54)
+- **Improving** (75-100)
+- **Steady** (55-74)
+- **Needs Attention** (0-54)
 
 Tap to reveal:
-- Score (0–100)
+- Score (0-100)
 - Strongest area
 - Biggest challenge
 - Tonight's focus
 
 ### Scoring Principles
-- Measures baby sleep quality (not parenting quality)
-- Age-aware (expectations differ by age band)
-- Trend-aware (weighted: 50% last 24h, 30% last 3 days, 20% last 7 days)
-- Explainable (user can understand why their score is what it is)
+- Measures baby sleep quality, not parenting quality
+- Age-aware so expectations change with age band
+- Trend-aware across the last 24 hours, 3 days, and 7 days
+- Explainable so users can see why the score changed
 
 ### Score Components
 1. Night sleep quality (40 points)
@@ -141,33 +114,28 @@ Tap to reveal:
 
 ### Rules
 - Only count disruptive wakes
-- Overnight feeds: neutral (younger babies), slightly negative (older babies)
-- Contact naps = neutral (V1)
-
----
+- Overnight feeds are neutral for younger babies and slightly negative for older babies
+- Contact naps are neutral in V1
 
 ## Monetisation
 
-| Tier | Price | Includes |
-|------|-------|----------|
-| **Free** | $0 | 10 messages/day, sleep logging, delayed sleep score (24h) |
-| **Somni Plus (Monthly)** | $19.99/month (first month $9.99) | Unlimited messages, real-time score, personalised plans, trend charts |
-| **Somni Plus (Annual)** | $99/year (~$8.25/mo) | Same as monthly — 58% savings vs monthly |
+| Tier | Includes |
+|------|----------|
+| **Free** | Sleep logging and a daily coaching chat cap |
+| **Somni Premium** | Removes the daily chat cap and uses Stripe checkout/portal for billing |
 
-Revenue target: ~$10K/year (~55-60 paying subscribers)
-
----
+Pricing is shown in the live checkout flow. Keep any future price changes out of the docs unless they are verified in the product.
 
 ## AI Strategy
 
-- Use external model: Gemini (primary), with fallback consideration for future
-- Use RAG over curated corpus (50+ chunks, Australian sources)
-- Use structured baby + sleep data as runtime context
-- AI is NOT the moat — corpus quality, product design, and personalisation are
+- Use Gemini as the primary model
+- Use RAG over the curated corpus
+- Use baby profile and sleep data as runtime context
+- Keep the AI as the coach, not the product moat
 
 ### Safety (Non-Negotiable)
-- Medical disclaimer in all health-adjacent responses
-- Emergency detection and immediate redirect to 000
-- Hallucination guardrails: only reference corpus context
-- Prompt injection protection
-- Red Nose Australia safe sleeping compliance
+- Show a medical disclaimer in health-adjacent responses
+- Redirect emergency concerns to 000 in Australia
+- Only reference corpus context when possible
+- Protect against prompt injection
+- Keep safe sleep language aligned with Australian guidance

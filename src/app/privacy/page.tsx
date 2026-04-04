@@ -17,9 +17,8 @@ export default function PrivacyPage() {
         </p>
 
         <p className={styles.draft}>
-          Draft placeholder for review. This is not legal advice and is not a final
-          policy. Before launch, replace this with reviewed copy that matches your
-          actual data practices.
+          This policy describes the current Somni app flow. Keep it in sync with the
+          product if we change what the app collects or how it is used.
         </p>
 
         <div className={styles.content}>
@@ -39,11 +38,11 @@ export default function PrivacyPage() {
               birth.
             </li>
             <li>
-              Sleep logs you record: start/end times, tags, and optional notes.
+              Sleep logs you record: start and end times, tags, and optional notes.
             </li>
             <li>
-              Chat messages you send and Somni’s responses, including safety metadata
-              needed for quality and audit.
+              Chat messages you send and Somni&apos;s responses, including safety
+              metadata needed for quality and audit.
             </li>
             <li>
               Billing status: whether you have an active subscription (payments are
@@ -82,8 +81,7 @@ export default function PrivacyPage() {
           <h2>Retention</h2>
           <p>
             We retain your data for as long as you keep your account, and longer if
-            required for legal, security, or dispute-handling reasons. Replace this
-            section with a specific retention schedule.
+            required for legal, security, or dispute-handling reasons.
           </p>
 
           <h2>Your choices</h2>
@@ -94,12 +92,11 @@ export default function PrivacyPage() {
 
           <h2>Contact</h2>
           <p>
-            Add your official support contact here before launch (email address and
-            business details).
+            For privacy requests, use the support details tied to your Somni account
+            or billing record.
           </p>
         </div>
       </article>
     </main>
   )
 }
-

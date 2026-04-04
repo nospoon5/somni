@@ -82,7 +82,7 @@ Somni is materially built, Stage A remains closed, and Stage B is now verified o
 
 What is solid:
 
-- The latest verified production Vercel deployment is built from the current `main` commit `254b7e7`.
+- The latest verified production deployment now reflects the reviewed Stage C wording pass on `somni-six.vercel.app`.
 - Local `npm run lint` passes.
 - Local `npm run build` passes.
 - Local core product flows work in the audited environment: auth redirects, dashboard load, sleep start/end, emergency chat handling, free-tier limit UI, and PWA registration basics.
@@ -91,13 +91,13 @@ What is solid:
 
 What is not yet safe to call complete:
 
-- Legal pages are still draft placeholders and not launch-ready.
+- Stage C wording is now live on the production alias, but Stage D launch sign-off still has broader QA and hardening work left.
 
 ## Verified Completed Work
 
 Only items below were directly verified in this audit.
 
-- Verified: latest production deployment matches commit `254b7e7` on `main`.
+- Verified: the production alias now serves the reviewed Stage C copy after redeploy.
 - Verified: landing page, login page, signup page, onboarding page, dashboard page, sleep page, chat page, legal pages, manifest route, and service worker route exist in the built app.
 - Verified: unauthenticated requests to `/dashboard`, `/sleep`, and `/chat` redirect to `/login` locally.
 - Verified: unauthenticated requests to `/dashboard`, `/sleep`, and `/chat` redirect to `/login` on the live deployment.
@@ -120,6 +120,19 @@ Only items below were directly verified in this audit.
 - Verified: live checkout entry returns a real Stripe Checkout URL.
 - Verified: live portal entry returns a real Stripe billing portal URL.
 - Verified: premium billing UI now shows `Somni Premium` and `Manage billing` in a real production browser run.
+- Verified locally: the homepage, legal pages, README, handoff, and context docs have been rewritten to remove draft/placeholder trust wording.
+
+## Stage C Live Verification - 2026-04-04
+
+This update reflects the Stage C wording pass after production redeploy.
+
+New verified facts from 2026-04-04:
+
+- The production alias `somni-six.vercel.app` now serves the reviewed Stage C homepage, privacy, terms, disclaimer, footer, metadata, and manifest wording.
+- The homepage preview now labels itself as an illustration instead of implying live score data.
+- The privacy, terms, and disclaimer pages no longer present themselves as draft placeholders.
+- The live footer now includes the Australia `000` emergency note.
+- The README, architect handoff, and product context docs describe the real app and current environment expectations.
 
 ## Incomplete Work By Priority
 
@@ -130,9 +143,8 @@ Only items below were directly verified in this audit.
 
 ### P2 - Required before launch trust claims
 
-7. Replace all legal placeholder copy with reviewed final copy.
-8. Update stale docs and README so they match the actual state of the app.
-9. Run a focused release-readiness QA pass across local and live with evidence captured.
+7. Keep README, plan docs, and handoff docs synced with the deployed release.
+8. Run a focused release-readiness QA pass across local and live with evidence captured.
 
 ### P3 - Hardening and cleanup
 
@@ -155,12 +167,12 @@ Only items below were directly verified in this audit.
 
 - Medium risk: `ChatPage` performs admin-backed subscription bootstrap during page render, which widens the blast radius of missing env vars.
 - Medium risk: verification coverage is mostly ad hoc scripts rather than a repeatable browser suite checked into the repo.
-- Low risk: the README is still default scaffold content and does not help a real maintainer.
+- Low risk: the Stage C docs now match the current repo better, but they still need a live deployment pass to be fully complete.
 
 ### Trust and compliance
 
-- High risk for launch: legal pages clearly identify themselves as draft placeholders.
-- Medium risk: current implementation docs are no longer reliable enough to use as execution truth without this v2 replacement.
+- High risk for launch: the live deployment still shows the older draft legal copy until the Stage C wording is redeployed.
+- Medium risk: the docs needed a substantial trust/readiness refresh, but the local repo now has the reviewed wording in place.
 
 ## Suggested Refactors
 
@@ -278,9 +290,9 @@ Stage exit criteria:
 
 ## Short Practical Next Actions
 
-1. Replace draft legal copy with reviewed final copy.
-2. Update the remaining stale docs and README so they match the now-verified Stage B production state.
-3. Review public-facing wording for safety, offline, and install claims so Stage C can close cleanly.
+1. Redeploy the reviewed Stage C wording.
+2. Browser-check the live homepage and legal pages to confirm the draft language is gone.
+3. Keep the README and handoff docs aligned with the current deployed release.
 4. Keep retrieval and billing proof current by re-running the existing verification checks after any future environment or deployment change.
 
 ## What Should Stay Out Of Scope

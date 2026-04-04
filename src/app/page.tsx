@@ -11,8 +11,8 @@ export default function Home() {
             Gentle, grounded infant sleep coaching for the longest nights.
           </h1>
           <p className={styles.summary}>
-            Track sleep, understand patterns, and receive calm, source-backed
-            guidance designed for tired parents making decisions at 3am.
+            Track sleep, spot patterns, and get calm, source-backed guidance when
+            you are making decisions at 3am.
           </p>
           <div className={styles.actions}>
             <Link href="/signup" className={styles.primaryAction}>
@@ -23,25 +23,25 @@ export default function Home() {
             </Link>
           </div>
           <ul className={styles.highlights}>
-            <li>Personalised coaching grounded in curated sleep guidance</li>
-            <li>3am-friendly sleep logging built for one-handed use</li>
-            <li>Premium, calm design with safe-sleep compliant language</li>
+            <li>Personalised coaching based on your baby&apos;s age, logs, and sleep style</li>
+            <li>Fast sleep logging that is easy to use with one hand</li>
+            <li>Careful safe-sleep wording and clear emergency guidance</li>
           </ul>
         </div>
 
         <div className={styles.previewCard}>
           <div className={styles.previewHeader}>
-            <span className={styles.previewStatus}>Tonight&apos;s focus</span>
-            <span className={styles.previewScore}>78</span>
+            <span className={styles.previewStatus}>Example coach view</span>
+            <span className={styles.previewScore}>Sample</span>
           </div>
-          <h2 className={styles.previewTitle}>Improving</h2>
+          <h2 className={styles.previewTitle}>Calm next step</h2>
           <p className={styles.previewBody}>
-            Bedtime is steady, but the second overnight wake is stretching the
-            whole household. A smaller tweak tonight is to protect the last nap
-            from running too late.
+            This is an illustration of the coaching tone Somni uses after you add
+            real sleep data: steady, specific, and grounded in the latest night
+            rather than a generic script.
           </p>
           <div className={styles.previewTags}>
-            <span>4-6 months</span>
+            <span>Illustration</span>
             <span>Gentle</span>
             <span>Source-backed</span>
           </div>
