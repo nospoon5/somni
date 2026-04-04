@@ -1,0 +1,88 @@
+.shell {
+  margin-top: 22px;
+}
+
+.grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.field,
+.fieldWide {
+  display: grid;
+  gap: 8px;
+}
+
+.field span,
+.fieldWide span {
+  color: var(--text-secondary);
+  font-size: 0.94rem;
+}
+
+.field input,
+.field select,
+.fieldWide textarea {
+  min-height: 52px;
+  padding: 0 16px;
+  border: 1px solid rgba(227, 235, 244, 0.12);
+  border-radius: var(--radius-md);
+  background: rgba(251, 247, 239, 0.08);
+  color: var(--text-primary);
+}
+
+.fieldWide textarea {
+  padding: 14px 16px;
+  min-height: unset;
+  resize: vertical;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.primaryButton {
+  min-height: 50px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 0;
+  background: linear-gradient(135deg, var(--color-cream-50), var(--color-gold-300));
+  color: var(--text-dark);
+  font-weight: 700;
+}
+
+.primaryButton:disabled {
+  opacity: 0.7;
+}
+
+.success,
+.error {
+  margin: 18px 0 0;
+  padding: 13px 14px;
+  border-radius: var(--radius-sm);
+  line-height: 1.6;
+}
+
+.success {
+  background: rgba(142, 182, 160, 0.2);
+  color: #dff3e8;
+}
+
+.error {
+  background: rgba(215, 155, 141, 0.18);
+  color: #ffd9d0;
+}
+
+@media (min-width: 820px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fieldWide {
+    grid-column: 1 / -1;
+  }
+}
+

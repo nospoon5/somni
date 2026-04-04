@@ -288,6 +288,44 @@ Stage exit criteria:
 
 - Somni is safe to describe as beta-ready.
 
+### Stage D Evidence (In Progress)
+
+As of 2026-04-05 (Australia/Sydney):
+
+- Local repo `main` is clean and at commit `18e7cf3` before Stage D changes.
+- Live production alias `https://somni-six.vercel.app/` points at deployment `dpl_BGcD8VEYQPdhwfnPiuoFigQuePDw`, built from commit `18e7cf3`.
+- Local QA pass (automated) after the Stage D support additions:
+  - `npm run lint` passes.
+  - `npm run build` passes.
+  - `node scripts/verify-stage4-chat-e2e.mjs` passes.
+  - `node scripts/verify-stage4-retrieval.mjs` reports RPC mode.
+  - `npm run verify:stage5:usage` passes.
+  - `npm run verify:stage5:stripe` passes.
+
+Remaining Stage D items still pending live verification:
+
+- Full live QA walkthrough on the current production alias after deploying Stage D support/triage changes.
+- Runtime log review immediately after the live walkthrough.
+- Final documentation of acceptable beta limitations (explicitly accepted).
+
+### Stage D Support And Bug Triage (New)
+
+For beta readiness, Somni now includes an in-app support intake:
+
+- `/support` provides a simple "report a bug / share feedback" form.
+- `/api/support` accepts signed-in support submissions and writes them to Vercel runtime logs as a structured `SUPPORT_REQUEST` event with a unique request ID.
+
+This approach intentionally avoids new vendor dependencies (email provider, new DB table) during recovery. If email notifications are required later, add them as a follow-up (e.g., Resend) once the beta stabilises.
+
+Proposed triage process:
+
+- Check Vercel runtime logs for `SUPPORT_REQUEST` entries daily during beta.
+- Classify each report into P0/P1/P2:
+  - P0: safety risk, data loss, auth broken, billing broken.
+  - P1: core flows degraded (onboarding, sleep logging, chat unusable).
+  - P2: copy bugs, minor UI issues, edge cases.
+- Acknowledge and respond to testers within 24-48 hours during beta (even if the fix comes later).
+
 ## Short Practical Next Actions
 
 1. Redeploy the reviewed Stage C wording.

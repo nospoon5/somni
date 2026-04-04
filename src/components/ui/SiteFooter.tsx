@@ -6,7 +6,7 @@ export function SiteFooter() {
     <footer className={styles.footer} aria-label="Site footer">
       <div className={styles.inner}>
         <div>&copy; {new Date().getFullYear()} Somni</div>
-        <nav className={styles.links} aria-label="Legal links">
+        <nav className={styles.links} aria-label="Footer links">
           <Link className={styles.link} href="/privacy">
             Privacy
           </Link>
@@ -15,6 +15,9 @@ export function SiteFooter() {
           </Link>
           <Link className={styles.link} href="/disclaimer">
             Disclaimer
+          </Link>
+          <Link className={styles.link} href="/support">
+            Support
           </Link>
         </nav>
       </div>
