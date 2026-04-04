@@ -288,12 +288,12 @@ Stage exit criteria:
 
 - Somni is safe to describe as beta-ready.
 
-### Stage D Evidence (In Progress)
+### Stage D Evidence (Completed)
 
-As of 2026-04-05 (Australia/Sydney):
+Verified on 2026-04-05 (Australia/Sydney):
 
 - Local repo `main` is clean and at commit `18e7cf3` before Stage D changes.
-- Live production alias `https://somni-six.vercel.app/` points at deployment `dpl_BGcD8VEYQPdhwfnPiuoFigQuePDw`, built from commit `18e7cf3`.
+- Live production alias `https://somni-six.vercel.app/` now points at deployment `dpl_AeULaXYwPmjXG1zLTB4uqjo2Qfr5`, built from commit `ace927c`.
 - Local QA pass (automated) after the Stage D support additions:
   - `npm run lint` passes.
   - `npm run build` passes.
@@ -302,11 +302,16 @@ As of 2026-04-05 (Australia/Sydney):
   - `npm run verify:stage5:usage` passes.
   - `npm run verify:stage5:stripe` passes.
 
-Remaining Stage D items still pending live verification:
+Live QA pass (production alias):
 
-- Full live QA walkthrough on the current production alias after deploying Stage D support/triage changes.
-- Runtime log review immediately after the live walkthrough.
-- Final documentation of acceptable beta limitations (explicitly accepted).
+- A full production walkthrough (signup -> onboarding -> dashboard -> sleep start/end -> chat send/receive -> billing entry endpoints -> support form) completed without blockers.
+- Billing entry was verified without completing any payments (only verifying that endpoints returned Stripe-hosted URLs).
+- Vercel runtime logs for the walkthrough window showed no `error`-level logs.
+- Vercel runtime logs include a `SUPPORT_REQUEST` log entry from `/api/support`, proving the beta intake path is working.
+
+Rollback path:
+
+- The prior production deployment `dpl_BGcD8VEYQPdhwfnPiuoFigQuePDw` (commit `18e7cf3`) remains available as a rollback candidate in Vercel if needed.
 
 ### Stage D Support And Bug Triage (New)
 
@@ -325,6 +330,12 @@ Proposed triage process:
   - P1: core flows degraded (onboarding, sleep logging, chat unusable).
   - P2: copy bugs, minor UI issues, edge cases.
 - Acknowledge and respond to testers within 24-48 hours during beta (even if the fix comes later).
+
+Known acceptable limitations (explicitly accepted for beta):
+
+- Support intake is currently logged to Vercel runtime logs (search for `SUPPORT_REQUEST`). It does not yet email notifications automatically.
+- Support intake currently requires a signed-in account (to reduce spam). Signed-out users are prompted to sign in first.
+- There is no in-app ticket history page yet; the support request ID is shown after submission for reference.
 
 ## Short Practical Next Actions
 
