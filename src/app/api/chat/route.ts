@@ -138,6 +138,12 @@ async function streamGeminiResponse(prompt: string, onToken: (token: string) => 
         generationConfig: {
           temperature: 0.35,
           maxOutputTokens: 700,
+          // This chat flow needs a complete parent-facing answer more than hidden
+          // reasoning tokens. Gemini 2.5 Flash can spend output budget on thinking,
+          // which was truncating replies mid-sentence in production.
+          thinkingConfig: {
+            thinkingBudget: 0,
+          },
         },
       }),
     }
