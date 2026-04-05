@@ -31,12 +31,10 @@
   gap: 10px;
 }
 
-.brandDot {
-  width: 10px;
-  height: 10px;
-  border-radius: var(--radius-full);
-  background: var(--color-accent);
-  box-shadow: var(--shadow-accent);
+.brandIcon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 
 .brandText {
@@ -145,16 +143,34 @@
 
 .atmosphere {
   position: absolute;
-  top: 16px;
-  right: 10px;
-  width: 160px;
-  height: 160px;
-  border-radius: var(--radius-full);
-  background:
-    radial-gradient(circle at 35% 40%, rgba(232, 180, 74, 0.26), rgba(232, 180, 74, 0) 62%),
-    radial-gradient(circle at 60% 50%, rgba(10, 12, 26, 1), rgba(10, 12, 26, 1) 55%, transparent 56%);
-  opacity: 0.45;
+  top: 26px;
+  right: 8px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 45% 45%, rgba(232, 180, 74, 0.18), rgba(232, 180, 74, 0.02) 58%, transparent 70%);
+  filter: blur(0.3px);
+  opacity: 0.8;
   pointer-events: none;
+}
+
+.atmosphere::before {
+  content: '';
+  position: absolute;
+  inset: 20px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(232, 180, 74, 0.22);
+}
+
+.atmosphere::after {
+  content: '';
+  position: absolute;
+  width: 122px;
+  height: 122px;
+  top: 31px;
+  left: 76px;
+  border-radius: 50%;
+  background: var(--color-bg);
 }
 
 @media (min-width: 920px) {

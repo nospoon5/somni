@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import styles from './page.module.css'
 
@@ -15,7 +16,14 @@ export default function Home() {
       <section className={styles.hero}>
         <div className={`${styles.copy} animate-fade-up`}>
           <div className={styles.brandRow}>
-            <span className={styles.brandDot} aria-hidden="true" />
+            <Image
+              src="/somni_icon_clean.png"
+              alt="Somni icon"
+              width={20}
+              height={20}
+              className={styles.brandIcon}
+              priority
+            />
             <span className={styles.brandText}>Somni</span>
           </div>
 
