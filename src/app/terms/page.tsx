@@ -8,10 +8,10 @@ export const metadata: Metadata = {
 export default function TermsPage() {
   return (
     <main className={styles.page}>
-      <article className={styles.card}>
-        <p className={styles.eyebrow}>Legal</p>
-        <h1 className={styles.title}>Terms of Service</h1>
-        <p className={styles.lede}>
+      <article className={`${styles.card} card`}>
+        <p className={`${styles.eyebrow} text-label`}>Legal</p>
+        <h1 className={`${styles.title} text-display`}>Terms of Service</h1>
+        <p className={`${styles.lede} text-body`}>
           These terms describe how Somni works, what you can expect from us, and what
           we need from you.
         </p>
@@ -26,8 +26,7 @@ export default function TermsPage() {
           <ul>
             <li>You must be at least 18 years old to create an account.</li>
             <li>
-              You&apos;re responsible for keeping your login details secure and
-              accurate.
+              You are responsible for keeping your login details secure and accurate.
             </li>
             <li>
               Use Somni for personal, non-commercial purposes unless you have written
@@ -62,8 +61,8 @@ export default function TermsPage() {
 
           <h2>Acceptable use</h2>
           <ul>
-            <li>Don&apos;t misuse Somni (for example, attempting to break or abuse it).</li>
-            <li>Don&apos;t upload content you don&apos;t have the right to share.</li>
+            <li>Do not misuse Somni (for example, attempting to break or abuse it).</li>
+            <li>Do not upload content you do not have the right to share.</li>
           </ul>
 
           <h2>Availability</h2>

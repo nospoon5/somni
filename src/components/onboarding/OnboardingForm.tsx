@@ -81,21 +81,19 @@ export function OnboardingForm() {
     bedtimeRange
 
   return (
-    <form className={styles.form} action={formAction}>
+    <form className={`${styles.form} card`} action={formAction}>
       <div className={styles.progressRow}>
-        <span className={styles.progressStep}>Step {step + 1} of 2</span>
-        <div className={styles.progressTrack} aria-hidden="true">
-          <span
-            className={styles.progressFill}
-            style={{ width: step === 0 ? '50%' : '100%' }}
-          />
+        <span className={`${styles.progressStep} text-label`}>Step {step + 1} of 2</span>
+        <div className={styles.dotTrack} aria-hidden="true">
+          <span className={step === 0 ? styles.dotActive : styles.dot} />
+          <span className={step === 1 ? styles.dotActive : styles.dot} />
         </div>
       </div>
 
       {step === 0 ? (
         <section className={styles.stepSection}>
-          <h1 className={styles.title}>Let&apos;s start with your baby&apos;s details.</h1>
-          <p className={styles.subtitle}>
+          <h1 className={`${styles.title} text-display`}>Let&apos;s start with your baby&apos;s details.</h1>
+          <p className={`${styles.subtitle} text-body`}>
             We only ask for the basics we need to make the coaching feel relevant,
             gentle, and grounded in your baby&apos;s age.
           </p>
@@ -167,19 +165,19 @@ export function OnboardingForm() {
 
           <div className={styles.actions}>
             <button
-              className={styles.primaryButton}
+              className="btn-primary"
               type="button"
               onClick={() => setStep(1)}
               disabled={!canContinueFromBasics}
             >
-              Continue
+              Next
             </button>
           </div>
         </section>
       ) : (
         <section className={styles.stepSection}>
-          <h1 className={styles.title}>Now shape the coaching style.</h1>
-          <p className={styles.subtitle}>
+          <h1 className={`${styles.title} text-display`}>Now shape the coaching style.</h1>
+          <p className={`${styles.subtitle} text-body`}>
             Move the sliders toward what feels right for your family. There is no
             perfect answer here.
           </p>
@@ -187,13 +185,13 @@ export function OnboardingForm() {
           <div className={styles.stylePreview}>
             <span className={styles.stylePreviewLabel}>Current style preview</span>
             <strong>
-              {stylePreview.label} · {stylePreview.score}
+              {stylePreview.label} - {stylePreview.score}
             </strong>
           </div>
 
           <div className={styles.questionList}>
             {questionPrompts.map((prompt, index) => (
-              <label className={styles.questionCard} key={prompt}>
+              <label className={`${styles.questionCard} card`} key={prompt}>
                 <span className={styles.questionText}>{prompt}</span>
                 <div className={styles.sliderRow}>
                   <span>1</span>
@@ -220,14 +218,10 @@ export function OnboardingForm() {
           {state.error ? <p className={styles.error}>{state.error}</p> : null}
 
           <div className={styles.actions}>
-            <button
-              className={styles.secondaryButton}
-              type="button"
-              onClick={() => setStep(0)}
-            >
+            <button className="btn-secondary" type="button" onClick={() => setStep(0)}>
               Back
             </button>
-            <button className={styles.primaryButton} type="submit" disabled={pending}>
+            <button className="btn-primary" type="submit" disabled={pending}>
               {pending ? 'Saving your profile...' : 'Finish onboarding'}
             </button>
           </div>

@@ -1,18 +1,30 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Playfair_Display, DM_Sans, DM_Mono } from 'next/font/google'
 import './globals.css'
 import { PwaServiceWorker } from '@/components/pwa/PwaServiceWorker'
 import { SiteFooter } from '@/components/ui/SiteFooter'
 import { AppBottomNav } from '@/components/ui/AppBottomNav'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const displayFont = Playfair_Display({
   subsets: ['latin'],
+  variable: '--font-display',
+  weight: ['400', '700', '900'],
+  style: ['normal', 'italic'],
+  display: 'swap',
 })
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const bodyFont = DM_Sans({
   subsets: ['latin'],
+  variable: '--font-body',
+  weight: ['300', '400', '500'],
+  display: 'swap',
+})
+
+const monoFont = DM_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  weight: ['400'],
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -36,7 +48,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en-AU" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html
+      lang="en-AU"
+      className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable}`}
+    >
       <body>
         <PwaServiceWorker />
         {children}

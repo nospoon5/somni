@@ -110,7 +110,7 @@ export function SupportForm() {
 
       <div className={styles.actions}>
         <button
-          className={styles.primaryButton}
+          className="btn-primary"
           type="button"
           onClick={submit}
           disabled={state.status === 'submitting'}

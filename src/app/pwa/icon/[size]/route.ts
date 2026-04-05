@@ -15,8 +15,7 @@ export async function GET(
   const requested = Number.parseInt(size, 10)
   const dimension = clampNumber(Number.isFinite(requested) ? requested : 512, 32, 1024)
 
-  const fontSize = Math.round(dimension * 0.28)
-  const badgeSize = Math.round(dimension * 0.2)
+  const fontSize = Math.round(dimension * 0.36)
 
   return new ImageResponse(
     createElement(
@@ -29,10 +28,9 @@ export async function GET(
           alignItems: 'center',
           justifyContent: 'center',
           background:
-            'radial-gradient(circle at top, rgba(216,187,125,0.22), transparent 45%), radial-gradient(circle at 85% 20%, rgba(142,182,160,0.22), transparent 40%), linear-gradient(180deg, #0d1730 0%, #162544 55%, #f4ecdc 160%)',
+            'radial-gradient(ellipse at 60% 0%, rgba(18, 22, 39, 0.8) 0%, transparent 60%), #0a0c1a',
           position: 'relative',
-          fontFamily:
-            '"Geist", "Geist Fallback", "Avenir Next", "Segoe UI", sans-serif',
+          fontFamily: '"Playfair Display", Georgia, serif',
         },
       },
       createElement(
@@ -42,9 +40,9 @@ export async function GET(
             width: Math.round(dimension * 0.78),
             height: Math.round(dimension * 0.78),
             borderRadius: Math.round(dimension * 0.22),
-            background: 'rgba(15,26,47,0.74)',
-            border: '1px solid rgba(227,235,244,0.16)',
-            boxShadow: '0 22px 50px rgba(4,10,24,0.34)',
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(232, 180, 74, 0.12)',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.4)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -54,27 +52,15 @@ export async function GET(
           'div',
           {
             style: {
-              color: '#fbf7ef',
+              color: '#fef0dc',
               fontSize,
-              fontWeight: 650,
-              letterSpacing: '-0.06em',
+              fontWeight: 700,
+              letterSpacing: '-0.03em',
             },
           },
-          'Somni'
+          'S'
         )
-      ),
-      createElement('div', {
-        style: {
-          position: 'absolute',
-          right: Math.round(dimension * 0.14),
-          top: Math.round(dimension * 0.14),
-          width: badgeSize,
-          height: badgeSize,
-          borderRadius: 999,
-          background: 'rgba(216,187,125,0.95)',
-          boxShadow: '0 16px 40px rgba(4,10,24,0.28)',
-        },
-      })
+      )
     ),
     {
       width: dimension,

@@ -1,0 +1,71 @@
+.page {
+  min-height: 100vh;
+  padding: 24px 18px 96px;
+  background: var(--color-bg);
+}
+
+.card {
+  width: min(920px, 100%);
+  margin: 0 auto;
+  padding: 24px;
+  display: grid;
+  gap: 14px;
+}
+
+.eyebrow {
+  margin: 0;
+}
+
+.heading {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 2.7rem);
+}
+
+.section {
+  padding: 18px;
+}
+
+.sectionTitle {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+}
+
+.badgeRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.freeBadge,
+.premiumBadge {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.freeBadge {
+  background: var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.premiumBadge {
+  background: var(--color-accent-glow);
+  color: var(--color-accent);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+@media (min-width: 860px) {
+  .card {
+    padding: 32px;
+  }
+}

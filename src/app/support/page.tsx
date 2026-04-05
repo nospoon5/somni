@@ -11,10 +11,10 @@ export default async function SupportPage() {
 
   return (
     <main className={styles.page}>
-      <section className={styles.card}>
-        <p className={styles.eyebrow}>Support</p>
-        <h1 className={styles.title}>Report a bug or share feedback.</h1>
-        <p className={styles.lede}>
+      <section className={`${styles.card} card`}>
+        <p className={`${styles.eyebrow} text-label`}>Support</p>
+        <h1 className={`${styles.title} text-display`}>Report a bug or share feedback.</h1>
+        <p className={`${styles.lede} text-body`}>
           This beta is still improving. If something feels off, tell us what happened and
           what you expected to see. It helps to include the screen you were on and any
           error message.
@@ -39,4 +39,3 @@ export default async function SupportPage() {
     </main>
   )
 }
-

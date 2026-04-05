@@ -94,7 +94,7 @@ export function ChatCoach({
     {
       id: 'welcome',
       role: 'assistant',
-      content: `Hi, I’m Somni. Tell me what tonight looks like for ${babyName}, and I’ll help with a calm, practical plan.`,
+      content: `Hi, I'm Somni. Tell me what tonight looks like for ${babyName}, and I'll help with a calm, practical plan.`,
     },
   ])
   const [draft, setDraft] = useState('')
@@ -213,7 +213,7 @@ export function ChatCoach({
           message:
             typeof payload?.message === 'string'
               ? payload.message
-              : 'You have reached today’s free Somni chat limit.',
+              : 'You have reached today\'s free Somni chat limit.',
           upgradeHint:
             typeof payload?.upgradeHint === 'string'
               ? payload.upgradeHint
@@ -339,13 +339,11 @@ export function ChatCoach({
 
   return (
     <section className={styles.shell}>
-      <section className={styles.planCard}>
+      <section className={`${styles.planCard} card`}>
         <div>
-          <p className={styles.planLabel}>Plan</p>
+          <p className={`${styles.planLabel} text-label`}>Plan</p>
           <p className={styles.planValue}>
-            {hasPremiumAccess
-              ? `Somni Premium (${subscriptionPlan})`
-              : 'Somni Free'}
+            {hasPremiumAccess ? `Somni Premium (${subscriptionPlan})` : 'Somni Free'}
           </p>
           <p className={styles.planBody}>
             {hasPremiumAccess
@@ -356,7 +354,7 @@ export function ChatCoach({
 
         {hasPremiumAccess ? (
           <button
-            className={styles.secondaryButton}
+            className="btn-secondary"
             type="button"
             onClick={openPortal}
             disabled={!billingEnabled || billingAction !== null}
@@ -369,9 +367,9 @@ export function ChatCoach({
       </section>
 
       {limitState ? (
-        <section className={styles.limitCard}>
-          <p className={styles.limitLabel}>Daily limit reached</p>
-          <h2 className={styles.limitTitle}>You’ve used today’s free chats.</h2>
+        <section className={`${styles.limitCard} card`}>
+          <p className={`${styles.limitLabel} text-label`}>Daily limit reached</p>
+          <h2 className={`${styles.limitTitle} text-display`}>You have used today&apos;s free chats.</h2>
           <p className={styles.limitBody}>{limitState.message}</p>
           <p className={styles.limitMeta}>
             Used {limitState.used} of {limitState.dailyLimit}. Resets{' '}
@@ -381,7 +379,7 @@ export function ChatCoach({
 
           <div className={styles.limitActions}>
             <button
-              className={styles.sendButton}
+              className="btn-primary"
               type="button"
               onClick={() => openCheckout('monthly')}
               disabled={!billingEnabled || billingAction !== null}
@@ -389,7 +387,7 @@ export function ChatCoach({
               {billingAction === 'monthly' ? 'Opening...' : 'Upgrade monthly'}
             </button>
             <button
-              className={styles.secondaryButton}
+              className="btn-secondary"
               type="button"
               onClick={() => openCheckout('annual')}
               disabled={!billingEnabled || billingAction !== null}
@@ -415,7 +413,7 @@ export function ChatCoach({
               message.role === 'assistant' ? styles.assistantBubble : styles.userBubble
             }
           >
-            <p className={styles.roleLabel}>
+            <p className={`${styles.roleLabel} text-label`}>
               {message.role === 'assistant' ? 'Somni Coach' : 'You'}
             </p>
             <p className={styles.messageText}>
@@ -427,9 +425,13 @@ export function ChatCoach({
             ) : null}
 
             {message.sources && message.sources.length > 0 ? (
-              <p className={styles.sources}>
-                Sources: {message.sources.map((source) => `${source.name} (${source.topic})`).join(', ')}
-              </p>
+              <div className={styles.sources}>
+                {message.sources.map((source) => (
+                  <span className={styles.sourceChip} key={`${source.name}-${source.topic}`}>
+                    {source.name} ({source.topic})
+                  </span>
+                ))}
+              </div>
             ) : null}
 
             {message.confidence ? (
@@ -440,22 +442,29 @@ export function ChatCoach({
       </div>
 
       <form className={styles.form} onSubmit={submitMessage}>
-        <label className={styles.label} htmlFor="chat-message">
+        <label className={`${styles.label} text-label`} htmlFor="chat-message">
           Ask Somni
         </label>
-        <textarea
-          id="chat-message"
-          className={styles.textarea}
-          value={draft}
-          onChange={(event) => setDraft(event.target.value)}
-          placeholder="Example: We had three night wakes and short naps today. What should I try tonight?"
-          rows={3}
-          disabled={isSending}
-          required
-        />
-        <button className={styles.sendButton} type="submit" disabled={isSending || !draft.trim()}>
-          {isSending ? 'Sending...' : 'Send'}
-        </button>
+        <div className={styles.inputRow}>
+          <textarea
+            id="chat-message"
+            className={styles.textarea}
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            placeholder="Example: We had three night wakes and short naps today. What should I try tonight?"
+            rows={3}
+            disabled={isSending}
+            required
+          />
+          <button
+            className={styles.sendButton}
+            type="submit"
+            disabled={isSending || !draft.trim()}
+            aria-label={isSending ? 'Sending message' : 'Send message'}
+          >
+            {isSending ? '...' : '>'}
+          </button>
+        </div>
       </form>
 
       {error ? <p className={styles.error}>{error}</p> : null}

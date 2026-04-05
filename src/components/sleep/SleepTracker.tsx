@@ -80,19 +80,19 @@ export function SleepTracker({ activeLog, recentLogs }: SleepTrackerProps) {
 
   return (
     <div className={styles.layout}>
-      <section className={styles.card}>
-        <p className={styles.kicker}>Sleep tracking</p>
-        <h1 className={styles.title}>
+      <section className={`${styles.card} card`}>
+        <p className={`${styles.kicker} text-label`}>Sleep tracking</p>
+        <h1 className={`${styles.title} text-display`}>
           {activeLog ? 'A sleep session is running.' : 'Ready to start a new sleep session?'}
         </h1>
-        <p className={styles.subtitle}>
+        <p className={`${styles.subtitle} text-body`}>
           Keep this fast and low-effort. Start with one tap, then add a note or tag
           only if it helps.
         </p>
 
         {!activeLog ? (
           <form action={startFormAction} className={styles.singleAction}>
-            <button className={styles.primaryButton} type="submit" disabled={startPending}>
+            <button className="btn-primary" type="submit" disabled={startPending}>
               {startPending ? 'Starting...' : 'Start sleep'}
             </button>
             {startState.error ? <p className={styles.error}>{startState.error}</p> : null}
@@ -101,9 +101,10 @@ export function SleepTracker({ activeLog, recentLogs }: SleepTrackerProps) {
             ) : null}
           </form>
         ) : (
-          <form action={endFormAction} className={styles.endForm}>
+          <form action={endFormAction} className={`${styles.endForm} animate-pulse-ring`}>
             <input type="hidden" name="activeLogId" value={activeLog.id} />
 
+            <p className={styles.activeLabel}>Currently sleeping</p>
             <div className={styles.activeSummary}>
               <span>Started {formatDateTime(activeLog.startedAt)}</span>
               <strong>{formatDuration(activeLog.startedAt, null)} so far</strong>
@@ -128,7 +129,7 @@ export function SleepTracker({ activeLog, recentLogs }: SleepTrackerProps) {
             </label>
 
             <div className={styles.singleAction}>
-              <button className={styles.primaryButton} type="submit" disabled={endPending}>
+              <button className="btn-primary" type="submit" disabled={endPending}>
                 {endPending ? 'Saving...' : 'End sleep'}
               </button>
             </div>
@@ -139,23 +140,23 @@ export function SleepTracker({ activeLog, recentLogs }: SleepTrackerProps) {
         )}
       </section>
 
-      <section className={styles.historyCard}>
+      <section className={`${styles.historyCard} card`}>
         <div className={styles.historyHeader}>
           <div>
-            <p className={styles.kicker}>Recent history</p>
-            <h2 className={styles.historyTitle}>Latest logged sleep</h2>
+            <p className={`${styles.kicker} text-label`}>Recent history</p>
+            <h2 className={`${styles.historyTitle} text-display`}>Latest logged sleep</h2>
           </div>
         </div>
 
         {recentLogs.length === 0 ? (
-          <p className={styles.emptyState}>
+          <p className={`${styles.emptyState} text-body`}>
             No sleep logs yet. Start one when your baby goes down and we&apos;ll build
             your history from there.
           </p>
         ) : (
           <ul className={styles.historyList}>
             {recentLogs.map((log) => (
-              <li className={styles.historyItem} key={log.id}>
+              <li className={`${styles.historyItem} card`} key={log.id}>
                 <div className={styles.historyMeta}>
                   <strong>{log.isNight ? 'Night sleep' : 'Day sleep'}</strong>
                   <span>{formatDateTime(log.startedAt)}</span>

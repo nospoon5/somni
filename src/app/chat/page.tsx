@@ -51,10 +51,10 @@ export default async function ChatPage() {
 
   return (
     <main className={styles.page}>
-      <section className={styles.header}>
-        <p className={styles.eyebrow}>Chat</p>
-        <h1 className={styles.heading}>Sleep coaching for {baby.name}</h1>
-        <p className={styles.body}>
+      <section className={`${styles.header} card`}>
+        <p className={`${styles.eyebrow} text-label`}>Chat</p>
+        <h1 className={`${styles.heading} text-display`}>Sleep coaching for {baby.name}</h1>
+        <p className={`${styles.body} text-body`}>
           Ask one question at a time and Somni will respond with calm, source-backed
           guidance in Australian English.
         </p>

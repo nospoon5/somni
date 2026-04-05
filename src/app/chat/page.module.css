@@ -3,45 +3,27 @@
   padding: 1.15rem 0.95rem 7.2rem;
   display: grid;
   gap: 1rem;
+  background: var(--color-bg);
 }
 
 .header {
   width: min(860px, 100%);
   margin: 0 auto;
   padding: 1.1rem 1.05rem;
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--surface-card-border);
-  background: rgba(15, 26, 47, 0.7);
-  box-shadow: var(--shadow-strong);
 }
 
 .eyebrow {
   margin: 0;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.11em;
-  font-size: 0.73rem;
 }
 
 .heading {
   margin: 0.5rem 0 0;
-  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-size: clamp(1.8rem, 5vw, 2.4rem);
   line-height: 1.2;
 }
 
 .body {
   margin: 0.7rem 0 0;
   max-width: 62ch;
-  color: var(--text-secondary);
   line-height: 1.5;
-}
-
-@media (max-width: 700px) {
-  .page {
-    padding: 0.9rem 0.75rem 6.9rem;
-  }
-
-  .header {
-    border-radius: var(--radius-lg);
-  }
 }

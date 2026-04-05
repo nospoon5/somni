@@ -20,51 +20,37 @@ export default function AppleIcon() {
           alignItems: 'center',
           justifyContent: 'center',
           background:
-            'radial-gradient(circle at top, rgba(216,187,125,0.22), transparent 45%), radial-gradient(circle at 85% 20%, rgba(142,182,160,0.22), transparent 40%), linear-gradient(180deg, #0d1730 0%, #162544 55%, #f4ecdc 160%)',
-          fontFamily:
-            '"Geist", "Geist Fallback", "Avenir Next", "Segoe UI", sans-serif',
-          position: 'relative',
+            'radial-gradient(ellipse at 60% 0%, rgba(18, 22, 39, 0.8) 0%, transparent 60%), #0a0c1a',
+          fontFamily: '"DM Sans", system-ui, sans-serif',
         }}
       >
         <div
           style={{
-            width: 142,
-            height: 142,
+            width: 140,
+            height: 140,
             borderRadius: 36,
-            background: 'rgba(15,26,47,0.74)',
-            border: '1px solid rgba(227,235,244,0.16)',
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(232, 180, 74, 0.12)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 22px 50px rgba(4,10,24,0.34)',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.4)',
           }}
         >
           <div
             style={{
-              color: '#fbf7ef',
+              color: '#fef0dc',
               fontSize: 44,
-              fontWeight: 650,
-              letterSpacing: '-0.06em',
+              fontWeight: 700,
+              letterSpacing: '-0.04em',
+              fontFamily: '"Playfair Display", Georgia, serif',
             }}
           >
-            Somni
+            S
           </div>
         </div>
-        <div
-          style={{
-            position: 'absolute',
-            right: 22,
-            top: 22,
-            width: 32,
-            height: 32,
-            borderRadius: 999,
-            background: 'rgba(216,187,125,0.95)',
-            boxShadow: '0 16px 40px rgba(4,10,24,0.28)',
-          }}
-        />
       </div>
     ),
     size
   )
 }
-

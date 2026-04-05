@@ -8,10 +8,10 @@ export const metadata: Metadata = {
 export default function DisclaimerPage() {
   return (
     <main className={styles.page}>
-      <article className={styles.card}>
-        <p className={styles.eyebrow}>Legal</p>
-        <h1 className={styles.title}>Disclaimer</h1>
-        <p className={styles.lede}>
+      <article className={`${styles.card} card`}>
+        <p className={`${styles.eyebrow} text-label`}>Legal</p>
+        <h1 className={`${styles.title} text-display`}>Disclaimer</h1>
+        <p className={`${styles.lede} text-body`}>
           Somni is designed for calm support during long nights. This page explains
           the boundaries of what the app can and cannot do.
         </p>
@@ -57,9 +57,9 @@ export default function DisclaimerPage() {
 
           <h2>Internet connection</h2>
           <p>
-            Somni&apos;s coaching chat requires an internet connection. If you are
-            offline, the app may not be able to respond or sync your latest changes
-            until you are back online.
+            Somni&apos;s coaching chat requires an internet connection. If you are offline,
+            the app may not be able to respond or sync your latest changes until you
+            are back online.
           </p>
         </div>
       </article>

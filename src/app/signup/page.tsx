@@ -8,11 +8,11 @@ export default function SignupPage() {
     <main className={styles.page}>
       <section className={styles.panel}>
         <div className={styles.copy}>
-          <p className={styles.eyebrow}>Start with support</p>
-          <h2 className={styles.heading}>
+          <p className={`${styles.eyebrow} text-label`}>Start with support</p>
+          <h2 className={`${styles.heading} text-display`}>
             Build your baby&apos;s sleep profile in a few calm steps.
           </h2>
-          <p className={styles.body}>
+          <p className={`${styles.body} text-body`}>
             Somni is designed to feel reassuring, not overwhelming. Create your
             account to begin onboarding and shape the coaching around your
             baby&apos;s age, rhythm, and sleep style.
@@ -25,7 +25,7 @@ export default function SignupPage() {
         <AuthForm
           action={signupAction}
           title="Create your account"
-          subtitle="We&apos;ll take you straight into onboarding once you&apos;re in."
+          subtitle="We'll take you straight into onboarding once you're in."
           submitLabel="Create account"
           mode="signup"
         />

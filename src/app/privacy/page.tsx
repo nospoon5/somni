@@ -8,10 +8,10 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <main className={styles.page}>
-      <article className={styles.card}>
-        <p className={styles.eyebrow}>Legal</p>
-        <h1 className={styles.title}>Privacy Policy</h1>
-        <p className={styles.lede}>
+      <article className={`${styles.card} card`}>
+        <p className={`${styles.eyebrow} text-label`}>Legal</p>
+        <h1 className={`${styles.title} text-display`}>Privacy Policy</h1>
+        <p className={`${styles.lede} text-body`}>
           This page explains what information Somni collects, why we collect it, and
           how we protect it.
         </p>

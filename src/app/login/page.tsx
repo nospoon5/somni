@@ -8,9 +8,9 @@ export default function LoginPage() {
     <main className={styles.page}>
       <section className={styles.panel}>
         <div className={styles.copy}>
-          <p className={styles.eyebrow}>Welcome back</p>
-          <h2 className={styles.heading}>Pick up where last night left off.</h2>
-          <p className={styles.body}>
+          <p className={`${styles.eyebrow} text-label`}>Welcome back</p>
+          <h2 className={`${styles.heading} text-display`}>Pick up where last night left off.</h2>
+          <p className={`${styles.body} text-body`}>
             Sign in to review sleep patterns, continue your chat, and keep
             tonight&apos;s plan grounded in your baby&apos;s real data.
           </p>

@@ -54,11 +54,9 @@ export default async function SleepPage() {
   return (
     <main className={styles.page}>
       <section className={styles.header}>
-        <p className={styles.eyebrow}>Sleep</p>
-        <h1 className={styles.heading}>
-          Sleep logging for {baby.name}
-        </h1>
-        <p className={styles.body}>
+        <p className={`${styles.eyebrow} text-label`}>Sleep</p>
+        <h1 className={`${styles.heading} text-display`}>Sleep logging for {baby.name}</h1>
+        <p className={`${styles.body} text-body`}>
           Start a session when sleep begins, then end it when your baby wakes.
           Tags and notes stay optional so the core flow remains fast.
         </p>

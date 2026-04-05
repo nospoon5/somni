@@ -1,17 +1,13 @@
 .page {
   min-height: 100vh;
   padding: 24px 18px 108px;
+  background: var(--color-bg);
 }
 
 .card {
   width: min(1080px, 100%);
   margin: 0 auto;
   padding: 28px;
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--surface-card-border);
-  background: var(--surface-card);
-  backdrop-filter: blur(18px);
-  box-shadow: var(--shadow-strong);
 }
 
 .header {
@@ -24,23 +20,16 @@
 
 .eyebrow {
   margin: 0 0 12px;
-  color: var(--color-gold-300);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  font-size: 0.76rem;
 }
 
 .title {
   margin: 0;
   font-size: clamp(2rem, 5vw, 3.4rem);
-  letter-spacing: -0.04em;
 }
 
 .subtitle {
   margin: 14px 0 0;
   max-width: 40rem;
-  color: var(--text-secondary);
-  line-height: 1.8;
 }
 
 .actions {
@@ -51,39 +40,9 @@
   width: min(360px, 100%);
 }
 
-.primaryAction,
-.secondaryAction {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 52px;
-  padding: 0 18px;
-  border-radius: 999px;
-  text-align: center;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-.primaryAction {
-  background: linear-gradient(180deg, rgba(216, 187, 125, 0.95), rgba(216, 187, 125, 0.75));
-  color: var(--color-ink-900);
-  box-shadow: 0 18px 34px rgba(4, 10, 24, 0.24);
-}
-
-.secondaryAction {
-  border: 1px solid rgba(227, 235, 244, 0.16);
-  background: rgba(251, 247, 239, 0.06);
-  color: var(--text-primary);
-}
-
 .scorePanel {
   margin-top: 26px;
   padding: 22px;
-  border-radius: var(--radius-lg);
-  background:
-    linear-gradient(180deg, rgba(216, 187, 125, 0.08), rgba(251, 247, 239, 0.04)),
-    rgba(251, 247, 239, 0.05);
-  border: 1px solid rgba(216, 187, 125, 0.12);
 }
 
 .scoreHeader {
@@ -96,16 +55,12 @@
 
 .scoreKicker {
   margin: 0 0 10px;
-  color: var(--color-gold-300);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  font-size: 0.76rem;
 }
 
 .scoreTitle {
   margin: 0;
-  font-size: clamp(2rem, 5vw, 3rem);
-  letter-spacing: -0.05em;
+  font-size: clamp(2.6rem, 6vw, 3.5rem);
+  color: var(--color-accent);
 }
 
 .scoreBadge {
@@ -113,16 +68,48 @@
   align-items: center;
   min-height: 40px;
   padding: 0 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(227, 235, 244, 0.16);
-  background: rgba(251, 247, 239, 0.08);
-  color: var(--text-primary);
+  border-radius: var(--radius-full);
+  background: var(--color-accent-glow);
+  color: var(--color-accent);
 }
 
-.scoreBody {
+.scoreBody,
+.scoreMeta,
+.emptyTip {
   margin: 16px 0 0;
-  color: var(--text-secondary);
+  color: var(--color-text-muted);
   line-height: 1.8;
+}
+
+.scoreFocus {
+  margin: 12px 0 0;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  line-height: 1.7;
+}
+
+.scoreFocus .text-label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.metricGrid {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.metricCard {
+  padding: 14px 16px;
+}
+
+.metricCard strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 1.15rem;
 }
 
 .emptySteps {
@@ -137,89 +124,31 @@
   gap: 12px;
   align-items: start;
   padding: 14px 16px;
-  border-radius: 18px;
-  background: rgba(251, 247, 239, 0.05);
-  border: 1px solid rgba(227, 235, 244, 0.1);
 }
 
 .stepNumber {
   width: 34px;
   height: 34px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   display: grid;
   place-items: center;
-  background: rgba(216, 187, 125, 0.16);
-  border: 1px solid rgba(216, 187, 125, 0.22);
-  color: var(--text-primary);
+  background: var(--color-accent-glow);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
   font-weight: 650;
 }
 
 .stepBody strong {
   display: block;
-  color: var(--text-primary);
+  color: var(--color-text);
   font-size: 1rem;
 }
 
 .stepBody span {
   display: block;
   margin-top: 6px;
-  color: var(--text-secondary);
+  color: var(--color-text-muted);
   line-height: 1.7;
-}
-
-.emptyTip {
-  margin: 14px 0 0;
-  color: var(--text-secondary);
-  line-height: 1.7;
-}
-
-.scoreFocus {
-  margin: 12px 0 0;
-  padding: 14px 16px;
-  border-left: 3px solid rgba(216, 187, 125, 0.55);
-  background: rgba(251, 247, 239, 0.05);
-  border-radius: 14px;
-  color: var(--text-primary);
-  line-height: 1.7;
-}
-
-.metricGrid {
-  display: grid;
-  gap: 12px;
-  margin-top: 18px;
-}
-
-.metricCard {
-  padding: 14px 16px;
-  border-radius: 18px;
-  background: rgba(251, 247, 239, 0.05);
-}
-
-.metricCard span {
-  display: block;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-}
-
-.metricCard strong {
-  display: block;
-  margin-top: 6px;
-  font-size: 1.1rem;
-}
-
-.scoreMeta {
-  margin: 16px 0 0;
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
-
-.logoutButton {
-  min-height: 48px;
-  padding: 0 18px;
-  border-radius: 999px;
-  border: 1px solid rgba(227, 235, 244, 0.16);
-  background: rgba(251, 247, 239, 0.06);
-  color: var(--text-primary);
 }
 
 .grid {
@@ -230,19 +159,15 @@
 
 .panel {
   padding: 20px;
-  border-radius: var(--radius-lg);
-  background: rgba(251, 247, 239, 0.06);
 }
 
 .panel h2 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.25rem;
 }
 
 .panel p {
   margin: 12px 0 0;
-  color: var(--text-secondary);
-  line-height: 1.7;
 }
 
 .linkGroup {
@@ -252,14 +177,27 @@
 .inlineLink {
   display: inline-flex;
   margin-top: 16px;
-  color: var(--color-cream-50);
+  color: var(--color-accent-light);
   text-decoration: underline;
-  text-decoration-color: rgba(216, 187, 125, 0.55);
   text-underline-offset: 4px;
 }
 
 .linkGroup .inlineLink {
   margin-top: 0;
+}
+
+.metricGrid .metricCard:nth-child(1),
+.grid .panel:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.metricGrid .metricCard:nth-child(2),
+.grid .panel:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.metricGrid .metricCard:nth-child(3) {
+  animation-delay: 0.15s;
 }
 
 @media (min-width: 820px) {

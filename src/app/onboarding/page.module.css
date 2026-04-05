@@ -1,6 +1,12 @@
 .page {
   min-height: 100vh;
   padding: 24px 18px 40px;
+  background: radial-gradient(
+      ellipse at 60% 0%,
+      rgba(18, 22, 39, 0.8) 0%,
+      transparent 60%
+    ),
+    var(--color-bg);
 }
 
 .panel {
@@ -17,25 +23,17 @@
 
 .eyebrow {
   margin: 0 0 12px;
-  color: var(--color-gold-300);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  font-size: 0.76rem;
 }
 
 .heading {
   margin: 0;
   max-width: 12ch;
   font-size: clamp(2.2rem, 6vw, 4.3rem);
-  line-height: 0.98;
-  letter-spacing: -0.045em;
 }
 
 .body {
   margin: 18px 0 0;
   max-width: 38rem;
-  color: var(--text-secondary);
-  line-height: 1.8;
 }
 
 @media (min-width: 1080px) {

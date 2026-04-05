@@ -19,12 +19,11 @@ export default function Icon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: '#0d1730',
-          color: '#fbf7ef',
+          background: '#0a0c1a',
+          color: '#fef0dc',
           fontSize: 18,
           fontWeight: 700,
-          fontFamily:
-            '"Geist", "Geist Fallback", "Avenir Next", "Segoe UI", sans-serif',
+          fontFamily: '"DM Sans", system-ui, sans-serif',
         }}
       >
         S
@@ -33,4 +32,3 @@ export default function Icon() {
     size
   )
 }
-

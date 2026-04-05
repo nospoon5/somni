@@ -78,38 +78,38 @@ export default async function DashboardPage() {
 
   return (
     <main className={styles.page}>
-      <section className={styles.card}>
+      <section className={`${styles.card} card`}>
         <div className={styles.header}>
           <div>
-            <p className={styles.eyebrow}>Dashboard</p>
-            <h1 className={styles.title}>
+            <p className={`${styles.eyebrow} text-label`}>Dashboard</p>
+            <h1 className={`${styles.title} text-display`}>
               {profile.full_name ? `Welcome, ${profile.full_name}.` : 'Welcome to Somni.'}
             </h1>
-            <p className={styles.subtitle}>
+            <p className={`${styles.subtitle} text-body`}>
               A calm snapshot of the last week, plus the fastest next steps for tonight.
             </p>
             <div className={styles.actions}>
-              <Link className={styles.primaryAction} href="/sleep">
+              <Link className="btn-primary" href="/sleep">
                 Log sleep
               </Link>
-              <Link className={styles.secondaryAction} href="/chat">
+              <Link className="btn-primary" href="/chat">
                 Ask Somni
               </Link>
             </div>
           </div>
 
           <form action={logoutAction}>
-            <button className={styles.logoutButton} type="submit">
+            <button className="btn-secondary" type="submit">
               Sign out
             </button>
           </form>
         </div>
 
-        <div className={styles.scorePanel}>
+        <div className={`${styles.scorePanel} card-glass animate-fade-up`}>
           <div className={styles.scoreHeader}>
             <div>
-              <p className={styles.scoreKicker}>Sleep score</p>
-              <h2 className={styles.scoreTitle}>
+              <p className={`${styles.scoreKicker} text-label`}>Sleep score</p>
+              <h2 className={`${styles.scoreTitle} text-display`}>
                 {sleepScore?.hasData
                   ? `${sleepScore.totalScore}/100`
                   : activeLog
@@ -129,24 +129,27 @@ export default async function DashboardPage() {
                 {' | '}
                 Biggest challenge: <strong>{sleepScore.biggestChallenge}</strong>
               </p>
-              <p className={styles.scoreFocus}>{sleepScore.tonightFocus}</p>
+              <p className={styles.scoreFocus}>
+                <span className="text-label">Tonight&apos;s focus</span>
+                {sleepScore.tonightFocus}
+              </p>
 
               <div className={styles.metricGrid}>
-                <article className={styles.metricCard}>
-                  <span>Night sleep</span>
-                  <strong>{sleepScore.breakdown.nightSleep}/100</strong>
+                <article className={`${styles.metricCard} card animate-fade-up`}>
+                  <span className="text-label">Night sleep</span>
+                  <strong className="text-data">{sleepScore.breakdown.nightSleep}/100</strong>
                 </article>
-                <article className={styles.metricCard}>
-                  <span>Day sleep</span>
-                  <strong>{sleepScore.breakdown.daySleep}/100</strong>
+                <article className={`${styles.metricCard} card animate-fade-up`}>
+                  <span className="text-label">Day sleep</span>
+                  <strong className="text-data">{sleepScore.breakdown.daySleep}/100</strong>
                 </article>
-                <article className={styles.metricCard}>
-                  <span>Total sleep</span>
-                  <strong>{sleepScore.breakdown.totalSleep}/100</strong>
+                <article className={`${styles.metricCard} card animate-fade-up`}>
+                  <span className="text-label">Total sleep</span>
+                  <strong className="text-data">{sleepScore.breakdown.totalSleep}/100</strong>
                 </article>
-                <article className={styles.metricCard}>
-                  <span>Settling</span>
-                  <strong>{sleepScore.breakdown.settling}/100</strong>
+                <article className={`${styles.metricCard} card animate-fade-up`}>
+                  <span className="text-label">Settling</span>
+                  <strong className="text-data">{sleepScore.breakdown.settling}/100</strong>
                 </article>
               </div>
 
@@ -164,7 +167,7 @@ export default async function DashboardPage() {
               </p>
 
               <div className={styles.emptySteps} aria-label="Getting started steps">
-                <div className={styles.step}>
+                <div className={`${styles.step} card`}>
                   <span className={styles.stepNumber}>1</span>
                   <div className={styles.stepBody}>
                     <strong>Log the next sleep</strong>
@@ -173,21 +176,21 @@ export default async function DashboardPage() {
                     </span>
                   </div>
                 </div>
-                <div className={styles.step}>
+                <div className={`${styles.step} card`}>
                   <span className={styles.stepNumber}>2</span>
                   <div className={styles.stepBody}>
                     <strong>Add optional tags</strong>
                     <span>
-                      If it helps later, add a quick tag like <em>feed</em> or <em>resettle</em>. Skip it if you’re tired.
+                      If it helps later, add a quick tag like <em>feed</em> or <em>resettle</em>. Skip it if you are tired.
                     </span>
                   </div>
                 </div>
-                <div className={styles.step}>
+                <div className={`${styles.step} card`}>
                   <span className={styles.stepNumber}>3</span>
                   <div className={styles.stepBody}>
                     <strong>Ask Somni one focused question</strong>
                     <span>
-                      Best format: baby age + what happened + what you’ve tried + what you want to change.
+                      Best format: baby age + what happened + what you have tried + what you want to change.
                     </span>
                   </div>
                 </div>
@@ -201,9 +204,9 @@ export default async function DashboardPage() {
         </div>
 
         <div className={styles.grid}>
-          <article className={styles.panel}>
-            <h2>Current focus</h2>
-            <p>
+          <article className={`${styles.panel} card animate-fade-up`}>
+            <h2 className="text-display">Current focus</h2>
+            <p className="text-body">
               {baby?.name
                 ? `${baby.name}'s profile is set up and ready for real sleep data.`
                 : 'Your profile is set up and ready for real sleep data.'}
@@ -219,9 +222,9 @@ export default async function DashboardPage() {
             </p>
           </article>
 
-          <article className={styles.panel}>
-            <h2>Recent activity</h2>
-            <p>
+          <article className={`${styles.panel} card animate-fade-up`}>
+            <h2 className="text-display">Recent activity</h2>
+            <p className="text-body">
               {activeLog
                 ? 'A sleep session is currently in progress.'
                 : hasAnySleepData

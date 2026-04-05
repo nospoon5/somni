@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useActionState } from 'react'
 import type { AuthActionState } from '@/app/auth-actions'
 import styles from './AuthForm.module.css'
@@ -27,11 +28,18 @@ export function AuthForm({
   const [state, formAction, pending] = useActionState(action, initialState)
 
   return (
-    <form className={styles.form} action={formAction}>
+    <form className={`${styles.form} card`} action={formAction}>
       <div className={styles.header}>
-        <p className={styles.kicker}>Somni</p>
-        <h1 className={styles.title}>{title}</h1>
-        <p className={styles.subtitle}>{subtitle}</p>
+        <Image
+          src="/somni_logo.png"
+          alt="Somni"
+          width={120}
+          height={32}
+          className={styles.logo}
+          priority
+        />
+        <h1 className={`${styles.title} text-display`}>{title}</h1>
+        <p className={`${styles.subtitle} text-body`}>{subtitle}</p>
       </div>
 
       <div className={styles.fields}>
@@ -74,7 +82,7 @@ export function AuthForm({
       {state.error ? <p className={styles.error}>{state.error}</p> : null}
       {state.success ? <p className={styles.success}>{state.success}</p> : null}
 
-      <button className={styles.submitButton} type="submit" disabled={pending}>
+      <button className="btn-primary" type="submit" disabled={pending}>
         {pending ? 'Just a moment...' : submitLabel}
       </button>
     </form>

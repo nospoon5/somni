@@ -1,35 +1,28 @@
 .form {
   width: min(100%, 520px);
   padding: 28px;
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--surface-card-border);
-  background: var(--surface-card);
-  backdrop-filter: blur(18px);
-  box-shadow: var(--shadow-strong);
+  border-color: var(--color-border);
+  background: var(--color-card);
 }
 
 .header {
   margin-bottom: 24px;
+  text-align: center;
 }
 
-.kicker {
-  margin: 0 0 10px;
-  color: var(--color-gold-300);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  font-size: 0.76rem;
+.logo {
+  margin: 0 auto 14px;
+  width: auto;
+  height: 32px;
 }
 
 .title {
   margin: 0;
   font-size: clamp(2rem, 5vw, 3rem);
-  letter-spacing: -0.04em;
 }
 
 .subtitle {
   margin: 12px 0 0;
-  color: var(--text-secondary);
-  line-height: 1.7;
 }
 
 .fields {
@@ -43,32 +36,27 @@
 }
 
 .field span {
-  color: var(--text-secondary);
+  color: var(--color-text-muted);
   font-size: 0.94rem;
 }
 
 .field input {
   min-height: 52px;
-  padding: 0 16px;
-  border: 1px solid rgba(227, 235, 244, 0.12);
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-md);
-  background: rgba(251, 247, 239, 0.08);
-  color: var(--text-primary);
+  background: var(--color-surface);
+  color: var(--color-text);
   outline: none;
-  transition:
-    border-color 140ms ease,
-    background-color 140ms ease,
-    transform 140ms ease;
+  transition: border-color 140ms ease;
 }
 
 .field input::placeholder {
-  color: var(--text-muted);
+  color: var(--color-text-faint);
 }
 
 .field input:focus {
-  border-color: rgba(216, 187, 125, 0.64);
-  background: rgba(251, 247, 239, 0.12);
-  transform: translateY(-1px);
+  border-color: var(--color-accent);
 }
 
 .error,
@@ -80,35 +68,22 @@
 }
 
 .error {
-  background: rgba(215, 155, 141, 0.18);
-  color: #ffd9d0;
+  background: color-mix(in srgb, var(--color-error) 18%, transparent);
+  color: var(--color-error);
 }
 
 .success {
-  background: rgba(142, 182, 160, 0.2);
-  color: #dff3e8;
+  background: color-mix(in srgb, var(--color-success) 18%, transparent);
+  color: var(--color-success);
 }
 
-.submitButton {
+.form > :global(.btn-primary) {
   width: 100%;
   min-height: 54px;
   margin-top: 22px;
-  border: 0;
-  border-radius: 999px;
-  background: linear-gradient(135deg, var(--color-cream-50), var(--color-gold-300));
-  color: var(--text-dark);
-  font-weight: 700;
-  cursor: pointer;
-  transition:
-    transform 140ms ease,
-    opacity 140ms ease;
 }
 
-.submitButton:hover:not(:disabled) {
-  transform: translateY(-1px);
-}
-
-.submitButton:disabled {
+.form :global(.btn-primary):disabled {
   opacity: 0.72;
   cursor: wait;
 }

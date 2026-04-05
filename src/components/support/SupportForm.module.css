@@ -16,7 +16,7 @@
 
 .field span,
 .fieldWide span {
-  color: var(--text-secondary);
+  color: var(--color-text-muted);
   font-size: 0.94rem;
 }
 
@@ -24,15 +24,14 @@
 .field select,
 .fieldWide textarea {
   min-height: 52px;
-  padding: 0 16px;
-  border: 1px solid rgba(227, 235, 244, 0.12);
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-md);
-  background: rgba(251, 247, 239, 0.08);
-  color: var(--text-primary);
+  background: var(--color-surface);
+  color: var(--color-text);
 }
 
 .fieldWide textarea {
-  padding: 14px 16px;
   min-height: unset;
   resize: vertical;
 }
@@ -44,17 +43,11 @@
   margin-top: 18px;
 }
 
-.primaryButton {
+.actions :global(.btn-primary) {
   min-height: 50px;
-  padding: 0 20px;
-  border-radius: 999px;
-  border: 0;
-  background: linear-gradient(135deg, var(--color-cream-50), var(--color-gold-300));
-  color: var(--text-dark);
-  font-weight: 700;
 }
 
-.primaryButton:disabled {
+.actions :global(.btn-primary):disabled {
   opacity: 0.7;
 }
 
@@ -67,13 +60,13 @@
 }
 
 .success {
-  background: rgba(142, 182, 160, 0.2);
-  color: #dff3e8;
+  background: color-mix(in srgb, var(--color-success) 18%, transparent);
+  color: var(--color-success);
 }
 
 .error {
-  background: rgba(215, 155, 141, 0.18);
-  color: #ffd9d0;
+  background: color-mix(in srgb, var(--color-error) 18%, transparent);
+  color: var(--color-error);
 }
 
 @media (min-width: 820px) {
@@ -85,4 +78,3 @@
     grid-column: 1 / -1;
   }
 }
-
