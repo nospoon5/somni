@@ -1,11 +1,9 @@
 .page {
   min-height: 100vh;
   padding: 32px 20px 96px;
-  background-image: url('/noise.png'), radial-gradient(
-      ellipse at 60% 0%,
-      rgba(18, 22, 39, 0.8) 0%,
-      transparent 60%
-    ),
+  background-image:
+    url('/noise.png'),
+    radial-gradient(ellipse at 60% 0%, rgba(18, 22, 39, 0.8) 0%, transparent 60%),
     var(--color-bg);
   background-size: 200px 200px, auto, auto;
   background-repeat: repeat, no-repeat, no-repeat;
@@ -19,12 +17,7 @@
   min-height: calc(100vh - 120px);
   display: grid;
   gap: 28px;
-  align-items: center;
-}
-
-.logo {
-  width: auto;
-  height: 36px;
+  align-items: start;
 }
 
 .copy {
@@ -32,10 +25,31 @@
   gap: 18px;
 }
 
+.brandRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brandDot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  box-shadow: var(--shadow-accent);
+}
+
+.brandText {
+  font-family: var(--font-display), 'Playfair Display', Georgia, serif;
+  color: var(--color-text);
+  font-size: 1.2rem;
+  letter-spacing: 0.03em;
+}
+
 .title {
   margin: 0;
   max-width: 14ch;
-  font-size: clamp(2.5rem, 8vw, 3.5rem);
+  font-size: clamp(2.5rem, 7vw, 4rem);
 }
 
 .summary {
@@ -63,11 +77,13 @@
 }
 
 .icon {
-  font-size: 1.1rem;
+  width: 22px;
+  height: 22px;
+  color: var(--color-accent-light);
 }
 
 .featureTitle {
-  margin: 8px 0 6px;
+  margin: 10px 0 6px;
   font-size: 1rem;
 }
 
@@ -77,7 +93,6 @@
 
 .previewCard {
   padding: 28px;
-  align-self: stretch;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -130,15 +145,21 @@
 
 .atmosphere {
   position: absolute;
-  top: 4px;
-  right: 0;
-  width: min(220px, 42vw);
-  opacity: 0.15;
+  top: 16px;
+  right: 10px;
+  width: 160px;
+  height: 160px;
+  border-radius: var(--radius-full);
+  background:
+    radial-gradient(circle at 35% 40%, rgba(232, 180, 74, 0.26), rgba(232, 180, 74, 0) 62%),
+    radial-gradient(circle at 60% 50%, rgba(10, 12, 26, 1), rgba(10, 12, 26, 1) 55%, transparent 56%);
+  opacity: 0.45;
   pointer-events: none;
 }
 
 @media (min-width: 920px) {
   .hero {
-    grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.75fr);
+    grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.82fr);
+    align-items: center;
   }
 }

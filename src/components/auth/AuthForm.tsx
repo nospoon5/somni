@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import { useActionState } from 'react'
 import type { AuthActionState } from '@/app/auth-actions'
 import styles from './AuthForm.module.css'
@@ -30,14 +29,10 @@ export function AuthForm({
   return (
     <form className={`${styles.form} card`} action={formAction}>
       <div className={styles.header}>
-        <Image
-          src="/somni_logo.png"
-          alt="Somni"
-          width={120}
-          height={32}
-          className={styles.logo}
-          priority
-        />
+        <div className={styles.brandRow}>
+          <span className={styles.brandDot} aria-hidden="true" />
+          <span className={styles.brandText}>Somni</span>
+        </div>
         <h1 className={`${styles.title} text-display`}>{title}</h1>
         <p className={`${styles.subtitle} text-body`}>{subtitle}</p>
       </div>

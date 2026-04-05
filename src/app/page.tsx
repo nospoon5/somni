@@ -1,18 +1,24 @@
 import Link from 'next/link'
 import styles from './page.module.css'
 
+function FeatureIcon({ path }: { path: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={styles.icon} aria-hidden="true">
+      <path d={path} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 export default function Home() {
   return (
     <main className={styles.page}>
       <section className={styles.hero}>
-        <img
-          src="/somni_logo.png"
-          alt="Somni"
-          className={styles.logo}
-          height={36}
-        />
-
         <div className={`${styles.copy} animate-fade-up`}>
+          <div className={styles.brandRow}>
+            <span className={styles.brandDot} aria-hidden="true" />
+            <span className={styles.brandText}>Somni</span>
+          </div>
+
           <h1 className={`${styles.title} text-display`}>
             Gentle, grounded infant sleep coaching for the longest nights.
           </h1>
@@ -32,27 +38,17 @@ export default function Home() {
 
           <ul className={styles.highlights}>
             <li className={`${styles.highlightCard} card`}>
-              <span className={styles.icon} aria-hidden="true">
-                ??
-              </span>
-              <h2 className={`${styles.featureTitle} text-display`}>
-                Personalised Coaching
-              </h2>
-              <p className="text-body">
-                Based on your baby&apos;s age, logs, and sleep style.
-              </p>
+              <FeatureIcon path="M20 15.2c-1.2 2.6-3.8 4.3-6.8 4.3-4.1 0-7.4-3.3-7.4-7.4 0-3 1.7-5.6 4.3-6.8" />
+              <h2 className={`${styles.featureTitle} text-display`}>Personalised Coaching</h2>
+              <p className="text-body">Based on your baby&apos;s age, logs, and sleep style.</p>
             </li>
             <li className={`${styles.highlightCard} card`}>
-              <span className={styles.icon} aria-hidden="true">
-                ?
-              </span>
+              <FeatureIcon path="M12 2v20M2 12h20" />
               <h2 className={`${styles.featureTitle} text-display`}>One-Hand Logging</h2>
               <p className="text-body">Fast sleep logging that works in the middle of the night.</p>
             </li>
             <li className={`${styles.highlightCard} card`}>
-              <span className={styles.icon} aria-hidden="true">
-                ???
-              </span>
+              <FeatureIcon path="M12 3l7 3v6c0 4.5-2.8 7.9-7 9-4.2-1.1-7-4.5-7-9V6l7-3z" />
               <h2 className={`${styles.featureTitle} text-display`}>Safety-First Language</h2>
               <p className="text-body">Clear, careful wording with emergency guidance when needed.</p>
             </li>
@@ -77,12 +73,7 @@ export default function Home() {
           </div>
         </div>
 
-        <img
-          src="/somni_icon.png"
-          alt=""
-          aria-hidden="true"
-          className={styles.atmosphere}
-        />
+        <div className={styles.atmosphere} aria-hidden="true" />
       </section>
     </main>
   )
