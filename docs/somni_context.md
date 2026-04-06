@@ -1,5 +1,14 @@
 # Somni - Product Context Summary
 
+## Current Delivery Status (2026-04-06)
+
+- Active implementation plan: `docs/somni_implementation_plan_v3.md`
+- Stage 7 outcome: **Partially complete**
+  - Option A (SVG brand refresh): deferred
+  - Option B (single active sleep session DB constraint): complete and verified
+  - Option C (chat resilience when billing fails): complete and verified
+- Next execution target: **Stage 8 (AI Persona & Corpus Enrichment)**
+
 ## Vision
 
 Somni is a sleep-first baby coaching PWA for first-time parents.

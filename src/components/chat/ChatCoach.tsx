@@ -24,6 +24,8 @@ type ChatCoachProps = {
   subscriptionPlan: 'free' | 'monthly' | 'annual'
   subscriptionStatus: 'inactive' | 'trialing' | 'active' | 'past_due' | 'canceled'
   hasPremiumAccess: boolean
+  isReadOnly?: boolean
+  billingDegradedReason?: string | null
 }
 
 type ParsedEvent = {
@@ -89,6 +91,8 @@ export function ChatCoach({
   subscriptionPlan,
   subscriptionStatus,
   hasPremiumAccess,
+  isReadOnly = false,
+  billingDegradedReason = null,
 }: ChatCoachProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -168,6 +172,10 @@ export function ChatCoach({
 
   async function submitMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (isReadOnly) {
+      return
+    }
+
     const trimmed = draft.trim()
     if (!trimmed || isSending) {
       return
@@ -346,7 +354,9 @@ export function ChatCoach({
             {hasPremiumAccess ? `Somni Premium (${subscriptionPlan})` : 'Somni Free'}
           </p>
           <p className={styles.planBody}>
-            {hasPremiumAccess
+            {isReadOnly
+              ? 'Chat is temporarily in read-only mode while billing reconnects.'
+              : hasPremiumAccess
               ? 'Premium access is active, so your coaching chat is not capped.'
               : 'Free access includes 10 coaching chats per day, resetting at midnight in your timezone.'}
           </p>
@@ -357,7 +367,7 @@ export function ChatCoach({
             className="btn-secondary"
             type="button"
             onClick={openPortal}
-            disabled={!billingEnabled || billingAction !== null}
+            disabled={!billingEnabled || billingAction !== null || isReadOnly}
           >
             {billingAction === 'portal' ? 'Opening...' : 'Manage billing'}
           </button>
@@ -365,6 +375,13 @@ export function ChatCoach({
           <p className={styles.planMeta}>Status: {subscriptionStatus}</p>
         )}
       </section>
+
+      {billingDegradedReason ? (
+        <section className={`${styles.systemNotice} card`}>
+          <p className={`${styles.systemNoticeLabel} text-label`}>System notice</p>
+          <p className={styles.systemNoticeBody}>{billingDegradedReason}</p>
+        </section>
+      ) : null}
 
       {limitState ? (
         <section className={`${styles.limitCard} card`}>
@@ -382,7 +399,7 @@ export function ChatCoach({
               className="btn-primary"
               type="button"
               onClick={() => openCheckout('monthly')}
-              disabled={!billingEnabled || billingAction !== null}
+              disabled={!billingEnabled || billingAction !== null || isReadOnly}
             >
               {billingAction === 'monthly' ? 'Opening...' : 'Upgrade monthly'}
             </button>
@@ -390,7 +407,7 @@ export function ChatCoach({
               className="btn-secondary"
               type="button"
               onClick={() => openCheckout('annual')}
-              disabled={!billingEnabled || billingAction !== null}
+              disabled={!billingEnabled || billingAction !== null || isReadOnly}
             >
               {billingAction === 'annual' ? 'Opening...' : 'Upgrade annual'}
             </button>
@@ -443,7 +460,7 @@ export function ChatCoach({
 
       <form className={styles.form} onSubmit={submitMessage}>
         <label className={`${styles.label} text-label`} htmlFor="chat-message">
-          Ask Somni
+          {isReadOnly ? 'Chat temporarily read-only' : 'Ask Somni'}
         </label>
         <div className={styles.inputRow}>
           <textarea
@@ -451,15 +468,19 @@ export function ChatCoach({
             className={styles.textarea}
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
-            placeholder="Example: We had three night wakes and short naps today. What should I try tonight?"
+            placeholder={
+              isReadOnly
+                ? 'Chat is temporarily unavailable while billing reconnects.'
+                : 'Example: We had three night wakes and short naps today. What should I try tonight?'
+            }
             rows={3}
-            disabled={isSending}
+            disabled={isSending || isReadOnly}
             required
           />
           <button
             className={styles.sendButton}
             type="submit"
-            disabled={isSending || !draft.trim()}
+            disabled={isSending || !draft.trim() || isReadOnly}
             aria-label={isSending ? 'Sending message' : 'Send message'}
           >
             {isSending ? '...' : '>'}

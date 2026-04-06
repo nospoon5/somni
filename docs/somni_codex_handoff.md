@@ -1,5 +1,29 @@
 # Somni - Brand Refresh Handoff for Codex
 
+## V3 Program Status Update (2026-04-06)
+
+This handoff was originally created for brand-refresh execution. The active source of truth for current delivery is now:
+
+- `docs/somni_implementation_plan_v3.md`
+
+Latest execution snapshot:
+
+- Stage 7 status: **Partially complete**
+- Stage 7 Option A (SVG brand conversion): **Deferred by product decision**
+- Stage 7 Option B (sleep log integrity): **Complete**
+  - Migration applied: `supabase/migrations/20260406_sleep_logs_single_active_session.sql`
+  - Verified constraint behavior: second open session for same baby fails with `SQLSTATE 23505`
+- Stage 7 Option C (chat/billing decoupling): **Complete**
+  - Updated files:
+    - `src/app/chat/page.tsx`
+    - `src/components/chat/ChatCoach.tsx`
+    - `src/components/chat/ChatCoach.module.css`
+  - Verified degraded behavior using forced billing failure (`SOMNI_FORCE_BILLING_FAILURE=1`): `/chat` returns 200 and renders read-only notice instead of 500.
+
+Next active stage:
+
+- Stage 8: AI Persona & Corpus Enrichment (execute strictly stage-by-stage with QC gates)
+
 ## Live Progress (Updated: 2026-04-05)
 
 ### Status Summary

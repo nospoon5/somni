@@ -12,6 +12,24 @@
   padding: 1rem;
 }
 
+.systemNotice {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.9rem 1rem;
+  border-color: color-mix(in srgb, var(--color-warning, #f5c26b) 55%, var(--color-border) 45%);
+  background: color-mix(in srgb, var(--color-warning, #f5c26b) 12%, transparent);
+}
+
+.systemNoticeLabel,
+.systemNoticeBody {
+  margin: 0;
+}
+
+.systemNoticeBody {
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
 .planLabel,
 .limitLabel {
   margin: 0;
