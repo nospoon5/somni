@@ -387,40 +387,29 @@ export async function POST(request: Request) {
             ? `${sleepScore.totalScore}/100 (${sleepScore.statusLabel}). Focus: ${sleepScore.tonightFocus}`
             : 'No score data yet.'
 
-          let assistantMessage = ''
+          const prompt = buildChatPrompt({
+            babyName: baby.name,
+            ageBand,
+            sleepStyleLabel:
+              (preferences?.sleep_style_label as SleepMethodology | null) ?? 'all',
+            biggestIssue: baby.biggest_issue,
+            feedingType: baby.feeding_type,
+            bedtimeRange: baby.bedtime_range,
+            recentSleepSummary,
+            scoreSummary,
+            conversationHistory: (recentMessages ?? [])
+              .filter((item) => item.role === 'user' || item.role === 'assistant')
+              .map((item) => ({
+                role: item.role as 'user' | 'assistant',
+                content: item.content,
+              })),
+            retrievedChunks,
+            latestUserMessage: message,
+          })
 
-          if (retrievedChunks.length === 0) {
-            assistantMessage =
-              'I could not find a close source match for that yet, so I will stay conservative. ' +
-              'Tonight, focus on a calm bedtime routine, age-appropriate wake windows, and a safe sleep space. ' +
-              'If you share your baby age, recent naps, and night waking pattern, I can give a more specific plan.'
-
-            controller.enqueue(encoder.encode(createSseEvent('token', { text: assistantMessage })))
-          } else {
-            const prompt = buildChatPrompt({
-              babyName: baby.name,
-              ageBand,
-              sleepStyleLabel:
-                (preferences?.sleep_style_label as SleepMethodology | null) ?? 'all',
-              biggestIssue: baby.biggest_issue,
-              feedingType: baby.feeding_type,
-              bedtimeRange: baby.bedtime_range,
-              recentSleepSummary,
-              scoreSummary,
-              conversationHistory: (recentMessages ?? [])
-                .filter((item) => item.role === 'user' || item.role === 'assistant')
-                .map((item) => ({
-                  role: item.role as 'user' | 'assistant',
-                  content: item.content,
-                })),
-              retrievedChunks,
-              latestUserMessage: message,
-            })
-
-            assistantMessage = await streamGeminiResponse(prompt, (token) => {
-              controller.enqueue(encoder.encode(createSseEvent('token', { text: token })))
-            })
-          }
+          const assistantMessage = await streamGeminiResponse(prompt, (token) => {
+            controller.enqueue(encoder.encode(createSseEvent('token', { text: token })))
+          })
 
           await supabase.from('messages').insert({
             profile_id: user.id,
