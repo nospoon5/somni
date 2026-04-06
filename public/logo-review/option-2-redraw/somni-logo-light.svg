@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 60" width="220" height="60" role="img" aria-label="Somni logo, redraw style, light wordmark">
+  <g transform="translate(0 0) scale(0.6)">
+    <path fill="#e8b44a" fill-rule="evenodd" d="M47 22a30 30 0 1 1 0 60a30 30 0 1 1 0 -60ZM60 27a25 25 0 1 0 0 50a25 25 0 1 0 0 -50Z"/>
+    <circle cx="40" cy="33" r="9.5" fill="#fef0dc"/>
+    <path d="M42 35c5 0 9 3.5 10.2 8.2-2 1.8-4.7 2.8-7.6 2.8-4.9 0-8.8-2.9-10.5-7 1.3-2.8 4.1-4.8 7.9-4Z" fill="#fef0dc"/>
+    <path d="M34.5 33.3 Q36.2 31.6 38.3 33.1" stroke="#3d2314" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+    <path d="M39 33.3 Q40.7 31.6 42.8 33.1" stroke="#3d2314" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+    <circle cx="36" cy="36.4" r="2.1" fill="#f4a57a" opacity="0.32"/>
+    <path d="M37.8 24.8 Q39.6 22.2 41.4 24.8" stroke="#d4a060" stroke-width="1.35" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <text x="75" y="38" font-family="'DM Sans', 'Nunito', system-ui, sans-serif" font-size="28" font-weight="600" fill="#fef0dc" letter-spacing="-0.5">somni</text>
+</svg>

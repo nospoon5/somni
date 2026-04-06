@@ -136,7 +136,8 @@ main {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.875rem 2rem;
+  padding: 0.5rem 1.25rem;
+  width: 220px;
   background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
   color: #0a0c1a;
   font-family: var(--font-body), 'DM Sans', system-ui, sans-serif;
@@ -162,7 +163,8 @@ main {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.875rem 2rem;
+  padding: 0.5rem 1.25rem;
+  width: 220px;
   background: transparent;
   color: var(--color-text);
   font-family: var(--font-body), 'DM Sans', system-ui, sans-serif;

@@ -21,6 +21,7 @@
 - [x] Step 4 - Profile & Billing pages implemented (`/profile`, `/billing`)
 - [x] Step 5 - Manifest updated to lunar theme/icons (`src/app/manifest.ts`)
 - [x] Step 6 - Optional noise texture added (`/public/noise.png`) and wired to landing background
+- [ ] Step 7 - SVG logo files created (`public/somni-icon.svg`, `public/somni-logo-light.svg`, `public/somni-logo-dark.svg`)
 
 ### Notes and Assumptions
 - Profile/Billing routes were added with server-rendered auth gating and existing billing/subscription data wiring.
@@ -463,6 +464,165 @@ body::before {
   z-index: 0;
 }
 ```
+
+---
+
+## Step 7 — SVG Logo Files
+
+**Why SVG:** The PNG logos in `assets/` have a solid background and cannot be made transparent cleanly from raster processing. SVG gives crisp, infinitely scalable logos at every size with true transparency. These are used in the nav bar, auth page headers, and anywhere the logo sits on the app's dark background.
+
+**Reference image for the illustration style:** `assets/somni_logo_full.png`
+- A warm golden crescent moon (`#e8b44a`)
+- A cute sleeping baby cartoon lying on the top of the crescent, rendered in cream/ivory (`#fef0dc`) with a visible round head, chubby cheeks, closed eyes, and a small curved body
+- Dark navy rounded-square tile background (`#0a0c1a`) for the app icon version
+
+---
+
+### File 1: `public/somni-icon.svg`
+
+The standalone icon mark — the full app icon tile with navy background. Used in the nav bar and anywhere a square icon tile is needed.
+
+Create this file with the following structure. The baby illustration should be a simplified but recognisable vector cartoon — prioritise a round head, gentle closed eyes (two small arcs), and a curved body resting on the moon. Use the reference image `assets/somni_logo_full.png` as the visual guide.
+
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Navy rounded square background -->
+  <rect width="100" height="100" rx="22" ry="22" fill="#0a0c1a"/>
+
+  <!-- Crescent moon: large circle minus smaller circle via clip -->
+  <!-- Moon body — large arc -->
+  <circle cx="46" cy="52" r="30" fill="#e8b44a"/>
+  <!-- Cutout to make crescent -->
+  <circle cx="58" cy="45" r="26" fill="#0a0c1a"/>
+
+  <!--
+    Baby illustration — simplified cartoon sleeping on the crescent.
+    Reference: assets/somni_logo_full.png
+    Build from these approximate shapes:
+    - Round head: cream circle ~r=10 centred ~(38, 34)
+    - Body: cream ellipse/oval slightly below and right of head, rotated to follow the moon curve
+    - Closed eyes: two small dark arcs on the face
+    - Cheeks: two tiny circles slightly pink/warm, below the eyes
+    Draw the baby lying along the top-right curve of the crescent.
+    Keep it simple — 6 to 10 shapes total. Cute, not detailed.
+  -->
+
+  <!-- Baby head -->
+  <circle cx="38" cy="34" r="10" fill="#fef0dc"/>
+  <!-- Baby body -->
+  <ellipse cx="52" cy="40" rx="12" ry="8" fill="#fef0dc" transform="rotate(-20, 52, 40)"/>
+  <!-- Eyes — two gentle closed arcs -->
+  <path d="M34 33 Q36 31 38 33" stroke="#3d2314" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <path d="M39 33 Q41 31 43 33" stroke="#3d2314" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <!-- Soft cheek blush -->
+  <circle cx="34" cy="36" r="2.5" fill="#f4a57a" opacity="0.4"/>
+  <!-- Small hair tuft -->
+  <path d="M36 25 Q38 21 40 25" stroke="#d4a060" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+</svg>
+```
+
+> **Important:** The SVG above is a starting scaffold. Codex should refine the baby illustration to closely match the reference image `assets/somni_logo_full.png` — in particular ensuring the baby clearly reads as an infant (round chubby head, closed eyes, body curled on the moon). Adjust path coordinates and shapes until it looks warm and recognisable. The moon crescent approach (two circles) can be replaced with a proper SVG `path` arc if clip-path is simpler.
+
+---
+
+### File 2: `public/somni-logo-light.svg`
+
+Horizontal lockup for use on **dark backgrounds** (the app's night theme). Icon tile on the left, "somni" wordmark in cream on the right. No subtitle text.
+
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 60" width="220" height="60">
+  <!-- Icon tile — scaled version of somni-icon.svg at 60x60 -->
+  <g transform="scale(0.6) translate(0, 0)">
+    <rect width="100" height="100" rx="22" ry="22" fill="#0a0c1a"/>
+    <circle cx="46" cy="52" r="30" fill="#e8b44a"/>
+    <circle cx="58" cy="45" r="26" fill="#0a0c1a"/>
+    <circle cx="38" cy="34" r="10" fill="#fef0dc"/>
+    <ellipse cx="52" cy="40" rx="12" ry="8" fill="#fef0dc" transform="rotate(-20, 52, 40)"/>
+    <path d="M34 33 Q36 31 38 33" stroke="#3d2314" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path d="M39 33 Q41 31 43 33" stroke="#3d2314" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <circle cx="34" cy="36" r="2.5" fill="#f4a57a" opacity="0.4"/>
+    <path d="M36 25 Q38 21 40 25" stroke="#d4a060" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Wordmark: "somni" in cream, DM Sans / system sans-serif -->
+  <text
+    x="75"
+    y="38"
+    font-family="'DM Sans', 'Nunito', system-ui, sans-serif"
+    font-size="28"
+    font-weight="600"
+    fill="#fef0dc"
+    letter-spacing="-0.5"
+  >somni</text>
+</svg>
+```
+
+---
+
+### File 3: `public/somni-logo-dark.svg`
+
+Horizontal lockup for use on **light backgrounds**. Same layout but wordmark text is dark navy `#0a0c1a`. Background is transparent.
+
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 60" width="220" height="60">
+  <!-- Same icon tile as light version -->
+  <g transform="scale(0.6) translate(0, 0)">
+    <rect width="100" height="100" rx="22" ry="22" fill="#0a0c1a"/>
+    <circle cx="46" cy="52" r="30" fill="#e8b44a"/>
+    <circle cx="58" cy="45" r="26" fill="#0a0c1a"/>
+    <circle cx="38" cy="34" r="10" fill="#fef0dc"/>
+    <ellipse cx="52" cy="40" rx="12" ry="8" fill="#fef0dc" transform="rotate(-20, 52, 40)"/>
+    <path d="M34 33 Q36 31 38 33" stroke="#3d2314" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path d="M39 33 Q41 31 43 33" stroke="#3d2314" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <circle cx="34" cy="36" r="2.5" fill="#f4a57a" opacity="0.4"/>
+    <path d="M36 25 Q38 21 40 25" stroke="#d4a060" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Wordmark in dark navy for light backgrounds -->
+  <text
+    x="75"
+    y="38"
+    font-family="'DM Sans', 'Nunito', system-ui, sans-serif"
+    font-size="28"
+    font-weight="600"
+    fill="#0a0c1a"
+    letter-spacing="-0.5"
+  >somni</text>
+</svg>
+```
+
+---
+
+### Where to use each file
+
+| File | Use in |
+|---|---|
+| `public/somni-icon.svg` | Favicon fallback, inline icon anywhere a square mark is needed |
+| `public/somni-logo-light.svg` | Nav bar on dark pages, auth page header, landing page header |
+| `public/somni-logo-dark.svg` | Any marketing materials or pages with a light/white background |
+
+### Update logo references in the app
+
+Anywhere the existing code uses `public/somni_logo.png` or `public/somni_icon.png`, replace with the SVG equivalents:
+
+```tsx
+// Nav bar / page headers (dark background context)
+<img src="/somni-logo-light.svg" alt="Somni" height={32} />
+
+// If used on a light background
+<img src="/somni-logo-dark.svg" alt="Somni" height={32} />
+
+// Standalone icon mark
+<img src="/somni-icon.svg" alt="Somni" width={40} height={40} />
+```
+
+### Verification for Step 7
+
+- [ ] `public/somni-icon.svg` exists and renders the crescent moon + baby illustration matching `assets/somni_logo_full.png` reference
+- [ ] `public/somni-logo-light.svg` renders cleanly on the dark `#0a0c1a` background — cream wordmark, no background fill
+- [ ] `public/somni-logo-dark.svg` renders cleanly on white — dark navy wordmark, no background fill
+- [ ] Nav bar, landing header, login header, signup header all updated to use SVG versions
+- [ ] `npm run lint` and `npm run build` still pass after changes
 
 ---
 
