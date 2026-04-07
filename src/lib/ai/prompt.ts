@@ -6,6 +6,7 @@ export type PromptContext = {
   babyName: string
   ageBand: string
   sleepStyleLabel: SleepMethodology
+  aiMemory: string | null
   biggestIssue: string | null
   feedingType: string | null
   bedtimeRange: string | null
@@ -93,6 +94,7 @@ Parent and baby context:
 - Baby name: ${context.babyName}
 - Age band: ${context.ageBand}
 - Sleep style: ${context.sleepStyleLabel}
+- Master memory profile: ${context.aiMemory?.trim() || 'none yet'}
 - Biggest issue: ${context.biggestIssue ?? 'not provided'}
 - Feeding type: ${context.feedingType ?? 'not provided'}
 - Bedtime range: ${context.bedtimeRange ?? 'not provided'}
