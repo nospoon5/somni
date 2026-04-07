@@ -1,0 +1,2 @@
+ALTER TABLE public.babies
+ADD COLUMN IF NOT EXISTS ai_memory TEXT;

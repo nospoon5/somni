@@ -76,6 +76,19 @@ Give Somni long-term, token-efficient memory of the baby's specific facts withou
 - [ ] After a user tells Somni, "Elly rolled on her tummy today," checking the Supabase table visually confirms this fact was appended to the memory string.
 - [ ] In a new chat session (where history isn't loaded), Somni is still aware the baby rolled on her tummy based purely on the `ai_memory` injection.
 
+### Stage 9 Hardening Addendum (2026-04-07)
+- [ ] **Hybrid persistence reliability patch (recommended):**
+  - Attempt `ai_memory` persistence synchronously for a short latency budget (target ~1.2s max).
+  - If persistence does not complete within budget, fall back to background completion so parent-facing response speed remains stable.
+  - Rationale: materially improves write reliability versus pure post-close async, while keeping UX impact small.
+- [ ] **Future reliability upgrades (tracked):**
+  - Introduce a durable queue/job worker for memory writes (highest reliability, higher complexity).
+  - Add retry/backfill job to reprocess recent conversations and repair missed memory updates.
+- [x] **Scheduled retry/backfill job (implemented 2026-04-07):**
+  - Added secure cron endpoint at `/api/cron/memory-backfill` (requires `Authorization: Bearer ${CRON_SECRET}`).
+  - Added Vercel cron schedule: every 12 hours (`0 */12 * * *`).
+  - Frequency rationale: catches rare missed writes same-day with lower model-call overhead than 6-hour cadence.
+
 ---
 
 ## Stage 10: Organic Logging & Dashboard Targets (Tool Calling)

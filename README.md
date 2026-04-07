@@ -23,10 +23,16 @@ The app expects these core environment variables:
 - `GEMINI_API_KEY`
 - `GEMINI_MODEL`
 - `GEMINI_EMBEDDING_MODEL`
+- `CRON_SECRET` (required for `/api/cron/memory-backfill` scheduled job auth)
 - `STRIPE_SECRET_KEY`
 - `STRIPE_PRICE_MONTHLY`
 - `STRIPE_PRICE_ANNUAL`
 - `STRIPE_WEBHOOK_SECRET`
+
+Optional tuning variables:
+- `AI_MEMORY_SYNC_BUDGET_MS` (default `1200`, max wait before falling back to async memory write)
+- `AI_MEMORY_BACKFILL_BABY_LIMIT` (default `50`)
+- `AI_MEMORY_BACKFILL_MESSAGE_LIMIT` (default `8`)
 
 The code falls back to sensible defaults in a few places, but the app is only
 fully functional when the matching production services are configured.

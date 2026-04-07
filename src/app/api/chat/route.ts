@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { buildChatPrompt } from '@/lib/ai/prompt'
+import { extractUpdatedAiMemory } from '@/lib/ai/memory'
 import { retrieveRelevantChunks, type SleepMethodology } from '@/lib/ai/retrieval'
 import { checkEmergencyRisk, getEmergencyRedirectMessage } from '@/lib/ai/safety'
 import { calculateSleepScore, getAgeBand } from '@/lib/scoring/sleep-score'
@@ -17,6 +18,10 @@ import {
 const CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || 'gemini-2.5-flash'
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+const AI_MEMORY_SYNC_BUDGET_MS = Math.min(
+  Math.max(Number(process.env.AI_MEMORY_SYNC_BUDGET_MS || '1200'), 0),
+  5000
+)
 
 type ChatRequestBody = {
   message?: unknown
@@ -206,6 +211,79 @@ function createSseEvent(event: string, data: unknown) {
   return `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`
 }
 
+type PersistAiMemoryArgs = {
+  supabase: Awaited<ReturnType<typeof createClient>>
+  profileId: string
+  babyId: string
+  babyName: string
+  conversationId: string
+  fallbackUserMessage: string
+  fallbackAssistantMessage: string
+}
+
+async function persistAiMemoryAfterChat(args: PersistAiMemoryArgs) {
+  try {
+    const { data: latestMessages, error: latestMessagesError } = await args.supabase
+      .from('messages')
+      .select('role, content')
+      .eq('profile_id', args.profileId)
+      .eq('baby_id', args.babyId)
+      .eq('conversation_id', args.conversationId)
+      .order('created_at', { ascending: false })
+      .limit(8)
+
+    if (latestMessagesError) {
+      throw latestMessagesError
+    }
+
+    const latestUserMessage =
+      latestMessages?.find((item) => item.role === 'user')?.content || args.fallbackUserMessage
+    const latestAssistantMessage =
+      latestMessages?.find((item) => item.role === 'assistant')?.content ||
+      args.fallbackAssistantMessage
+
+    const { data: babyRow, error: babyReadError } = await args.supabase
+      .from('babies')
+      .select('ai_memory')
+      .eq('id', args.babyId)
+      .eq('profile_id', args.profileId)
+      .maybeSingle()
+
+    if (babyReadError) {
+      throw babyReadError
+    }
+
+    const updatedMemory = await extractUpdatedAiMemory({
+      babyName: args.babyName,
+      existingMemory: babyRow?.ai_memory ?? null,
+      latestUserMessage,
+      latestAssistantMessage,
+    })
+
+    if (!updatedMemory) {
+      return
+    }
+
+    const { error: updateError } = await args.supabase
+      .from('babies')
+      .update({ ai_memory: updatedMemory })
+      .eq('id', args.babyId)
+      .eq('profile_id', args.profileId)
+
+    if (updateError) {
+      throw updateError
+    }
+  } catch (error) {
+    console.error('[chat] ai_memory persistence failed', error)
+  }
+}
+
+function waitFor(ms: number) {
+  return new Promise<'timed_out'>((resolve) => {
+    setTimeout(() => resolve('timed_out'), ms)
+  })
+}
+
 export async function POST(request: Request) {
   let body: ChatRequestBody
 
@@ -253,7 +331,7 @@ export async function POST(request: Request) {
 
   const { data: baby, error: babyError } = await supabase
     .from('babies')
-    .select('id, name, date_of_birth, biggest_issue, feeding_type, bedtime_range')
+    .select('id, name, date_of_birth, ai_memory, biggest_issue, feeding_type, bedtime_range')
     .eq('profile_id', user.id)
     .order('created_at', { ascending: true })
     .limit(1)
@@ -387,40 +465,30 @@ export async function POST(request: Request) {
             ? `${sleepScore.totalScore}/100 (${sleepScore.statusLabel}). Focus: ${sleepScore.tonightFocus}`
             : 'No score data yet.'
 
-          let assistantMessage = ''
+          const prompt = buildChatPrompt({
+            babyName: baby.name,
+            ageBand,
+            sleepStyleLabel:
+              (preferences?.sleep_style_label as SleepMethodology | null) ?? 'all',
+            aiMemory: baby.ai_memory ?? null,
+            biggestIssue: baby.biggest_issue,
+            feedingType: baby.feeding_type,
+            bedtimeRange: baby.bedtime_range,
+            recentSleepSummary,
+            scoreSummary,
+            conversationHistory: (recentMessages ?? [])
+              .filter((item) => item.role === 'user' || item.role === 'assistant')
+              .map((item) => ({
+                role: item.role as 'user' | 'assistant',
+                content: item.content,
+              })),
+            retrievedChunks,
+            latestUserMessage: message,
+          })
 
-          if (retrievedChunks.length === 0) {
-            assistantMessage =
-              'I could not find a close source match for that yet, so I will stay conservative. ' +
-              'Tonight, focus on a calm bedtime routine, age-appropriate wake windows, and a safe sleep space. ' +
-              'If you share your baby age, recent naps, and night waking pattern, I can give a more specific plan.'
-
-            controller.enqueue(encoder.encode(createSseEvent('token', { text: assistantMessage })))
-          } else {
-            const prompt = buildChatPrompt({
-              babyName: baby.name,
-              ageBand,
-              sleepStyleLabel:
-                (preferences?.sleep_style_label as SleepMethodology | null) ?? 'all',
-              biggestIssue: baby.biggest_issue,
-              feedingType: baby.feeding_type,
-              bedtimeRange: baby.bedtime_range,
-              recentSleepSummary,
-              scoreSummary,
-              conversationHistory: (recentMessages ?? [])
-                .filter((item) => item.role === 'user' || item.role === 'assistant')
-                .map((item) => ({
-                  role: item.role as 'user' | 'assistant',
-                  content: item.content,
-                })),
-              retrievedChunks,
-              latestUserMessage: message,
-            })
-
-            assistantMessage = await streamGeminiResponse(prompt, (token) => {
-              controller.enqueue(encoder.encode(createSseEvent('token', { text: token })))
-            })
-          }
+          const assistantMessage = await streamGeminiResponse(prompt, (token) => {
+            controller.enqueue(encoder.encode(createSseEvent('token', { text: token })))
+          })
 
           await supabase.from('messages').insert({
             profile_id: user.id,
@@ -435,6 +503,27 @@ export async function POST(request: Request) {
             model: CHAT_MODEL,
           })
           assistantPersisted = true
+
+          const memoryPersistencePromise = persistAiMemoryAfterChat({
+            supabase,
+            profileId: user.id,
+            babyId: baby.id,
+            babyName: baby.name,
+            conversationId,
+            fallbackUserMessage: message,
+            fallbackAssistantMessage: assistantMessage,
+          })
+
+          const memoryPersistenceResult = await Promise.race([
+            memoryPersistencePromise.then(() => 'completed' as const),
+            waitFor(AI_MEMORY_SYNC_BUDGET_MS),
+          ])
+
+          if (memoryPersistenceResult === 'timed_out') {
+            queueMicrotask(() => {
+              void memoryPersistencePromise
+            })
+          }
 
           controller.enqueue(
             encoder.encode(
