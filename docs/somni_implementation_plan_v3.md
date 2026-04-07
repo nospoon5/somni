@@ -47,16 +47,30 @@ Resolve pending technical debt, improve data integrity, and finalize the visual 
 Infuse Somni with the exact tonal characteristics and specific methodologies (no micro-naps, 10-minute wait) from Elyse's consulting style.
 
 ### Tasks and Actions
-- [ ] **Corpus Additions:** Create `corpus/chunks/10_minute_wait_and_assess.md` to formalize that giving a baby 10 minutes is about giving them space to practice self-settling, not crying-it-out.
-- [ ] **Corpus Additions:** Create `corpus/chunks/avoiding_micro_naps.md` explaining the severe impact of 2-second micro-naps on sleep drive and advising pushing nap schedules back if they happen.
-- [ ] **Persona Review:** The parent will read, adjust, and finalize the `docs/somni_ai_persona.md` document.
-- [ ] **Persona Injection:** Once approved, update `src/lib/ai/prompt.ts`. Add Elyse's tonal characteristics straight from the finalized persona document. **Crucially, implement conditional logic using the `sleepStyleLabel` to dynamically adjust the prompt's tone (Gentle, Balanced, Fast-Track) as outlined in the persona document.**
-- [ ] **Clarification Guardrail:** Update the system prompt to explicitly command: *"Before offering a plan, evaluate if critical context is missing. If missing, ask EXACTLY ONE clarifying question. DO NOT guess."*
+- [x] **Corpus Additions:** Create `corpus/chunks/10_minute_wait_and_assess.md` to formalize that giving a baby 10 minutes is about giving them space to practice self-settling, not crying-it-out.
+- [x] **Corpus Additions:** Create `corpus/chunks/avoiding_micro_naps.md` explaining the severe impact of 2-second micro-naps on sleep drive and advising pushing nap schedules back if they happen.
+- [x] **Persona Review:** The parent will read, adjust, and finalize the `docs/somni_ai_persona.md` document.
+- [x] **Persona Injection:** Once approved, update `src/lib/ai/prompt.ts`. Add Elyse's tonal characteristics straight from the finalized persona document. **Crucially, implement conditional logic using the `sleepStyleLabel` to dynamically adjust the prompt's tone (Gentle, Balanced, Fast-Track) as outlined in the persona document.**
+- [x] **Clarification Guardrail:** Update the system prompt to explicitly command: *"Before offering a plan, evaluate if critical context is missing. If missing, ask EXACTLY ONE clarifying question. DO NOT guess."*
 
 ### Quality Control Gates
-- [ ] The two new markdown chunks are successfully uploaded and embedded into the Supabase `corpus_chunks` table via the uploader script.
-- [ ] Sending a chat with missing context (e.g., "My baby woke up early") results in the AI asking one focused follow-up question instead of hallucinating advice.
-- [ ] Chat outputs heavily reflect the new warm, empathetic Persona.
+- [x] The two new markdown chunks are successfully uploaded and embedded into the Supabase `corpus_chunks` table via the uploader script.
+- [x] Sending a chat with missing context (e.g., "My baby woke up early") results in the AI asking one focused follow-up question instead of hallucinating advice.
+- [x] Chat outputs heavily reflect the new warm, empathetic Persona.
+
+### Stage 8 Execution Notes (2026-04-07)
+- Confirmed corpus files exist in repo:
+  - `corpus/chunks/10_minute_wait_and_assess.md`
+  - `corpus/chunks/avoiding_micro_naps.md`
+- Confirmed uploaded chunk records in Supabase `corpus_chunks`:
+  - `chunk_id=10-minute-wait-and-assess`
+  - `chunk_id=avoiding-micro-naps`
+- Confirmed prompt persona behavior in `src/lib/ai/prompt.ts`:
+  - Elyse-style warmth and language constraints
+  - dynamic style guidance for `gentle`, `balanced`, `fast-track`
+  - explicit one-question missing-context guardrail
+- Verified missing-context behavior with live chat check (`"My baby woke up early"`):
+  - assistant returned exactly one focused clarifying question (`?` count: 1).
 
 ---
 
@@ -66,28 +80,40 @@ Infuse Somni with the exact tonal characteristics and specific methodologies (no
 Give Somni long-term, token-efficient memory of the baby's specific facts without needing to pass the entire chat history.
 
 ### Tasks and Actions
-- [ ] Create a migration adding an `ai_memory` (TEXT) column to the `babies` table.
-- [ ] Create `src/lib/ai/memory.ts` containing a lightweight fact-extraction prompt. 
-- [ ] Update `src/app/api/chat/route.ts` to trigger the extractor asynchronously *after* the main chat stream closes. It will read the latest user/assistant messages and intelligently append/update facts in `babies.ai_memory`.
-- [ ] Update `src/lib/ai/prompt.ts` to inject the `ai_memory` string directly into the system context.
+- [x] Create a migration adding an `ai_memory` (TEXT) column to the `babies` table.
+- [x] Create `src/lib/ai/memory.ts` containing a lightweight fact-extraction prompt. 
+- [x] Update `src/app/api/chat/route.ts` to trigger the extractor asynchronously *after* the main chat stream closes. It will read the latest user/assistant messages and intelligently append/update facts in `babies.ai_memory`.
+- [x] Update `src/lib/ai/prompt.ts` to inject the `ai_memory` string directly into the system context.
 
 ### Quality Control Gates
-- [ ] The `ai_memory` column exists in Supabase.
-- [ ] After a user tells Somni, "Elly rolled on her tummy today," checking the Supabase table visually confirms this fact was appended to the memory string.
-- [ ] In a new chat session (where history isn't loaded), Somni is still aware the baby rolled on her tummy based purely on the `ai_memory` injection.
+- [x] The `ai_memory` column exists in Supabase.
+- [x] After a user tells Somni, "Elly rolled on her tummy today," checking the Supabase table visually confirms this fact was appended to the memory string.
+- [x] In a new chat session (where history isn't loaded), Somni is still aware the baby rolled on her tummy based purely on the `ai_memory` injection.
 
 ### Stage 9 Hardening Addendum (2026-04-07)
-- [ ] **Hybrid persistence reliability patch (recommended):**
+- [x] **Hybrid persistence reliability patch (recommended):**
   - Attempt `ai_memory` persistence synchronously for a short latency budget (target ~1.2s max).
   - If persistence does not complete within budget, fall back to background completion so parent-facing response speed remains stable.
   - Rationale: materially improves write reliability versus pure post-close async, while keeping UX impact small.
-- [ ] **Future reliability upgrades (tracked):**
+- [~] **Future reliability upgrades (tracked):**
   - Introduce a durable queue/job worker for memory writes (highest reliability, higher complexity).
   - Add retry/backfill job to reprocess recent conversations and repair missed memory updates.
 - [x] **Scheduled retry/backfill job (implemented 2026-04-07):**
   - Added secure cron endpoint at `/api/cron/memory-backfill` (requires `Authorization: Bearer ${CRON_SECRET}`).
   - Added Vercel cron schedule: every 12 hours (`0 */12 * * *`).
   - Frequency rationale: catches rare missed writes same-day with lower model-call overhead than 6-hour cadence.
+
+### Stage 9 Execution Notes (2026-04-07)
+- Added migration `supabase/migrations/20260407_add_babies_ai_memory.sql` and applied to remote Supabase.
+- Added extractor module: `src/lib/ai/memory.ts`.
+- Updated chat route (`src/app/api/chat/route.ts`) to:
+  - include `ai_memory` in prompt context,
+  - persist memory updates with hybrid reliability (short sync budget + async fallback),
+  - support scheduled repair path.
+- Updated prompt injection (`src/lib/ai/prompt.ts`) with `Master memory profile`.
+- Verified with test profile `tester1@test.com` / baby `Elly`:
+  - `ai_memory` contains `- Elly rolled onto her tummy today.`
+  - fresh conversation still references the rolling milestone from memory.
 
 ---
 
