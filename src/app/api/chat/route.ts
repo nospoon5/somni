@@ -1,4 +1,5 @@
 import { revalidatePath } from 'next/cache'
+import { after } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import {
   buildDailyPlanConfirmation,
@@ -29,10 +30,6 @@ import {
 const CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || 'gemini-2.5-flash'
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-const AI_MEMORY_SYNC_BUDGET_MS = Math.min(
-  Math.max(Number(process.env.AI_MEMORY_SYNC_BUDGET_MS || '1200'), 0),
-  5000
-)
 const UPDATE_DAILY_PLAN_TOOLS = [
   {
     functionDeclarations: [
@@ -441,12 +438,6 @@ async function persistAiMemoryAfterChat(args: PersistAiMemoryArgs) {
   }
 }
 
-function waitFor(ms: number) {
-  return new Promise<'timed_out'>((resolve) => {
-    setTimeout(() => resolve('timed_out'), ms)
-  })
-}
-
 async function saveDailyPlanForToday(args: {
   supabase: Awaited<ReturnType<typeof createClient>>
   currentPlan: DailyPlanRecord | null
@@ -801,16 +792,14 @@ export async function POST(request: Request) {
             fallbackAssistantMessage: assistantMessage,
           })
 
-          const memoryPersistenceResult = await Promise.race([
-            memoryPersistencePromise.then(() => 'completed' as const),
-            waitFor(AI_MEMORY_SYNC_BUDGET_MS),
-          ])
-
-          if (memoryPersistenceResult === 'timed_out') {
-            queueMicrotask(() => {
-              void memoryPersistencePromise
-            })
-          }
+          // Ensure the isolate stays alive on Vercel to finish the memory update
+          after(async () => {
+            try {
+              await memoryPersistencePromise
+            } catch (error) {
+              console.error('[MemoryPersistence] Background task failed:', error)
+            }
+          })
 
           controller.enqueue(
             encoder.encode(

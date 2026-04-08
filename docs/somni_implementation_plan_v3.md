@@ -123,14 +123,14 @@ Give Somni long-term, token-efficient memory of the baby's specific facts withou
 Allow the AI to organically gather sleep updates via conversation and save them as a "Dashboard Target Plan" to keep caregivers aligned.
 
 ### Tasks and Actions
-- [ ] Create a migration adding a `daily_plans` table (`id`, `baby_id`, `plan_date`, `sleep_targets` JSON, `feed_targets` JSON, `notes`). This allows historical tracking.
-- [ ] Build UI components on the Dashboard to fetch and display the `daily_plans` for the current date.
-- [ ] Update `src/lib/ai/prompt.ts` or route to expose a `FunctionDeclaration` (`update_daily_plan`) to the Gemini model.
-- [ ] Update the SSE stream handler in `src/app/api/chat/route.ts` to detect `functionCall` responses.
-- [ ] Write the logic so when Gemini decides to update the plan, the backend executes the Supabase insert/update to `daily_plans`, alerts the client (via a specialized SSE event), and completes the response.
+- [x] Create a migration adding a `daily_plans` table (`id`, `baby_id`, `plan_date`, `sleep_targets` JSON, `feed_targets` JSON, `notes`). This allows historical tracking.
+- [x] Build UI components on the Dashboard to fetch and display the `daily_plans` for the current date.
+- [x] Update `src/lib/ai/prompt.ts` or route to expose a `FunctionDeclaration` (`update_daily_plan`) to the Gemini model.
+- [x] Update the SSE stream handler in `src/app/api/chat/route.ts` to detect `functionCall` responses.
+- [x] Write the logic so when Gemini decides to update the plan, the backend executes the Supabase insert/update to `daily_plans`, alerts the client (via a specialized SSE event), and completes the response.
 
 ### Quality Control Gates
-- [ ] The new Dashboard UI correctly renders an active daily plan or an empty state if no plan exists.
-- [ ] When a user chats "Elly had a terrible morning, let's push her afternoon nap to 3pm", the SSE stream successfully triggers the `update_daily_plan` tool.
-- [ ] The database accurately reflects the requested changes in the `daily_plans` table for the current date.
-- [ ] The Dashboard UI automatically or cleanly updates to show the revised targets without corrupting past historical days.
+- [x] The new Dashboard UI correctly renders an active daily plan or an empty state if no plan exists.
+- [x] When a user chats "Elly had a terrible morning, let's push her afternoon nap to 3pm", the SSE stream successfully triggers the `update_daily_plan` tool.
+- [x] The database accurately reflects the requested changes in the `daily_plans` table for the current date.
+- [x] The Dashboard UI automatically or cleanly updates to show the revised targets without corrupting past historical days.
