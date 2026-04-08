@@ -1,0 +1,126 @@
+.shell {
+  margin-top: 26px;
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.kicker {
+  margin: 0 0 10px;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.65rem, 4vw, 2.4rem);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-glow);
+  color: var(--color-accent);
+}
+
+.body {
+  margin: 16px 0 0;
+  color: var(--color-text-muted);
+  line-height: 1.8;
+}
+
+.sectionGrid {
+  display: grid;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.section,
+.notesBlock,
+.emptyStep {
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+}
+
+.sectionLabel {
+  margin: 0 0 12px;
+}
+
+.sectionHint {
+  margin: 0;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.targetList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.targetItem {
+  display: grid;
+  gap: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+}
+
+.targetItem:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.targetLabel {
+  margin: 0;
+  font-weight: 650;
+  color: var(--color-text);
+}
+
+.targetMeta,
+.targetNotes,
+.notesText {
+  margin: 0;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.emptySteps {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.emptyStep {
+  display: grid;
+  gap: 6px;
+}
+
+.emptyStep strong {
+  color: var(--color-text);
+}
+
+.emptyStep span {
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+@media (min-width: 820px) {
+  .shell {
+    padding: 28px;
+  }
+
+  .sectionGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

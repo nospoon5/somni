@@ -1,4 +1,15 @@
+import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import {
+  buildDailyPlanConfirmation,
+  getDateStringForTimezone,
+  hasDailyPlanChanges,
+  mergeDailyPlan,
+  normalizeDailyPlanRow,
+  normalizeDailyPlanUpdateInput,
+  summarizeDailyPlanForPrompt,
+  type DailyPlanRecord,
+} from '@/lib/daily-plan'
 import { buildChatPrompt } from '@/lib/ai/prompt'
 import { extractUpdatedAiMemory } from '@/lib/ai/memory'
 import { retrieveRelevantChunks, type SleepMethodology } from '@/lib/ai/retrieval'
@@ -22,6 +33,89 @@ const AI_MEMORY_SYNC_BUDGET_MS = Math.min(
   Math.max(Number(process.env.AI_MEMORY_SYNC_BUDGET_MS || '1200'), 0),
   5000
 )
+const UPDATE_DAILY_PLAN_TOOLS = [
+  {
+    functionDeclarations: [
+      {
+        name: 'update_daily_plan',
+        description:
+          "Save or revise today's dashboard target plan for the current baby. Use this when the parent gives a concrete same-day schedule or feed change that should be reflected on the dashboard.",
+        parameters: {
+          type: 'object',
+          properties: {
+            sleep_targets: {
+              type: 'array',
+              description:
+                'Only include sleep targets that should be created or changed. Omit this field to leave sleep targets unchanged. Use an empty array only if the sleep plan should be cleared.',
+              items: {
+                type: 'object',
+                properties: {
+                  label: {
+                    type: 'string',
+                    description:
+                      'Short target label such as Morning nap, Lunch nap, Afternoon nap, Bedtime, Overnight resettle.',
+                  },
+                  target_time: {
+                    type: 'string',
+                    description:
+                      "Preferred target time in a parent-friendly format such as 3pm, 3:15 pm, or 15:00.",
+                  },
+                  window: {
+                    type: 'string',
+                    description:
+                      'Optional timing window such as 2:45-3:15pm or after lunch.',
+                  },
+                  notes: {
+                    type: 'string',
+                    description:
+                      'Optional short note explaining the target or cue to watch for.',
+                  },
+                },
+                required: ['label'],
+              },
+            },
+            feed_targets: {
+              type: 'array',
+              description:
+                'Only include feed targets that should be created or changed. Omit this field to leave feed targets unchanged. Use an empty array only if the feed plan should be cleared.',
+              items: {
+                type: 'object',
+                properties: {
+                  label: {
+                    type: 'string',
+                    description:
+                      'Short feed label such as Morning feed, Top-up feed, Bedtime feed, Dream feed.',
+                  },
+                  target_time: {
+                    type: 'string',
+                    description:
+                      "Preferred target time in a parent-friendly format such as 7am, 10:30 am, or 22:00.",
+                  },
+                  notes: {
+                    type: 'string',
+                    description:
+                      'Optional short note explaining the feed target or change.',
+                  },
+                },
+                required: ['label'],
+              },
+            },
+            notes: {
+              type: 'string',
+              description:
+                "Optional short note that explains today's shift in plan for caregivers.",
+            },
+          },
+        },
+      },
+    ],
+  },
+]
+const UPDATE_DAILY_PLAN_TOOL_CONFIG = {
+  functionCallingConfig: {
+    mode: 'AUTO',
+  },
+}
 
 type ChatRequestBody = {
   message?: unknown
@@ -31,6 +125,17 @@ type ChatRequestBody = {
 type SourceAttribution = {
   name: string
   topic: string
+}
+
+type GeminiFunctionCall = {
+  id: string | undefined
+  name: string
+  args: Record<string, unknown>
+}
+
+type GeminiStreamResult = {
+  text: string
+  functionCalls: GeminiFunctionCall[]
 }
 
 function isUuid(value: string) {
@@ -120,7 +225,53 @@ function extractGeminiText(payload: unknown) {
     .join('')
 }
 
-async function streamGeminiResponse(prompt: string, onToken: (token: string) => void) {
+function extractGeminiFunctionCalls(payload: unknown) {
+  if (!payload || typeof payload !== 'object') {
+    return []
+  }
+
+  const candidates = (payload as { candidates?: unknown }).candidates
+  if (!Array.isArray(candidates) || candidates.length === 0) {
+    return []
+  }
+
+  const firstCandidate = candidates[0] as {
+    content?: {
+      parts?: Array<{
+        functionCall?: {
+          id?: unknown
+          name?: unknown
+          args?: unknown
+        }
+      }>
+    }
+  }
+
+  const parts = firstCandidate?.content?.parts
+  if (!Array.isArray(parts)) {
+    return []
+  }
+
+  return parts
+    .map((part) => {
+      const call = part?.functionCall
+      if (!call || typeof call.name !== 'string') {
+        return null
+      }
+
+      return {
+        id: typeof call.id === 'string' ? call.id : undefined,
+        name: call.name,
+        args: call.args && typeof call.args === 'object' && !Array.isArray(call.args) ? call.args : {},
+      }
+    })
+    .filter((call): call is GeminiFunctionCall => call !== null)
+}
+
+async function streamGeminiResponse(
+  contents: Array<{ role: string; parts: Array<Record<string, unknown>> }>,
+  onToken: (token: string) => void
+) {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
     throw new Error('Missing GEMINI_API_KEY for chat')
@@ -134,12 +285,9 @@ async function streamGeminiResponse(prompt: string, onToken: (token: string) => 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        contents: [
-          {
-            role: 'user',
-            parts: [{ text: prompt }],
-          },
-        ],
+        contents,
+        tools: UPDATE_DAILY_PLAN_TOOLS,
+        toolConfig: UPDATE_DAILY_PLAN_TOOL_CONFIG,
         generationConfig: {
           temperature: 0.35,
           maxOutputTokens: 700,
@@ -167,6 +315,8 @@ async function streamGeminiResponse(prompt: string, onToken: (token: string) => 
   const reader = response.body.getReader()
   let buffer = ''
   let fullText = ''
+  const functionCalls: GeminiFunctionCall[] = []
+  const seenFunctionCalls = new Set<string>()
 
   while (true) {
     const { done, value } = await reader.read()
@@ -192,19 +342,32 @@ async function streamGeminiResponse(prompt: string, onToken: (token: string) => 
       try {
         const parsed = JSON.parse(dataPayload)
         const token = extractGeminiText(parsed)
-        if (!token) {
-          continue
+        const parsedFunctionCalls = extractGeminiFunctionCalls(parsed)
+
+        if (token) {
+          fullText += token
+          onToken(token)
         }
 
-        fullText += token
-        onToken(token)
+        for (const functionCall of parsedFunctionCalls) {
+          const key = `${functionCall.id ?? 'no-id'}::${functionCall.name}::${JSON.stringify(functionCall.args)}`
+          if (seenFunctionCalls.has(key)) {
+            continue
+          }
+
+          seenFunctionCalls.add(key)
+          functionCalls.push(functionCall)
+        }
       } catch {
         // Ignore malformed chunks and continue streaming the rest.
       }
     }
   }
 
-  return fullText.trim()
+  return {
+    text: fullText.trim(),
+    functionCalls,
+  } satisfies GeminiStreamResult
 }
 
 function createSseEvent(event: string, data: unknown) {
@@ -284,6 +447,84 @@ function waitFor(ms: number) {
   })
 }
 
+async function saveDailyPlanForToday(args: {
+  supabase: Awaited<ReturnType<typeof createClient>>
+  currentPlan: DailyPlanRecord | null
+  babyId: string
+  babyName: string
+  planDate: string
+  functionCalls: GeminiFunctionCall[]
+}) {
+  let workingPlan = args.currentPlan
+  let hasToolChanges = false
+
+  for (const functionCall of args.functionCalls) {
+    if (functionCall.name !== 'update_daily_plan') {
+      continue
+    }
+
+    const updates = normalizeDailyPlanUpdateInput(functionCall.args)
+    if (!updates || !hasDailyPlanChanges(updates)) {
+      continue
+    }
+
+    workingPlan = mergeDailyPlan(workingPlan, updates, {
+      babyId: args.babyId,
+      planDate: args.planDate,
+      id: workingPlan?.id,
+      updatedAt: new Date().toISOString(),
+    })
+    hasToolChanges = true
+  }
+
+  if (!hasToolChanges || !workingPlan) {
+    return null
+  }
+
+  const { data: savedPlanRow, error: savePlanError } = await args.supabase
+    .from('daily_plans')
+    .upsert(
+      {
+        baby_id: args.babyId,
+        plan_date: args.planDate,
+        sleep_targets: workingPlan.sleepTargets,
+        feed_targets: workingPlan.feedTargets,
+        notes: workingPlan.notes,
+      },
+      {
+        onConflict: 'baby_id,plan_date',
+      }
+    )
+    .select('id, baby_id, plan_date, sleep_targets, feed_targets, notes, updated_at')
+    .single()
+
+  if (savePlanError) {
+    throw savePlanError
+  }
+
+  revalidatePath('/dashboard')
+
+  const savedPlan = normalizeDailyPlanRow(savedPlanRow)
+  if (!savedPlan) {
+    throw new Error('Daily plan save returned an empty payload')
+  }
+
+  return {
+    plan: savedPlan,
+    assistantMessage: buildDailyPlanConfirmation({
+      babyName: args.babyName,
+      plan: savedPlan,
+    }),
+    streamPayload: {
+      planDate: savedPlan.planDate,
+      sleepTargets: savedPlan.sleepTargets,
+      feedTargets: savedPlan.feedTargets,
+      notes: savedPlan.notes,
+      updatedAt: savedPlan.updatedAt,
+    },
+  }
+}
+
 export async function POST(request: Request) {
   let body: ChatRequestBody
 
@@ -346,6 +587,7 @@ export async function POST(request: Request) {
   }
 
   const timezone = sanitizeTimezone(profile.timezone)
+  const localToday = getDateStringForTimezone(timezone)
   const subscription = await ensureSubscriptionRecord({
     profileId: user.id,
     email: profile.email ?? user.email ?? null,
@@ -365,6 +607,15 @@ export async function POST(request: Request) {
     .select('sleep_style_label')
     .eq('baby_id', baby.id)
     .maybeSingle()
+
+  const { data: currentDailyPlanRow } = await supabase
+    .from('daily_plans')
+    .select('id, baby_id, plan_date, sleep_targets, feed_targets, notes, updated_at')
+    .eq('baby_id', baby.id)
+    .eq('plan_date', localToday)
+    .maybeSingle()
+
+  const currentDailyPlan = normalizeDailyPlanRow(currentDailyPlanRow)
 
   const { data: recentSleepLogs } = await supabase
     .from('sleep_logs')
@@ -470,7 +721,10 @@ export async function POST(request: Request) {
             ageBand,
             sleepStyleLabel:
               (preferences?.sleep_style_label as SleepMethodology | null) ?? 'all',
+            timezone,
+            localToday,
             aiMemory: baby.ai_memory ?? null,
+            todayPlanSummary: summarizeDailyPlanForPrompt(currentDailyPlan),
             biggestIssue: baby.biggest_issue,
             feedingType: baby.feeding_type,
             bedtimeRange: baby.bedtime_range,
@@ -486,9 +740,42 @@ export async function POST(request: Request) {
             latestUserMessage: message,
           })
 
-          const assistantMessage = await streamGeminiResponse(prompt, (token) => {
+          const geminiRequestContents = [
+            {
+              role: 'user',
+              parts: [{ text: prompt }],
+            },
+          ]
+
+          const geminiResult = await streamGeminiResponse(geminiRequestContents, (token) => {
             controller.enqueue(encoder.encode(createSseEvent('token', { text: token })))
           })
+
+          let assistantMessage = geminiResult.text
+          let replaceMessage = false
+
+          const savedDailyPlan = await saveDailyPlanForToday({
+            supabase,
+            currentPlan: currentDailyPlan,
+            babyId: baby.id,
+            babyName: baby.name,
+            planDate: localToday,
+            functionCalls: geminiResult.functionCalls,
+          })
+
+          if (savedDailyPlan) {
+            assistantMessage = savedDailyPlan.assistantMessage
+            replaceMessage = true
+
+            controller.enqueue(
+              encoder.encode(createSseEvent('plan_updated', savedDailyPlan.streamPayload))
+            )
+          }
+
+          if (!assistantMessage) {
+            assistantMessage =
+              "I'm missing one key detail before I can shape today's plan. Tell me the one target you want to lock in first, and I'll tighten it up with you."
+          }
 
           await supabase.from('messages').insert({
             profile_id: user.id,
@@ -534,6 +821,7 @@ export async function POST(request: Request) {
                 is_emergency_redirect: false,
                 confidence,
                 conversation_id: conversationId,
+                replace_message: replaceMessage,
               })
             )
           )

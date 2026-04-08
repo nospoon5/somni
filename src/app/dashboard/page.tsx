@@ -1,7 +1,10 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { logoutAction } from '@/app/auth-actions'
+import { DailyPlanPanel } from '@/components/dashboard/DailyPlanPanel'
+import { getDateStringForTimezone, normalizeDailyPlanRow } from '@/lib/daily-plan'
 import { createClient } from '@/lib/supabase/server'
+import { sanitizeTimezone } from '@/lib/billing/usage'
 import { calculateSleepScore } from '@/lib/scoring/sleep-score'
 import styles from './page.module.css'
 
@@ -17,13 +20,15 @@ export default async function DashboardPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name, onboarding_completed')
+    .select('full_name, onboarding_completed, timezone')
     .eq('id', user.id)
     .maybeSingle()
 
   if (!profile?.onboarding_completed) {
     redirect('/onboarding')
   }
+
+  const timezone = sanitizeTimezone(profile.timezone)
 
   const { data: baby } = await supabase
     .from('babies')
@@ -32,6 +37,23 @@ export default async function DashboardPage() {
     .order('created_at', { ascending: true })
     .limit(1)
     .maybeSingle()
+
+  const todayPlanDate = getDateStringForTimezone(timezone)
+
+  const { data: dailyPlanRow, error: dailyPlanError } = baby
+    ? await supabase
+        .from('daily_plans')
+        .select('id, baby_id, plan_date, sleep_targets, feed_targets, notes, updated_at')
+        .eq('baby_id', baby.id)
+        .eq('plan_date', todayPlanDate)
+        .maybeSingle()
+    : { data: null, error: null }
+
+  if (dailyPlanError) {
+    console.error('[dashboard] failed to load daily plan', dailyPlanError)
+  }
+
+  const dailyPlan = normalizeDailyPlanRow(dailyPlanRow)
 
   const { data: activeLog } = baby
     ? await supabase
@@ -202,6 +224,12 @@ export default async function DashboardPage() {
             </>
           )}
         </div>
+
+        <DailyPlanPanel
+          babyName={baby?.name ?? 'your baby'}
+          initialPlan={dailyPlan}
+          todayPlanDate={todayPlanDate}
+        />
 
         <div className={styles.grid}>
           <article className={`${styles.panel} card animate-fade-up`}>

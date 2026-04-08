@@ -1,6 +1,10 @@
 'use client'
 
 import { FormEvent, useState } from 'react'
+import {
+  DAILY_PLAN_STORAGE_KEY,
+  type DailyPlanStreamPayload,
+} from '@/lib/daily-plan'
 import styles from './ChatCoach.module.css'
 
 type SourceAttribution = {
@@ -40,6 +44,11 @@ type LimitState = {
   used: number
   resetAt: string
   timezone: string
+}
+
+type PlanUpdateState = {
+  message: string
+  updatedAt: string | null
 }
 
 function nowId(prefix: string) {
@@ -106,6 +115,7 @@ export function ChatCoach({
   const [isSending, setIsSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [limitState, setLimitState] = useState<LimitState | null>(null)
+  const [planUpdate, setPlanUpdate] = useState<PlanUpdateState | null>(null)
   const [billingAction, setBillingAction] = useState<'monthly' | 'annual' | 'portal' | null>(null)
 
   async function openCheckout(plan: 'monthly' | 'annual') {
@@ -183,6 +193,7 @@ export function ChatCoach({
 
     setError(null)
     setLimitState(null)
+    setPlanUpdate(null)
     setIsSending(true)
     setDraft('')
 
@@ -288,6 +299,7 @@ export function ChatCoach({
               confidence?: unknown
               is_emergency_redirect?: unknown
               conversation_id?: unknown
+              replace_message?: unknown
             }
 
             if (typeof payload.conversation_id === 'string') {
@@ -300,11 +312,15 @@ export function ChatCoach({
                   return message
                 }
 
+                const finalMessage =
+                  typeof payload.message === 'string' ? payload.message : ''
+
                 return {
                   ...message,
                   content:
-                    message.content ||
-                    (typeof payload.message === 'string' ? payload.message : ''),
+                    payload.replace_message === true
+                      ? finalMessage
+                      : message.content || finalMessage,
                   sources: Array.isArray(payload.sources)
                     ? (payload.sources as SourceAttribution[])
                     : [],
@@ -320,6 +336,31 @@ export function ChatCoach({
                 }
               })
             )
+          }
+
+          if (parsed.event === 'plan_updated') {
+            const payload = parsed.payload as DailyPlanStreamPayload
+
+            setPlanUpdate({
+              message: 'Today\'s dashboard plan has been updated.',
+              updatedAt: typeof payload.updatedAt === 'string' ? payload.updatedAt : null,
+            })
+
+            setMessages((current) =>
+              current.map((message) =>
+                message.id === assistantMessageId
+                  ? { ...message, content: 'Updating today\'s dashboard plan...' }
+                  : message
+              )
+            )
+
+            if (typeof window !== 'undefined') {
+              try {
+                window.localStorage.setItem(DAILY_PLAN_STORAGE_KEY, JSON.stringify(payload))
+              } catch {
+                // Ignore browser storage failures and continue chat flow.
+              }
+            }
           }
 
           if (parsed.event === 'error') {
@@ -419,6 +460,16 @@ export function ChatCoach({
               environment.
             </p>
           ) : null}
+        </section>
+      ) : null}
+
+      {planUpdate ? (
+        <section className={`${styles.systemNotice} card`}>
+          <p className={`${styles.systemNoticeLabel} text-label`}>Dashboard updated</p>
+          <p className={styles.systemNoticeBody}>
+            {planUpdate.message}
+            {planUpdate.updatedAt ? ` Saved at ${new Date(planUpdate.updatedAt).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit' })}.` : ''}
+          </p>
         </section>
       ) : null}
 

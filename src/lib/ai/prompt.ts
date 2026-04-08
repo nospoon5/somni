@@ -6,7 +6,10 @@ export type PromptContext = {
   babyName: string
   ageBand: string
   sleepStyleLabel: SleepMethodology
+  timezone: string
+  localToday: string
   aiMemory: string | null
+  todayPlanSummary: string
   biggestIssue: string | null
   feedingType: string | null
   bedtimeRange: string | null
@@ -94,7 +97,10 @@ Parent and baby context:
 - Baby name: ${context.babyName}
 - Age band: ${context.ageBand}
 - Sleep style: ${context.sleepStyleLabel}
+- Parent timezone: ${context.timezone}
+- Local date for this conversation: ${context.localToday}
 - Master memory profile: ${context.aiMemory?.trim() || 'none yet'}
+- Today's dashboard plan: ${context.todayPlanSummary}
 - Biggest issue: ${context.biggestIssue ?? 'not provided'}
 - Feeding type: ${context.feedingType ?? 'not provided'}
 - Bedtime range: ${context.bedtimeRange ?? 'not provided'}
@@ -115,5 +121,9 @@ Response requirements:
 - Include a short "what to try tonight" section.
 - Include a brief confidence signal in wording, without exposing internal mechanics.
 - If you need more context, ask exactly one question and stop.
+- If the parent gives a concrete change that should update today's dashboard plan, call
+  \`update_daily_plan\`.
+- Only include the targets or notes that should change. Do not invent missing naps or
+  feeds.
 `.trim()
 }
