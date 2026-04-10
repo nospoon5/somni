@@ -235,9 +235,16 @@ These address specific evaluation gaps where no existing chunk provides decision
 
 ### Quality Gate - Stage 13
 
-- [ ] `DEFAULT_MATCH_LIMIT` is 7 in `retrieval.ts`
-- [ ] `MIN_SIMILARITY` constant (0.3) is defined and applied
-- [ ] Run `npm run build` - zero TypeScript errors
+- [x] `DEFAULT_MATCH_LIMIT` is 7 in `retrieval.ts`
+- [x] `MIN_SIMILARITY` constant (0.3) is defined and applied
+- [x] Run `npm run build` - zero TypeScript errors
+
+**Stage 13 implementation notes (2026-04-10):**
+- Updated `src/lib/ai/retrieval.ts` to increase `DEFAULT_MATCH_LIMIT` from `5` to `7`.
+- Added `MIN_SIMILARITY = 0.3` and applied it to both retrieval paths:
+  - RPC path: map RPC rows, then filter out any chunk with `similarity < 0.3` before returning.
+  - Fallback path: compute local similarity score, then filter out any chunk with `similarity < 0.3` before sort/slice.
+- Verified with `npm run build` (Next.js build + TypeScript check) completing successfully with zero TypeScript errors.
 
 ---
 

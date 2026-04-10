@@ -4,7 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 
 const EMBEDDING_MODEL = process.env.GEMINI_EMBEDDING_MODEL || 'gemini-embedding-001'
 const EMBEDDING_DIMENSION = 768
-const DEFAULT_MATCH_LIMIT = 5
+const DEFAULT_MATCH_LIMIT = 7
+const MIN_SIMILARITY = 0.3
 
 export type SleepMethodology = 'gentle' | 'balanced' | 'fast-track' | 'all'
 
@@ -219,17 +220,19 @@ export async function retrieveRelevantChunks(
   if (!error) {
     const rows = Array.isArray(data) ? data : []
 
-    return rows.map((row) => ({
-      id: String(row.id),
-      chunkId: String(row.chunk_id),
-      topic: String(row.topic),
-      ageBand: row.age_band ? String(row.age_band) : null,
-      methodology: String(row.methodology) as SleepMethodology,
-      content: String(row.content),
-      sources: parseSources(row.sources),
-      confidence: String(row.confidence) as RetrievedCorpusChunk['confidence'],
-      similarity: Number(row.similarity ?? 0),
-    }))
+    return rows
+      .map((row) => ({
+        id: String(row.id),
+        chunkId: String(row.chunk_id),
+        topic: String(row.topic),
+        ageBand: row.age_band ? String(row.age_band) : null,
+        methodology: String(row.methodology) as SleepMethodology,
+        content: String(row.content),
+        sources: parseSources(row.sources),
+        confidence: String(row.confidence) as RetrievedCorpusChunk['confidence'],
+        similarity: Number(row.similarity ?? 0),
+      }))
+      .filter((row) => row.similarity >= MIN_SIMILARITY)
   }
 
   const isMissingRpc =
@@ -275,6 +278,7 @@ export async function retrieveRelevantChunks(
         similarity,
       }
     })
+    .filter((row) => row.similarity >= MIN_SIMILARITY)
     .sort((a, b) => b.similarity - a.similarity)
     .slice(0, limit)
 
