@@ -209,9 +209,13 @@ These address specific evaluation gaps where no existing chunk provides decision
 - Reworked the two method-specific chunks to map parent requests onto Australian-supported settling guidance and left explicit manual-review markers in:
   - `4-6_months_and_older_ferber_method_graduated_extinction.md`
   - `5-6_months_and_older_cry_it_out_extinction_method.md`
+- Follow-up review fix:
+  - strengthened `12m_plus_Nap_transitions.md` so 12m+ / 13-month nap-readiness queries have an exact-age retrieval target with bridging guidance;
+  - added `12m_plus_independent_settling_common_mistakes.md` so vague `12 months+` reset queries have an exact-age retrieval target instead of relying on the `6-12 months` version alone;
+  - narrowed the Stage 12 `6-12m_nap_transition_2_to_1_bridging.md` framing so it clearly targets pre-12-month bridging and points 12m+ retrieval toward the toddler nap-transition chunk.
 - Confirmed the local source audit no longer returns the original flagged domains after the cleanup pass.
 - Uploaded the full corpus successfully with `node scripts/upload-corpus.mjs` after loading repo env vars from `.env.local`.
-- Upload verification reported `56` chunk files processed, and a direct Supabase count query returned `56` rows in `public.corpus_chunks`.
+- Follow-up upload verification reported `57` chunk files processed, and a direct Supabase count query returned `57` rows in `public.corpus_chunks`.
 - Accounted for the 10 post-evaluation local chunk files listed above when validating the corpus state before upload.
 
 ---

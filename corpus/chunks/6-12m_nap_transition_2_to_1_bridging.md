@@ -1,5 +1,5 @@
 ---
-topic: "bridging the 2 to 1 nap transition"
+topic: "bridging the 2 to 1 nap transition before 12 months"
 age_band: "6-12 months"
 methodology: "balanced"
 sources:
@@ -13,12 +13,12 @@ sources:
     url: "https://karitane.com.au/wp-content/uploads/2025/03/Karitane_Baby_Routines.pdf"
 last_updated: "2026-04-10"
 confidence: "high"
-tags: ["2 to 1 nap transition", "bridging", "11 months", "13 months", "one nap", "morning nap", "readiness"]
+tags: ["2 to 1 nap transition", "bridging", "10 months", "11 months", "12 months", "one nap", "morning nap", "readiness"]
 ---
 
-# Bridging the 2 To 1 Nap Transition
+# Bridging the 2 To 1 Nap Transition Before 12 Months
 
-The biggest mistake in this transition is going cold turkey too early. Many babies flirt with one nap well before they can actually cope with it every day. An 11-month-old refusing a nap and a 13-month-old taking a messy second nap are not the same thing.
+The biggest mistake in this transition is going cold turkey too early. Many babies flirt with one nap well before they can actually cope with it every day. An 11-month-old refusing a nap is not the same as a toddler who is genuinely ready to live on one nap most days.
 
 ## Most Babies Are Not Ready To Go Cold Turkey At 11 Months
 
@@ -40,7 +40,7 @@ The 2 to 1 nap transition usually lands closer to the second year than parents e
 - the child can comfortably stay awake much longer in the morning without melting down
 - the midday nap is becoming the longest and most reliable nap
 
-At 13 months, many toddlers still need **bridging**, not a full one-nap schedule every single day.
+Some babies nearing 12 months still need **bridging**, not a full one-nap schedule every single day. Once a child is clearly in the 12 months+ range, use the toddler nap-transition chunk as the primary retrieval target.
 
 ## Bridging Options
 
