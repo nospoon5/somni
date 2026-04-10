@@ -188,11 +188,31 @@ These address specific evaluation gaps where no existing chunk provides decision
 
 ### Quality Gate - Stage 12
 
-- [ ] 8 new chunk files exist in `corpus/chunks/` with valid frontmatter
-- [ ] All new chunks use exclusively Australian sources
-- [ ] 14 flagged chunks have been reviewed
-- [ ] `node scripts/upload-corpus.mjs` completes without errors
-- [ ] Supabase `corpus_chunks` count is >= 56
+- [x] 8 new chunk files exist in `corpus/chunks/` with valid frontmatter
+- [x] All new chunks use exclusively Australian sources
+- [x] 14 flagged chunks have been reviewed
+- [x] `node scripts/upload-corpus.mjs` completes without errors
+- [x] Supabase `corpus_chunks` count is >= 56
+
+**Stage 12 implementation notes (2026-04-10):**
+- Added the 8 required Stage 12 chunks:
+  - `4-6m_solids_impact_on_sleep.md`
+  - `6-12m_nap_transition_2_to_1_bridging.md`
+  - `12m_plus_sleeping_bag_refusal.md`
+  - `all_ages_schedule_constraints_daycare_work.md`
+  - `4-6m_nurse_to_sleep_association.md`
+  - `6-12m_pulling_to_stand_sleep_disruption.md`
+  - `all_ages_separation_anxiety_sleep.md`
+  - `6-12m_independent_settling_common_mistakes.md`
+- Reviewed all 14 flagged non-Australian-source chunks.
+- Replaced or removed non-Australian sources in 12 of the 14 reviewed chunks where existing Australian guidance already covered the content.
+- Reworked the two method-specific chunks to map parent requests onto Australian-supported settling guidance and left explicit manual-review markers in:
+  - `4-6_months_and_older_ferber_method_graduated_extinction.md`
+  - `5-6_months_and_older_cry_it_out_extinction_method.md`
+- Confirmed the local source audit no longer returns the original flagged domains after the cleanup pass.
+- Uploaded the full corpus successfully with `node scripts/upload-corpus.mjs` after loading repo env vars from `.env.local`.
+- Upload verification reported `56` chunk files processed, and a direct Supabase count query returned `56` rows in `public.corpus_chunks`.
+- Accounted for the 10 post-evaluation local chunk files listed above when validating the corpus state before upload.
 
 ---
 

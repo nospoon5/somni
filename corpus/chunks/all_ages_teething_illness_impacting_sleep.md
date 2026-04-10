@@ -17,11 +17,7 @@ sources:
     url: "https://www.health.qld.gov.au/__data/assets/pdf_file/0025/1166353/g-safer-sleep.pdf"
   - name: "Royal Children's Hospital (RCH Melbourne)"
     url: "https://www.rch.org.au/rchcpg/hospital_clinical_guideline_index/Safe_sleeping/"
-  - name: "sleepfoundation.org"
-    url: "https://www.sleepfoundation.org/baby-sleep/ferber-method"
-  - name: "pampers.com"
-    url: "https://www.pampers.com/en-us/baby/sleep/article/cry-it-out-method"
-last_updated: "2026-04-01"
+last_updated: "2026-04-10"
 confidence: "high"
 ---
 # Teething & Illness Impacting Sleep

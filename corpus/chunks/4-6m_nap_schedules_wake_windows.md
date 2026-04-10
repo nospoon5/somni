@@ -11,9 +11,7 @@ sources:
     url: "https://raisingchildren.net.au/babies/sleep/understanding-sleep/baby-sleep-2-12-months"
   - name: "Tresillian"
     url: "https://www.tresillian.org.au/baby/sleep/3-to-6-months/"
-  - name: "Pampers.com"
-    url: "https://www.pampers.com/en-us/baby/sleep/article/cry-it-out-method"
-last_updated: "2026-04-01"
+last_updated: "2026-04-10"
 confidence: "high"
 ---
 # Nap Schedules and Wake Windows for 4-6 Month Olds

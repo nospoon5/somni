@@ -1,44 +1,77 @@
 ---
-topic: "Cry-It-Out (Extinction Method)"
+topic: "cry it out and extinction requests"
 age_band: "5-6 months and older"
 methodology: "fast-track"
 sources:
-  - name: "huckleberrycare.com"
-    url: "https://huckleberrycare.com/blog/cry-it-out-method-aka-extinction-method-is-it-right-for-your-baby"
-  - name: "happiestbaby.com"
-    url: "https://www.happiestbaby.com/blogs/baby/sleep-training"
-  - name: "pampers.com"
-    url: "https://www.pampers.com/en-us/baby/sleep/article/cry-it-out-method"
-  - name: "drcraigcanapari.com"
-    url: "https://drcraigcanapari.com/cry-it-out-sleep-training-explained-how-to-use-cio-to-sleep-train-a-baby/"
-  - name: "happiestbaby.com"
-    url: "https://www.happiestbaby.com/blogs/baby/avoid-crying-it-out-sleep-training"
-...
-Hello, I'm Somni, here to provide you with clear, actionable information on various sleep approaches. The Cry-It-Out (CIO) method, also known as the Extinction Method or Total Extinction, is a direct sleep training approach aimed at teaching your baby to fall asleep independently.
+  - name: "Raising Children Network"
+    url: "https://raisingchildren.net.au/babies/sleep/settling-routines/responsive-settling-at-6-18-months-reducing-settling-help"
+  - name: "Raising Children Network"
+    url: "https://raisingchildren.net.au/babies/sleep/solving-sleep-problems/camping-out"
+  - name: "Tresillian"
+    url: "https://www.tresillian.org.au/baby/sleep/self-settling-techniques/"
+  - name: "Karitane"
+    url: "https://karitane.com.au/resource/when-settling-your-baby-or-toddler-tips/"
+last_updated: "2026-04-10"
+confidence: "medium"
+tags: ["cry it out", "extinction", "fast-track", "controlled comforting", "camping out", "settling plan"]
+---
+<!-- REVIEW: non-AU source -->
 
-**What is the Cry-It-Out (CIO) Method?**
-The CIO method involves placing your baby in their sleep space while they are still awake and allowing them to fall asleep on their own, without any parental intervention. The goal is to help your child learn to self-soothe by breaking any sleep onset associations (like being rocked, fed, or held to sleep) that might be preventing independent sleep. As the name suggests, this method often involves a period of crying as your baby adjusts to the new routine.
+# If a Parent Asks for "Cry It Out"
 
-**When to Consider the Cry-It-Out Method**
-Most pediatricians and sleep experts recommend considering the CIO method for babies who are **5 to 6 months old or older**. By this age, babies are typically developmentally ready to self-soothe, and their circadian rhythms are more established. It's also important to ensure your baby is physically capable of sleeping longer stretches without night feedings. Always consult your pediatrician to confirm your baby is healthy and ready for this method, and to discuss any necessary night feedings. This method is not suitable for newborns.
+Approved Australian sources generally do **not** present full extinction as the default or preferred first step. They focus more on responsive settling, reducing help, and parental-presence options. So if a parent asks for "cry it out", Somni should not answer with a hard extinction script as though that is the endorsed local standard.
 
-**What to Try: Step-by-Step Guide to the Cry-It-Out Method**
+The practical translation is: this parent wants a decisive plan with fewer sleep props and firmer boundaries. The safest Australian-grounded answer is usually a **structured reduced-help plan**, not pure extinction.
 
-1.  **Prepare Your Baby:** Before starting, ensure all your baby's basic needs are met. This means they are well-fed, have a clean diaper, are dressed comfortably, and are not in any physical discomfort.
-2.  **Establish a Consistent Bedtime Routine:** Implement a calming and predictable bedtime routine. This routine helps your baby wind down and signals that it's time for sleep.
-3.  **Optimize the Sleep Environment:** Ensure your baby's room is pitch dark (using blackout shades), quiet (a white or brown noise machine can be helpful, placed at least 7 feet away and below 50 decibels), and set at a comfortable temperature (68-72°F). Ensure the sleep space is safe, following all safe sleep guidelines (baby on their back, firm surface, no loose items).
-4.  **Put Your Baby Down Drowsy but Awake:** After completing the bedtime routine, place your baby in their crib or bassinet while they are drowsy but still awake.
-5.  **Leave the Room and Do Not Intervene:** Say goodnight and leave the room. The core of the CIO method is to *not* re-enter the room or intervene (ignore crying or fussing) until the next scheduled feeding time or your baby's designated morning wake-up time.
-    *   This means allowing your baby to cry until they fall asleep, without offering comfort, picking them up, or re-entering the room.
+## Bottom Line
 
-**Tips for Success:**
+- Do not use this chunk to encourage leaving a baby to cry without review of age, feeds, schedule, and safety.
+- If the parent wants a fast-track change, start with the firmest Australian-supported option that still includes brief reassurance or parental presence.
+- For many families, a fast-track response means "clear rules and consistency", not "zero response all night".
 
-*   **Absolute Consistency is Crucial:** This method requires 100% consistency from all caregivers. Mixed signals can hinder progress.
-*   **Expect Crying:** Your baby will likely cry, especially during the first few nights, as they protest the change in routine. The duration of crying can vary greatly, from minutes to hours. Crying often reduces significantly within 3-4 nights, with most babies adjusting within a week.
-*   **Emotional Preparedness:** This method can be emotionally challenging for parents. If possible, have a partner or support person available to help you through the initial nights. You might consider stepping out of earshot or using a video monitor to ensure safety without directly listening to the crying.
-*   **Naps:** Once nighttime CIO is established (typically after 2-3 weeks), you can apply the same method to naps. Naps can be trickier than nighttime sleep. Limit nap attempts to about one hour; if your baby hasn't fallen asleep, get them up and try again later to prevent overtiredness.
+## What to Try Tonight Instead
 
-**When to Seek Professional Guidance:**
-If your baby sounds in pain, or if you have concerns about their health, always check on them. If you've consistently applied the CIO method for about two weeks and see no significant improvement, or if you have doubts about whether this method is right for your family, consult your pediatrician or a sleep specialist. They can help rule out any underlying medical conditions or suggest alternative approaches that might be a better fit.
+- **Pick one clear target:** bedtime first, not bedtime plus naps plus every wake.
+- **Put baby down awake after a predictable routine.**
+- **Choose one response and keep it all night:** brief check-ins, hands-on settling, or camping out. Do not switch methods every 20 minutes.
+- **Keep night interactions flat:** dark room, low voice, minimal touch, no new sleep crutches at 2 am.
+- **Judge the plan over 3 nights, then 7.** Night 1 can be loud. Constantly changing the rules usually causes the stall, not the baby's personality.
 
-The CIO method is a powerful tool for teaching independent sleep, and while it can be difficult in the short term, many families find it highly effective in achieving better sleep for everyone.
+## When a Parent Says "I Need the Fastest Fix"
+
+The retrieval answer should still check the basics first:
+
+- Is bedtime too late or too early?
+- Is the baby still genuinely needing a night feed?
+- Is the parent currently feeding, rocking, or holding to full sleep every time?
+- Does the baby get more upset when the parent pops in and out?
+
+If the answers are unclear, Somni should recommend the simplest firm starting point:
+
+1. Fix the schedule
+2. End the routine before sleep
+3. Put baby down awake
+4. Use one consistent settling response
+5. Stop introducing new rescue habits overnight
+
+## Common Mistakes
+
+- Starting extinction when the baby is clearly overtired
+- Dropping feeds and sleep props in the same night
+- Letting crying run for long periods when the baby is escalating rather than protesting
+- Doing a hard method at bedtime and a totally different one overnight
+- Assuming louder crying means the method is wrong, then changing course every night
+
+## Better Somni Framing
+
+If a parent asks "Should I just do CIO?", a safer local answer is usually:
+
+- "If you want a faster plan, be more consistent, not harsher."
+- "Start with reduced help or camping out unless you are very sure schedule and feeds are already sorted."
+- "If check-ins make things worse, use parental presence instead of repeated popping in and out."
+
+## When to Seek Help
+
+- The parent reports panic, rage, or inability to stay regulated
+- The baby has medical red flags, pain, poor growth, or feeding concerns
+- The plan has been consistent for 1-2 weeks with no improvement, suggesting the real issue may be schedule, development, or health rather than the settling method

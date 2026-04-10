@@ -11,11 +11,7 @@ sources:
     url: "https://raisingchildren.net.au/babies/sleep/understanding-sleep/baby-sleep-2-12-months"
   - name: "Tresillian"
     url: "https://www.tresillian.org.au/baby/sleep/3-to-6-months/"
-  - name: "happiestbaby.com"
-    url: "https://www.happiestbaby.com/blogs/baby/sleep-training"
-  - name: "sleepfoundation.org"
-    url: "https://www.sleepfoundation.org/baby-sleep/ferber-method"
-last_updated: "2026-04-01"
+last_updated: "2026-04-10"
 confidence: "high"
 ---
 # The 4-Month Sleep Regression

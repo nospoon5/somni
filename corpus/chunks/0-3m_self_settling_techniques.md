@@ -11,11 +11,7 @@ sources:
     url: "https://raisingchildren.net.au/newborns/sleep/understanding-sleep/newborn-sleep"
   - name: "Tresillian"
     url: "https://www.tresillian.org.au/newborn/sleep/"
-  - name: "Happiest Baby"
-    url: "https://www.happiestbaby.com/blogs/baby/avoid-crying-it-out-sleep-training"
-  - name: "Pampers"
-    url: "https://www.pampers.com/en-us/baby/sleep/article/cry-it-out-method"
-last_updated: "2026-04-01"
+last_updated: "2026-04-10"
 confidence: "high"
 ---
 # Self-Settling for Newborns (0-3 Months)

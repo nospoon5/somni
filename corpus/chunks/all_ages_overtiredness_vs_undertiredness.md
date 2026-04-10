@@ -13,13 +13,7 @@ sources:
     url: "https://www.tresillian.org.au/newborn/sleep/"
   - name: "Murdoch Children's Research Institute"
     url: "https://www.mcri.edu.au/news/insights-and-opinions/why-hitting-the-hay-early-could-be-more-important-than-length-of-sleep"
-  - name: "Pampers"
-    url: "https://www.pampers.com/en-us/baby/sleep/article/cry-it-out-method"
-  - name: "Huckleberry"
-    url: "https://huckleberrycare.com/blog/cry-it-out-method-aka-extinction-method-is-it-right-for-your-baby"
-  - name: "drcraigcanapari.com"
-    url: "https://drcraigcanapari.com/cry-it-out-sleep-training-explained-how-to-use-cio-to-sleep-train-a-baby/"
-last_updated: "2026-04-01"
+last_updated: "2026-04-10"
 confidence: "high"
 ---
 # Overtiredness vs. Undertiredness in Babies

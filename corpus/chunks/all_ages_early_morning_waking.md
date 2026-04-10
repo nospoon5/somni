@@ -3,12 +3,6 @@ topic: "Early morning waking (before 6am)"
 age_band: "all ages"
 methodology: "balanced"
 sources:
-  - name: babycenter.com
-    url: "https://www.babycenter.com/baby/sleep/how-to-try-the-ferber-method-of-sleep-training-for-your-baby_7755"
-  - name: huckleberrycare.com
-    url: "https://huckleberrycare.com/blog/ferber-method-for-sleep-training-what-age-to-start"
-  - name: pampers.com
-    url: "https://www.pampers.com/en-us/baby/sleep/article/cry-it-out-method"
   - name: Raising Children Network
     url: "https://raisingchildren.net.au/babies/sleep/understanding-sleep/baby-sleep-2-12-months"
   - name: Raising Children Network
@@ -19,7 +13,7 @@ sources:
     url: "https://raisingchildren.net.au/toddlers/sleep/understanding-sleep/sleep-20-faqs"
   - name: Tresillian
     url: "https://www.tresillian.org.au/baby/sleep/7-to-12-months/"
-last_updated: "2026-04-01"
+last_updated: "2026-04-10"
 confidence: "high"
 ---
 # Early Morning Waking (Before 6 am)

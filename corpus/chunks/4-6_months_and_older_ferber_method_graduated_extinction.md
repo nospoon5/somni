@@ -1,62 +1,72 @@
 ---
-topic: "Ferber Method (Graduated Extinction)"
+topic: "Ferber method and timed check-ins"
 age_band: "4-6 months and older"
 methodology: "fast-track"
 sources:
-  - name: "sleepfoundation.org"
-    url: "https://www.sleepfoundation.org/baby-sleep/ferber-method"
-  - name: "huckleberrycare.com"
-    url: "https://huckleberrycare.com/blog/ferber-method-for-sleep-training-what-age-to-start"
-  - name: "babycenter.com"
-    url: "https://www.babycenter.com/baby/sleep/how-to-try-the-ferber-method-of-sleep-training-for-your-baby_7755"
-  - name: "happiestbaby.com"
-    url: "https://www.happiestbaby.com/blogs/baby/sleep-training"
-  - name: "drcraigcanapari.com"
-    url: "https://drcraigcanapari.com/cry-it-out-sleep-training-explained-how-to-use-cio-to-sleep-train-a-baby/"
-...
-Hello there! As Somni, I'm here to help you understand various sleep training approaches. The Ferber Method, also known as Graduated Extinction or "check and console," is a well-known strategy designed to help your little one learn to fall asleep independently. It's a modified version of the "cry-it-out" approach, allowing for brief, timed check-ins to reassure your baby.
+  - name: "Raising Children Network"
+    url: "https://raisingchildren.net.au/babies/sleep/settling-routines/responsive-settling-at-6-18-months-reducing-settling-help"
+  - name: "Raising Children Network"
+    url: "https://raisingchildren.net.au/babies/sleep/solving-sleep-problems/camping-out"
+  - name: "Tresillian"
+    url: "https://www.tresillian.org.au/baby/sleep/self-settling-techniques/"
+  - name: "Karitane"
+    url: "https://karitane.com.au/baby/baby-sleep/sleep-training/"
+last_updated: "2026-04-10"
+confidence: "medium"
+tags: ["Ferber", "timed check-ins", "graduated extinction", "controlled comforting", "camping out", "fast-track"]
+---
+<!-- REVIEW: non-AU source -->
 
-**What is the Ferber Method?**
-The Ferber Method teaches infants and young children to self-soothe and fall asleep on their own at bedtime and during night wakings. It addresses behavioral insomnia, which often occurs when children become reliant on caregiver actions (like rocking or feeding) to fall asleep. The core idea is to gradually increase the time between brief check-ins, allowing your child to learn to settle themselves.
+# If a Parent Asks for "Ferber"
 
-**When to Consider the Ferber Method**
-Many experts suggest starting the Ferber Method when your baby is between **4 to 6 months old**, as this is typically when their circadian rhythm begins to mature, and they are often capable of going longer stretches without night feedings. Some sources specifically recommend waiting until at least 6 months of age, as babies at this age are more consistently able to self-soothe. It's important to ensure your baby is healthy and developmentally ready before beginning any sleep training. Always consult with your pediatrician to confirm this method is suitable for your child.
+Australian sleep services do not usually teach the "Ferber method" by name. The closest local equivalent is a structured check-in approach where you reduce settling help gradually, keep visits brief, and stay consistent. In Australian guidance, this usually sits under responsive settling, reduced settling help, controlled comforting, or camping out rather than strict Ferber branding.
 
-**What to Try: Step-by-Step Guide to the Ferber Method**
+That matters because if a parent asks for "Ferber", the safest Somni move is **not** to give an imported timer chart as gospel. The better move is to translate the request into a local, approved version of timed support.
 
-1.  **Establish a Consistent Bedtime Routine:** Before starting, create a calming and predictable bedtime routine (20-45 minutes long). This might include a warm bath, a story, gentle cuddles, or a lullaby. This routine signals to your baby that sleep is coming.
-2.  **Put Your Baby Down Drowsy but Awake:** After the routine, place your baby in their crib or bassinet while they are drowsy but still awake. The goal is for them to learn to fall asleep in their sleep space, not in your arms. Ensure their sleep environment is safe, dark, quiet, and cool (68-72°F).
-3.  **Leave the Room:** Say goodnight and leave the room, even if your baby begins to fuss or cry.
-4.  **Follow the Timed Check-In Schedule:** If your baby cries, you will return to their room for brief, reassuring check-ins at progressively longer intervals. The purpose of these visits is to reassure your child and yourself, not to stop the crying or help them fall asleep.
-    *   **Keep check-ins short (1-2 minutes).**
-    *   **Avoid picking up or feeding your baby.** You can gently pat their back or speak softly, but the interaction should be minimal.
-    *   **Restart the intervals** if your child falls asleep but wakes up later in the night.
+## Bottom Line
 
-Here's a common example of a Ferber Method chart for increasing wait times:
+- Treat "Ferber" as "the parent wants a clear check-in plan", not "the family must use a strict American method chart".
+- Use this only for babies who are developmentally ready, medically well, and on an age-appropriate schedule.
+- If the baby is under about 6 months corrected age, or is still needing frequent feeds for growth, start with more responsive support instead of timed check-ins.
 
-| Day | Wait before 1st check-in | Wait before 2nd check-in | Wait before 3rd check-in | Wait before all subsequent check-ins |
-| :-- | :---------------------- | :---------------------- | :---------------------- | :---------------------------------- |
-| 1   | 3 minutes               | 5 minutes               | 10 minutes              | 10 minutes                          |
-| 2   | 5 minutes               | 10 minutes              | 12 minutes              | 12 minutes                          |
-| 3   | 10 minutes              | 12 minutes              | 15 minutes              | 15 minutes                          |
-| 4   | 12 minutes              | 15 minutes              | 17 minutes              | 17 minutes                          |
-| 5   | 15 minutes              | 17 minutes              | 20 minutes              | 20 minutes                          |
-| 6   | 17 minutes              | 20 minutes              | 25 minutes              | 25 minutes                          |
-| 7   | 20 minutes              | 25 minutes              | 30 minutes              | 30 minutes                          |
+## The Closest Australian Equivalent
 
-*Note: These intervals are guidelines and can be slightly modified to fit your family's needs and your baby's temperament. Some charts may start with 2 minutes on Day 1.*
+The closest match is:
 
-5.  **Repeat Until Your Child Falls Asleep:** Continue this process until your child falls asleep without needing comfort from you. Many families see progress within three to seven nights.
+1. A calm bedtime routine
+2. Put baby down awake, not fully asleep
+3. Pause briefly before going in
+4. Keep check-ins short and boring
+5. Reduce the amount of help over several nights
 
-**Tips for Success:**
+This is much closer to Australian "responsive settling with reduced help" than to strict extinction.
 
-*   **Patience and Consistency are Key:** A single lapse can reinforce dependence. Ensure all caregivers are aligned and follow the same plan.
-*   **Expect "Extinction Bursts":** It's normal for crying to temporarily worsen before improving. Stay consistent.
-*   **Don't Rush In:** Babies make many sounds during sleep; pause to see if they settle on their own before starting the timer.
-*   **Naps:** The same principles can be applied to naps. If your child is still awake and upset after 30 minutes, you can end the nap attempt and try again later. Naps may take longer to improve than nighttime sleep.
-*   **Modifications:** You can adjust intervals, start with bedtime only, or adapt for room-sharing (e.g., speak from your bed at designated times).
+## What to Try Tonight
 
-**When to Seek Professional Guidance:**
-If your child's sleep doesn't significantly improve after about a week, or if you suspect underlying medical conditions (like sleep apnea, chronic pain, or neurodevelopmental disorders), it's always best to consult your pediatrician or a sleep specialist. This method is designed for behavioral sleep problems, not medical ones.
+- **Start at bedtime only.** Do not overhaul naps, bedtime, and every night wake on night one.
+- **Use a short check-in rhythm:** pause 2-3 minutes, go in for 30-60 seconds, use voice and brief touch, then leave again. If needed, stretch the next pause modestly. The goal is consistency, not a perfect timer ladder.
+- **Keep the check-in boring:** low voice, no lights, no rocking to sleep, no long cuddle. Reassure, reset, leave.
+- **Use the same response for wakes that happen soon after bedtime.** If you feed or rock fully asleep at 8:45 pm after doing check-ins at 7:30 pm, you undo the learning.
+- **If the baby escalates hard, step down rather than powering through blindly.** A parent can switch to hands-on settling or camping out if the current plan is too sharp.
 
-Remember, choosing a sleep training method is a personal decision. The Ferber Method can be an effective tool for many families, empowering children to develop valuable self-soothing skills and leading to better sleep for everyone.
+## When This Plan Usually Fails
+
+- The baby is overtired or undertired before bed
+- Bedtime changes every night
+- Feeds are being dropped and sleep training is started at the same time
+- One parent does check-ins and the other fully rescues
+- The parent is trying to copy an internet schedule instead of following the baby's age and current sleep pattern
+
+## Better Retrieval Framing
+
+If a parent says "Should I do Ferber?", Somni should usually translate that into one of these:
+
+- "If you want a check-in method, start with brief, calm check-ins and reduce help gradually."
+- "If your baby gets more upset when you pop in and out, camping out is often a better fit."
+- "If your baby is still too young or clearly hungry overnight, do not start with a rigid timer plan."
+
+## When to Seek Help
+
+- Ongoing vomiting, pain, wheezing, eczema flare, or feeding concerns: rule out a medical driver first
+- If a parent feels panicked, angry, or unable to stay consistent, choose a gentler plan or pause and get support
+- If sleep is not improving after 1-2 weeks of a consistent age-appropriate plan, a child and family health nurse or sleep service review is reasonable

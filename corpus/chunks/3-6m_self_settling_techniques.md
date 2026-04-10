@@ -11,15 +11,7 @@ sources:
     url: "https://raisingchildren.net.au/babies/sleep/understanding-sleep/baby-sleep-2-12-months"
   - name: "Tresillian"
     url: "https://www.tresillian.org.au/baby/sleep/3-to-6-months/"
-  - name: "Happiest Baby"
-    url: "https://www.happiestbaby.com/blogs/baby/sleep-training"
-  - name: "Pampers"
-    url: "https://www.pampers.com/en-us/baby/sleep/article/cry-it-out-method"
-  - name: "BabyCenter"
-    url: "https://www.babycenter.com/baby/sleep/how-to-try-the-ferber-method-of-sleep-training-for-your-baby_7755"
-  - name: "Huckleberry"
-    url: "https://huckleberrycare.com/blog/cry-it-out-method-aka-extinction-method-is-it-right-for-your-baby"
-last_updated: "2026-04-01"
+last_updated: "2026-04-10"
 confidence: "high"
 ---
 # Self-Settling for Babies (3-6 Months)
