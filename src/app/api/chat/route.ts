@@ -267,6 +267,7 @@ function extractGeminiFunctionCalls(payload: unknown) {
 
 async function streamGeminiResponse(
   contents: Array<{ role: string; parts: Array<Record<string, unknown>> }>,
+  isEvalMode: boolean,
   onToken: (token: string) => void
 ) {
   const apiKey = process.env.GEMINI_API_KEY
@@ -283,11 +284,11 @@ async function streamGeminiResponse(
       },
       body: JSON.stringify({
         contents,
-        tools: UPDATE_DAILY_PLAN_TOOLS,
-        toolConfig: UPDATE_DAILY_PLAN_TOOL_CONFIG,
+        tools: isEvalMode ? undefined : UPDATE_DAILY_PLAN_TOOLS,
+        toolConfig: isEvalMode ? undefined : UPDATE_DAILY_PLAN_TOOL_CONFIG,
         generationConfig: {
-          temperature: 0.35,
-          maxOutputTokens: 700,
+          temperature: 0.2,
+          maxOutputTokens: 800,
           // This chat flow needs a complete parent-facing answer more than hidden
           // reasoning tokens. Gemini 2.5 Flash can spend output budget on thinking,
           // which was truncating replies mid-sentence in production.
@@ -355,11 +356,19 @@ async function streamGeminiResponse(
           seenFunctionCalls.add(key)
           functionCalls.push(functionCall)
         }
-      } catch {
+      } catch (e) {
+        console.error("JSON PARSE FAILED", (e as Error).message, dataPayload.substring(0, 100));
         // Ignore malformed chunks and continue streaming the rest.
       }
     }
   }
+
+  // Ensure any final data left in buffer is processed if it has not been printed
+  if (buffer.trim()) {
+    console.error("WARNING: FINAL BUFFER NOT EMPTY", buffer);
+  }
+
+  console.log(`Gemini Stream Completed internally. Extracted ${fullText.length} characters.`);
 
   return {
     text: fullText.trim(),
@@ -531,6 +540,8 @@ export async function POST(request: Request) {
   if (!message) {
     return Response.json({ error: 'Message is required' }, { status: 400 })
   }
+
+  const isEvalMode = request.headers.get('x-eval-mode') === 'true'
 
   const requestedConversationId =
     typeof body.conversationId === 'string' ? body.conversationId.trim() : ''
@@ -738,7 +749,7 @@ export async function POST(request: Request) {
             },
           ]
 
-          const geminiResult = await streamGeminiResponse(geminiRequestContents, (token) => {
+          const geminiResult = await streamGeminiResponse(geminiRequestContents, isEvalMode, (token: string) => {
             controller.enqueue(encoder.encode(createSseEvent('token', { text: token })))
           })
 
