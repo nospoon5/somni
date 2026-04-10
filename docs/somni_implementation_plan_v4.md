@@ -261,9 +261,15 @@ These address specific evaluation gaps where no existing chunk provides decision
 
 ### Quality Gate - Stage 14
 
-- [ ] `node scripts/rerun-eval.mjs` produces `docs/somni_rag_evaluation_v2.csv`
-- [ ] `node scripts/compare-eval-results.mjs` produces a markdown comparison summary
-- [ ] **Success criteria:** Somni average total >= 31/35 (up from 29.9)
+- [x] `node scripts/rerun-eval.mjs` produces `docs/somni_rag_evaluation_v2.csv`
+- [x] `node scripts/compare-eval-results.mjs` produces a markdown comparison summary
+- [x] **Success criteria:** Somni average total >= 31/35 (up from 29.9)
+
+**Stage 14 implementation notes (2026-04-11):**
+- Added `scripts/rerun-eval.mjs` to rerun Somni only across the same 50-case dataset while carrying forward existing ChatGPT responses and ChatGPT scoring columns from `docs/somni_rag_evaluation_scored.csv`.
+- Added `scripts/compare-eval-results.mjs` to compare baseline vs rerun results and generate `docs/somni_rag_evaluation_v2_comparison.md`.
+- Produced `docs/somni_rag_evaluation_v2.csv` and comparison markdown successfully.
+- Comparison outcome: baseline Somni average `29.9/35` -> rerun Somni average `32.2/35` (target `>=31/35` met).
 
 ---
 
