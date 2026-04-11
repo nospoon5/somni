@@ -1,41 +1,77 @@
 # Somni
 
-Somni is a sleep coaching app for parents of babies and young children. It uses
-Supabase for auth and data, Gemini for chat and retrieval, and Stripe for paid
-billing.
+Somni is a sleep coaching app for parents of babies and young children. It combines
+structured sleep logging, a daily plan, and a source-backed AI coach tailored to each baby.
 
-## What this repo contains
+## What is in the app today
 
-- Public marketing pages at `/`
+- Public marketing page at `/`
 - Email/password auth at `/login` and `/signup`
-- Onboarding, dashboard, sleep logging, and chat flows
+- Onboarding at `/onboarding`
+- Dashboard at `/dashboard`
+- AI coaching chat at `/chat`
+- Sleep logging at `/sleep`
+- Profile settings at `/profile`
+- Billing at `/billing`
+- Support form at `/support`
 - Legal pages at `/privacy`, `/terms`, and `/disclaimer`
-- Route handlers for chat, sleep, scoring, and billing
 
-## Environment
+## Main technical pieces
 
-The app expects these core environment variables:
+- Next.js 16 App Router
+- React 19
+- Supabase Auth and Postgres
+- Gemini for chat, embeddings, and AI memory extraction
+- Stripe for paid billing
+- Vercel cron for AI memory backfill
+
+## Key API routes
+
+- `/api/chat`
+- `/api/score`
+- `/api/support`
+- `/api/billing/checkout`
+- `/api/billing/portal`
+- `/api/billing/webhook`
+- `/api/cron/memory-backfill`
+
+Sleep logging, onboarding, and some profile updates are handled with Server Actions rather
+than route handlers.
+
+## Core environment variables
+
+Required for normal local development:
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `NEXT_PUBLIC_APP_URL`
 - `GEMINI_API_KEY`
-- `GEMINI_MODEL`
-- `GEMINI_EMBEDDING_MODEL`
-- `CRON_SECRET` (required for `/api/cron/memory-backfill` scheduled job auth)
 - `STRIPE_SECRET_KEY`
 - `STRIPE_PRICE_MONTHLY`
 - `STRIPE_PRICE_ANNUAL`
 - `STRIPE_WEBHOOK_SECRET`
 
-Optional tuning variables:
-- `AI_MEMORY_SYNC_BUDGET_MS` (default `1200`, max wait before falling back to async memory write)
-- `AI_MEMORY_BACKFILL_BABY_LIMIT` (default `50`)
-- `AI_MEMORY_BACKFILL_MESSAGE_LIMIT` (default `8`)
+Common AI and background-job variables:
 
-The code falls back to sensible defaults in a few places, but the app is only
-fully functional when the matching production services are configured.
+- `GEMINI_CHAT_MODEL`
+- `GEMINI_EMBEDDING_MODEL`
+- `GEMINI_MEMORY_MODEL`
+- `CRON_SECRET`
+- `AI_MEMORY_BACKFILL_BABY_LIMIT`
+- `AI_MEMORY_BACKFILL_MESSAGE_LIMIT`
+
+Evaluation-only variables:
+
+- `EVAL_DEV_PORT`
+- `EVAL_CHAT_COOLDOWN_MS`
+- `EVAL_JUDGE_MODEL`
+- `EVAL_JUDGE_COOLDOWN_MS`
+- `EVAL_JUDGE_RETRIES`
+
+Debug-only variable:
+
+- `SOMNI_FORCE_BILLING_FAILURE`
 
 ## Local setup
 
@@ -45,20 +81,20 @@ Install dependencies:
 npm install
 ```
 
-Run the development server:
+Run the dev server:
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000).
 
 ## Verification
 
-Useful checks for this repo:
+These checks currently give the clearest picture of repo health:
 
 ```bash
-npm run lint
+npm test -- --run
 npm run build
 node scripts/verify-stage4-chat-e2e.mjs
 node scripts/verify-stage4-retrieval.mjs
@@ -66,9 +102,19 @@ npm run verify:stage5:usage
 npm run verify:stage5:stripe
 ```
 
-## Notes
+Known issue:
 
-- The app uses the Next.js App Router.
-- Public copy and legal wording are kept intentionally plain and specific.
-- If you change routing, metadata, or route handlers, read the matching guide in
-  `node_modules/next/dist/docs/` first.
+- `npm run lint` currently fails because `scripts/cleanup_csv.js` and
+  `scripts/debug_chat.js` still use older CommonJS helpers. That cleanup is tracked in
+  `docs/somni_implementation_plan_v5.md`.
+
+## Docs
+
+Start here when orienting yourself:
+
+- `docs/README.md`
+- `docs/somni_context.md`
+- `docs/somni_architecture.md`
+- `docs/somni_implementation_plan_v5.md`
+
+Historical planning and handoff files have been moved to `archive/`.

@@ -1,150 +1,97 @@
 # Somni - Product Context Summary
 
-## Current Delivery Status (2026-04-06)
+## Current Delivery Status (2026-04-12)
 
-- Active implementation plan: `docs/somni_implementation_plan_v3.md`
-- Stage 7 outcome: **Partially complete**
-  - Option A (SVG brand refresh): deferred
-  - Option B (single active sleep session DB constraint): complete and verified
-  - Option C (chat resilience when billing fails): complete and verified
-- Next execution target: **Stage 8 (AI Persona & Corpus Enrichment)**
+- Active next-step plan: `docs/somni_implementation_plan_v5.md`
+- Recently completed work: Stages 11 to 14 from `docs/somni_implementation_plan_v4.md`
+- Current branch target: `main` is the working branch
+- Product state: usable first cut across auth, onboarding, dashboard, sleep logging, chat,
+  billing, support, daily plans, and AI memory
 
-## Vision
+## What Somni Is
 
-Somni is a sleep-first baby coaching PWA for first-time parents.
+Somni is a sleep-first coaching app for parents of babies and young children.
 
 Core promise:
-**Calm, source-backed sleep guidance tailored to your baby.**
 
-## Target Users
+**Calm, source-backed sleep guidance tailored to your baby and your real life.**
+
+## Who It Is For
 
 ### Persona 1: Anxious New Mum
-- First-time mother, baby around 3 months old
-- Leaning towards a gentle sleep approach
-- Feels overwhelmed by conflicting advice
-- Needs reassurance and a clear next step
+
+- First-time parent
+- Wants reassurance and a clear next step
+- Tends to worry about whether something is "normal"
 
 ### Persona 2: Pragmatic Dad
-- First-time father, baby around 6 months old
-- Wants structure and quick results
-- Prefers balanced or faster progress
-- Needs direct advice for tonight
 
-### Persona 3: Sleep-Deprived Return-to-Work Parent
-- Baby around 9-12 months old
-- Needs sleep to improve soon
-- Has already tried free advice without much clarity
-- Wants practical help before the week ahead
+- Wants direct advice fast
+- Likes clear structure and concrete actions
+- Values confidence over long explanations
 
-## Australia-First (V1) Implications
+### Persona 3: Return-to-Work Parent
 
-- Timezone handling uses AEST/AEDT-aware logic
-- Date formats should stay in Australian style where displayed to users
-- Units should stay metric
-- Safe sleep guidance should follow recognised Australian sources
-- Trusted sources include Red Nose Australia, Tresillian, Karitane, RCH Melbourne, and Raising Children Network
-- Health wording should use Australian English throughout
-- Emergency guidance should point to 000 in Australia
-- Privacy should be treated as an Australian Privacy Principles issue
+- Juggling daycare, commuting, or rigid time windows
+- Needs plans that work in real life, not just ideal conditions
+- Wants practical tradeoffs rather than perfection
 
-## Core Differentiation
+## Product Principles
 
-- Sleep-only focus rather than a broad baby tracker
-- Personalised advice based on logs, baby age, and sleep style
-- Coaching that explains the next step instead of just showing data
-- Australian-aligned sources and language
-- Calm but specific tone
+- Sleep-first, not a general baby tracker
+- Advice should feel personal, not generic
+- The app should reduce parent stress, not add guilt
+- Somni should be clear about what it knows, what it does not know, and when a health
+  professional is the better next step
+- Real-world constraints matter: daycare, work schedules, travel, illness, and caregiver
+  handoffs are part of the product problem
 
-## Core Product Loop
+## Australia-First V1
 
-1. Parent logs sleep
-2. Parent asks a question
-3. Somni interprets baby age, sleep style, and recent sleep patterns
-4. Somni responds with a personalised plan
-5. The system adapts as more data is logged
+- Australian English
+- Metric units
+- Australian-safe sleep alignment
+- Emergency direction points to `000`
+- Trusted source mix includes Red Nose Australia, Tresillian, Karitane, Raising Children
+  Network, RCH Melbourne, and related Australian health sources
 
-## Sleep Methodology Strategy
+## What Is Live Today
 
-Somni groups approaches into 3 buckets:
+- Email/password sign-up and sign-in
+- One-baby onboarding flow
+- Sleep style questionnaire
+- Sleep logging with single active sleep-session protection
+- Dashboard sleep score and summaries
+- Daily plan storage and chat-driven plan updates
+- AI chat with RAG over the curated corpus
+- Free-tier message limits
+- Stripe checkout and billing portal
+- Support form that logs requests to runtime logs
+- AI memory stored on the baby record and refreshed by cron
 
-### Gentle
-- Responsive, low crying, high involvement
-- Methods: pick-up/put-down, patting, shushing, gradual retreat
+## Current Product Strengths
 
-### Balanced
-- Structured with check-ins
-- Methods: Ferber-style timed intervals, controlled comforting
+- Personalisation is stronger than the generic chatbot baseline
+- Tone is warm and on-brand
+- The AI is much better than before at concise, practical answers
+- Retrieval coverage improved meaningfully in Stages 12 to 14
 
-### Fast-track
-- More direct, faster behaviour change, lower ongoing involvement
-- Methods: extinction-based approaches with clear boundaries
+## Current Product Risks
 
-User-facing labels: **Gentle** | **Balanced** | **Fast-track**
+- Sleep score trust is weaker than it should be for very new users with sparse data
+- Lint is not green because of two old helper scripts
+- Support requests do not reliably capture the page where a problem happened
+- Some older docs drifted away from the actual codebase before this cleanup pass
+- Retrieval is better, but still has a few weak spots in edge-case scenarios
 
-## Sleep Style Questionnaire
+## Next Strategic Focus
 
-5 questions on a 1-10 scale each.
+The next execution order is:
 
-Stores:
-- `sleep_style_score` (average, 1-10)
-- `sleep_style_label` (derived from score)
+1. Foundation cleanup
+2. Sleep score v2
+3. AI quality hardening
+4. Real-world constraint coaching
+5. Beta readiness
 
-Mapping:
-- 1-3 = Gentle
-- 4-7 = Balanced
-- 8-10 = Fast-track
-
-## Sleep Scoring Strategy
-
-### User Display
-
-Status labels:
-- **Improving** (75-100)
-- **Steady** (55-74)
-- **Needs Attention** (0-54)
-
-Tap to reveal:
-- Score (0-100)
-- Strongest area
-- Biggest challenge
-- Tonight's focus
-
-### Scoring Principles
-- Measures baby sleep quality, not parenting quality
-- Age-aware so expectations change with age band
-- Trend-aware across the last 24 hours, 3 days, and 7 days
-- Explainable so users can see why the score changed
-
-### Score Components
-1. Night sleep quality (40 points)
-2. Day sleep quality (25 points)
-3. Total sleep quantity (20 points)
-4. Settling ease (15 points)
-
-### Rules
-- Only count disruptive wakes
-- Overnight feeds are neutral for younger babies and slightly negative for older babies
-- Contact naps are neutral in V1
-
-## Monetisation
-
-| Tier | Includes |
-|------|----------|
-| **Free** | Sleep logging and a daily coaching chat cap |
-| **Somni Premium** | Removes the daily chat cap and uses Stripe checkout/portal for billing |
-
-Pricing is shown in the live checkout flow. Keep any future price changes out of the docs unless they are verified in the product.
-
-## AI Strategy
-
-- Use Gemini as the primary model
-- Use RAG over the curated corpus
-- Use baby profile and sleep data as runtime context
-- Keep the AI as the coach, not the product moat
-
-### Safety (Non-Negotiable)
-- Show a medical disclaimer in health-adjacent responses
-- Redirect emergency concerns to 000 in Australia
-- Only reference corpus context when possible
-- Protect against prompt injection
-- Keep safe sleep language aligned with Australian guidance
+Those sections are detailed in `docs/somni_implementation_plan_v5.md`.
