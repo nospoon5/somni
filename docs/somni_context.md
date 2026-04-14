@@ -75,13 +75,10 @@ Core promise:
 - Tone is warm and on-brand
 - The AI is much better than before at concise, practical answers
 - Retrieval coverage improved meaningfully in Stages 12 to 14
+- The sleep score now stays honest for sparse data instead of grading a parent too early
 
 ## Current Product Risks
 
-- Sleep score trust is weaker than it should be for very new users with sparse data
-- Lint is not green because of two old helper scripts
-- Support requests do not reliably capture the page where a problem happened
-- Some older docs drifted away from the actual codebase before this cleanup pass
 - Retrieval is better, but still has a few weak spots in edge-case scenarios
 
 ## Next Strategic Focus

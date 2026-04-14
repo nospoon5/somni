@@ -2,10 +2,15 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { logoutAction } from '@/app/auth-actions'
 import { DailyPlanPanel } from '@/components/dashboard/DailyPlanPanel'
+import { SleepScorePanel } from '@/components/dashboard/SleepScorePanel'
 import { getDateStringForTimezone, normalizeDailyPlanRow } from '@/lib/daily-plan'
 import { createClient } from '@/lib/supabase/server'
 import { sanitizeTimezone } from '@/lib/billing/usage'
-import { calculateSleepScore } from '@/lib/scoring/sleep-score'
+import {
+  calculateSleepScore,
+  getSleepScoreLookbackStart,
+  SLEEP_SCORE_FETCH_LIMIT,
+} from '@/lib/scoring/sleep-score'
 import styles from './page.module.css'
 
 export default async function DashboardPage() {
@@ -54,6 +59,7 @@ export default async function DashboardPage() {
   }
 
   const dailyPlan = normalizeDailyPlanRow(dailyPlanRow)
+  const lookbackStart = getSleepScoreLookbackStart()
 
   const { data: activeLog } = baby
     ? await supabase
@@ -71,8 +77,9 @@ export default async function DashboardPage() {
         .from('sleep_logs')
         .select('id, started_at, ended_at, is_night, tags')
         .eq('baby_id', baby.id)
+        .gte('started_at', lookbackStart.toISOString())
         .order('started_at', { ascending: false })
-        .limit(7)
+        .limit(SLEEP_SCORE_FETCH_LIMIT)
     : { data: [] }
 
   const sleepScore = baby
@@ -127,103 +134,11 @@ export default async function DashboardPage() {
           </form>
         </div>
 
-        <div className={`${styles.scorePanel} card-glass animate-fade-up`}>
-          <div className={styles.scoreHeader}>
-            <div>
-              <p className={`${styles.scoreKicker} text-label`}>Sleep score</p>
-              <h2 className={`${styles.scoreTitle} text-display`}>
-                {sleepScore?.hasData
-                  ? `${sleepScore.totalScore}/100`
-                  : activeLog
-                    ? 'Sleep in progress'
-                    : 'Ready when you are'}
-              </h2>
-            </div>
-            <span className={styles.scoreBadge}>
-              {sleepScore?.statusLabel ?? 'No sleep data yet'}
-            </span>
-          </div>
-
-          {sleepScore?.hasData ? (
-            <>
-              <p className={styles.scoreBody}>
-                Strongest area: <strong>{sleepScore.strongestArea}</strong>
-                {' | '}
-                Biggest challenge: <strong>{sleepScore.biggestChallenge}</strong>
-              </p>
-              <p className={styles.scoreFocus}>
-                <span className="text-label">Tonight&apos;s focus</span>
-                {sleepScore.tonightFocus}
-              </p>
-
-              <div className={styles.metricGrid}>
-                <article className={`${styles.metricCard} card animate-fade-up`}>
-                  <span className="text-label">Night sleep</span>
-                  <strong className="text-data">{sleepScore.breakdown.nightSleep}/100</strong>
-                </article>
-                <article className={`${styles.metricCard} card animate-fade-up`}>
-                  <span className="text-label">Day sleep</span>
-                  <strong className="text-data">{sleepScore.breakdown.daySleep}/100</strong>
-                </article>
-                <article className={`${styles.metricCard} card animate-fade-up`}>
-                  <span className="text-label">Total sleep</span>
-                  <strong className="text-data">{sleepScore.breakdown.totalSleep}/100</strong>
-                </article>
-                <article className={`${styles.metricCard} card animate-fade-up`}>
-                  <span className="text-label">Settling</span>
-                  <strong className="text-data">{sleepScore.breakdown.settling}/100</strong>
-                </article>
-              </div>
-
-              <p className={styles.scoreMeta}>
-                Age band: {sleepScore.ageBand} | Observed {sleepScore.observedSleepHours}h
-                over the last 7 days | Target {sleepScore.targetSleepHours}h/day
-              </p>
-            </>
-          ) : (
-            <>
-              <p className={styles.scoreBody}>
-                {activeLog
-                  ? 'When you end the current sleep session, Somni will start building a simple, explainable score from your history.'
-                  : 'Log your first sleep and Somni will turn that history into a simple, explainable score.'}
-              </p>
-
-              <div className={styles.emptySteps} aria-label="Getting started steps">
-                <div className={`${styles.step} card`}>
-                  <span className={styles.stepNumber}>1</span>
-                  <div className={styles.stepBody}>
-                    <strong>Log the next sleep</strong>
-                    <span>
-                      Tap <em>Log sleep</em>, then press Start when sleep begins and End when your baby wakes.
-                    </span>
-                  </div>
-                </div>
-                <div className={`${styles.step} card`}>
-                  <span className={styles.stepNumber}>2</span>
-                  <div className={styles.stepBody}>
-                    <strong>Add optional tags</strong>
-                    <span>
-                      If it helps later, add a quick tag like <em>feed</em> or <em>resettle</em>. Skip it if you are tired.
-                    </span>
-                  </div>
-                </div>
-                <div className={`${styles.step} card`}>
-                  <span className={styles.stepNumber}>3</span>
-                  <div className={styles.stepBody}>
-                    <strong>Ask Somni one focused question</strong>
-                    <span>
-                      Best format: baby age + what happened + what you have tried + what you want to change.
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <p className={styles.emptyTip}>
-                Tip: close enough is good enough. Consistency matters more than perfect timestamps.
-              </p>
-            </>
-          )}
-        </div>
+        <SleepScorePanel
+          sleepScore={sleepScore}
+          hasActiveSleep={Boolean(activeLog)}
+          styles={styles}
+        />
 
         <DailyPlanPanel
           babyName={baby?.name ?? 'your baby'}

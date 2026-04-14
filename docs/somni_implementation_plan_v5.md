@@ -21,14 +21,19 @@ In each new chat:
 ## Recommended Execution Order
 
 1. Foundation cleanup
+   - Status: completed on 2026-04-14
 2. Sleep score v2
+   - Status: completed on 2026-04-14
 3. AI quality hardening
+   - Status: next
 4. Real-world constraint coaching
 5. Beta readiness
 
 Sections 3 and 4 can overlap later, but only after Section 1 is complete.
 
 ## Section 1 - Foundation Cleanup
+
+Status: completed on 2026-04-14
 
 ### Goal
 
@@ -84,6 +89,23 @@ paper cuts before we do more advanced product work.
 - `vercel.json` schedule and docs agree
 - Current docs have no obvious route or env-var drift
 
+### Completed Work
+
+- Converted legacy helper scripts to ESM:
+  - `scripts/cleanup_csv.mjs`
+  - `scripts/debug_chat.mjs`
+- Added support-origin tracking and logging:
+  - `src/components/support/SupportOriginTracker.tsx`
+  - `src/app/layout.tsx`
+  - `src/components/support/SupportForm.tsx`
+  - `src/app/api/support/route.ts`
+- Confirmed and aligned AI memory backfill timing in `vercel.json`
+- Cleaned up current docs and added `docs/somni_verification_checklist.md`
+- Verified:
+  - `npm run lint`
+  - `npm test -- --run`
+  - `npm run build`
+
 ### Recommended Codex Setup
 
 - Model: `5.3 Codex`
@@ -95,6 +117,8 @@ Why:
 - `5.3 Codex` should give strong code-edit quality without paying for heavier reasoning than we need.
 
 ## Section 2 - Sleep Score v2
+
+Status: completed on 2026-04-14
 
 ### Goal
 
@@ -147,6 +171,28 @@ parts of Somni can help them.
 - `npm test -- --run` passes
 - `npm run build` passes
 - Score labels, helper text, and status logic all agree
+
+### Completed Work
+
+- Implemented a sparse-data policy in `src/lib/scoring/sleep-score.ts`
+  - no-data state
+  - learning / sparse-data state
+  - ready-to-score state
+- Switched scoring to a true recent 7-day window instead of the latest 7 sessions
+- Updated status labels, helper text, and supportive explanation wording
+- Added clarifying questions for sparse-data coaching follow-up
+- Updated dashboard and chat consumers so UI and prompt logic agree
+- Added edge-case and dashboard-state tests for:
+  - zero logs
+  - one or two logs
+  - mixed day/night coverage
+  - age-band transitions
+  - fragmented older-baby nights
+  - empty / learning / ready dashboard states
+- Verified:
+  - `npm test -- --run`
+  - `npm run build`
+  - `npm run lint`
 
 ### Recommended Codex Setup
 

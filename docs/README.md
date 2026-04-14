@@ -15,6 +15,9 @@ and one-off prompt files have been moved to `archive/`.
   The current next-step execution plan. Each section is designed to be worked in a separate
   Codex chat.
 
+- `somni_verification_checklist.md`
+  The minimum post-change checks to keep quality gates and docs consistency reliable.
+
 ## Supporting current docs
 
 - `somni_ai_persona.md`

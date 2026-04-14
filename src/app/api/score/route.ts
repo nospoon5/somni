@@ -1,5 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
-import { calculateSleepScore } from '@/lib/scoring/sleep-score'
+import {
+  calculateSleepScore,
+  getSleepScoreLookbackStart,
+  SLEEP_SCORE_FETCH_LIMIT,
+} from '@/lib/scoring/sleep-score'
 
 export async function GET() {
   const supabase = await createClient()
@@ -33,6 +37,8 @@ export async function GET() {
     return Response.json({ error: 'Baby profile missing' }, { status: 404 })
   }
 
+  const lookbackStart = getSleepScoreLookbackStart()
+
   const { data: activeLog } = await supabase
     .from('sleep_logs')
     .select('id, started_at, ended_at, is_night, tags')
@@ -46,8 +52,9 @@ export async function GET() {
     .from('sleep_logs')
     .select('id, started_at, ended_at, is_night, tags')
     .eq('baby_id', baby.id)
+    .gte('started_at', lookbackStart.toISOString())
     .order('started_at', { ascending: false })
-    .limit(7)
+    .limit(SLEEP_SCORE_FETCH_LIMIT)
 
   const logs = [
     ...(recentLogs ?? []).map((log) => ({

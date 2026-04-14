@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { resolveSupportOrigin } from '@/lib/support/origin'
 import styles from './SupportForm.module.css'
 
 type SupportCategory = 'bug' | 'feedback' | 'billing' | 'other'
@@ -19,14 +21,26 @@ const categoryOptions: Array<{ value: SupportCategory; label: string }> = [
 ]
 
 export function SupportForm() {
+  const searchParams = useSearchParams()
   const [category, setCategory] = useState<SupportCategory>('bug')
   const [message, setMessage] = useState('')
-  const [pageUrl, setPageUrl] = useState('')
+  const [originPage, setOriginPage] = useState('')
+  const [supportPage, setSupportPage] = useState('')
   const [state, setState] = useState<SubmitState>({ status: 'idle' })
 
   useEffect(() => {
-    setPageUrl(window.location.href)
-  }, [])
+    const currentSupportPage = `${window.location.pathname}${window.location.search}`
+    const resolvedOrigin = resolveSupportOrigin({
+      appOrigin: window.location.origin,
+      currentSupportPage,
+      queryOrigin: searchParams.get('from'),
+      lastInAppPage: sessionStorage.getItem('somni:last-in-app-page'),
+      documentReferrer: document.referrer,
+    })
+
+    setOriginPage(resolvedOrigin)
+    setSupportPage(currentSupportPage)
+  }, [searchParams])
 
   async function submit() {
     const trimmed = message.trim()
@@ -49,7 +63,8 @@ export function SupportForm() {
         body: JSON.stringify({
           category,
           message: trimmed,
-          pageUrl,
+          originPage,
+          supportPage,
           userAgent: navigator.userAgent,
         }),
       })
@@ -92,8 +107,8 @@ export function SupportForm() {
         </label>
 
         <label className={styles.field}>
-          <span>Page</span>
-          <input value={pageUrl} readOnly />
+          <span>Where this happened</span>
+          <input value={originPage} readOnly />
         </label>
 
         <label className={styles.fieldWide}>
@@ -129,4 +144,3 @@ export function SupportForm() {
     </section>
   )
 }
-

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Playfair_Display, DM_Sans, DM_Mono } from 'next/font/google'
 import './globals.css'
 import { PwaServiceWorker } from '@/components/pwa/PwaServiceWorker'
+import { SupportOriginTracker } from '@/components/support/SupportOriginTracker'
 import { SiteFooter } from '@/components/ui/SiteFooter'
 import { AppBottomNav } from '@/components/ui/AppBottomNav'
 
@@ -54,6 +55,7 @@ export default function RootLayout({
     >
       <body>
         <PwaServiceWorker />
+        <SupportOriginTracker />
         {children}
         <AppBottomNav />
         <SiteFooter />

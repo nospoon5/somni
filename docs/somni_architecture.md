@@ -58,7 +58,7 @@ Current live product areas:
 | `/sleep` | Sleep logging and sleep history | Authenticated |
 | `/profile` | Profile and baby settings | Authenticated |
 | `/billing` | Upgrade and billing management | Authenticated |
-| `/support` | Support form | Authenticated |
+| `/support` | Support form | Public (submission requires auth) |
 | `/privacy` | Privacy policy | Public |
 | `/terms` | Terms of service | Public |
 | `/disclaimer` | Medical and product disclaimer | Public |
@@ -102,7 +102,9 @@ Current note:
 
 1. User starts or ends sleep sessions in the app.
 2. Server logic validates ownership and active-session rules.
-3. Dashboard and score calculations read the latest sleep data.
+3. Dashboard and score calculations read the recent 7-day sleep window.
+4. If Somni has fewer than 3 covered days, fewer than 4 logs, or only day-only/night-only
+   coverage, it stays in a learning state instead of showing a numeric score.
 
 ### Chat Flow
 
@@ -126,9 +128,17 @@ Current note:
 
 ### Support Flow
 
-1. User submits a support request from `/support`.
-2. Route handler validates the payload.
-3. Request is written to runtime logs as structured JSON.
+1. User opens `/support` after a problem page.
+2. Client logic stores the last in-app page and prefills it as support origin context.
+3. User submits a support request from `/support`.
+4. Route handler validates the payload.
+5. Request is written to runtime logs as structured JSON.
+
+Support logs include:
+
+- `origin_page` for the issue page
+- `support_page` for the form URL
+- `page_url` as a compatibility alias for `origin_page`
 
 Current tradeoff:
 
@@ -138,7 +148,7 @@ Current tradeoff:
 ### Background Flow
 
 - Vercel cron calls `/api/cron/memory-backfill`.
-- Current schedule in `vercel.json`: once per day at `0 0 * * *`.
+- Current schedule in `vercel.json`: once per day at `0 14 * * *` (midnight AEST, UTC+10).
 - The job refreshes `babies.ai_memory` from recent conversations.
 
 ## Data Model Summary
@@ -201,8 +211,6 @@ Main runtime variables:
 ## Known Architecture Gaps
 
 - Support is runtime-log based rather than inbox based.
-- Sleep score sparse-data behavior still needs a product decision and implementation cleanup.
-- Lint is currently red because of two legacy helper scripts.
 - Retrieval still needs better observability for edge-case misses.
 
 ## Companion Docs

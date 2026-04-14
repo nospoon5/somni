@@ -6,6 +6,8 @@ type SupportCategory = 'bug' | 'feedback' | 'billing' | 'other'
 type SupportRequestBody = {
   category?: unknown
   message?: unknown
+  originPage?: unknown
+  supportPage?: unknown
   pageUrl?: unknown
   userAgent?: unknown
 }
@@ -32,7 +34,8 @@ export async function POST(request: Request) {
   const rawBody = (await request.json().catch(() => null)) as SupportRequestBody | null
   const categoryRaw = rawBody?.category
   const message = clampText(rawBody?.message, 2000)
-  const pageUrl = clampText(rawBody?.pageUrl, 300)
+  const originPage = clampText(rawBody?.originPage ?? rawBody?.pageUrl, 300)
+  const supportPage = clampText(rawBody?.supportPage, 300)
   const userAgent = clampText(rawBody?.userAgent, 300)
 
   if (!isCategory(categoryRaw)) {
@@ -59,7 +62,10 @@ export async function POST(request: Request) {
       email: user.email ?? null,
       category: categoryRaw,
       message,
-      page_url: pageUrl || null,
+      origin_page: originPage || null,
+      support_page: supportPage || null,
+      // Kept for log query compatibility with older filters.
+      page_url: originPage || null,
       user_agent: userAgent || null,
       created_at: new Date().toISOString(),
     })
@@ -67,4 +73,3 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ id })
 }
-

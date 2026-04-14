@@ -15,7 +15,13 @@ import { buildChatPrompt } from '@/lib/ai/prompt'
 import { extractUpdatedAiMemory } from '@/lib/ai/memory'
 import { retrieveRelevantChunks, type SleepMethodology } from '@/lib/ai/retrieval'
 import { checkEmergencyRisk, getEmergencyRedirectMessage } from '@/lib/ai/safety'
-import { calculateSleepScore, getAgeBand } from '@/lib/scoring/sleep-score'
+import {
+  buildSleepScorePromptSummary,
+  calculateSleepScore,
+  getAgeBand,
+  getSleepScoreLookbackStart,
+  SLEEP_SCORE_FETCH_LIMIT,
+} from '@/lib/scoring/sleep-score'
 import {
   buildDailyLimitPayload,
   consumeChatQuota,
@@ -623,8 +629,9 @@ export async function POST(request: Request) {
     .from('sleep_logs')
     .select('started_at, ended_at, is_night, tags')
     .eq('baby_id', baby.id)
+    .gte('started_at', getSleepScoreLookbackStart().toISOString())
     .order('started_at', { ascending: false })
-    .limit(7)
+    .limit(SLEEP_SCORE_FETCH_LIMIT)
 
   const { data: recentMessages } = await supabase
     .from('messages')
@@ -714,9 +721,7 @@ export async function POST(request: Request) {
               tags: log.tags ?? [],
             }))
           )
-          const scoreSummary = sleepScore.hasData
-            ? `${sleepScore.totalScore}/100 (${sleepScore.statusLabel}). Focus: ${sleepScore.tonightFocus}`
-            : 'No score data yet.'
+          const scoreSummary = buildSleepScorePromptSummary(sleepScore)
 
           const prompt = buildChatPrompt({
             babyName: baby.name,
