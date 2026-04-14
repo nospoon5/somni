@@ -26,23 +26,23 @@ It's completely normal for your little one's sleep patterns to shift when they'r
 
 Babies, especially those under six months, have developing protective reflexes, making them more vulnerable when unwell. Their airways are smaller and softer, and their head and neck control are still maturing, which means they need extra care to breathe easily.
 
-## Key Points
+## What is Happening
 - Teething and illness are common causes of temporary sleep disruptions and increased night waking.
 - Babies may be more wakeful, fussy, or, conversely, unusually sleepy when unwell.
 - Illness can affect breathing (e.g., blocked nose, snoring) or cause general discomfort.
-- It's important to be flexible with routines and prioritise comfort during these times.
-- Avoid introducing new sleep training methods or expecting consistent results during periods of illness or significant teething discomfort.
 
-## What to Try
-- **Be Flexible with Routines:** During these times, your usual sleep-and-feed routine might need to be adjusted. Focus on responding to your baby's cues rather than sticking rigidly to a schedule.
-- **Offer Extra Comfort:** Gentle rocking, patting, cuddling, or soft singing can help soothe an unsettled baby. Your presence and reassurance are vital when they're not feeling their best.
-- **Maintain a Safe Sleep Environment:** Ensure your baby's sleep space is always clear, firm, flat, and smoke-free. Keep their head and face uncovered to prevent overheating and ensure easy breathing.
+## What to Do Tonight (or Today)
 - **Adjust Clothing for Comfort:** Dress your baby in layers, similar to how you'd dress yourself for the room temperature. Avoid hats or beanies during sleep, as babies regulate their temperature through their heads.
 - **Monitor for Tired Signs:** Look for cues like yawning, rubbing eyes, or fussiness, and respond promptly to prevent your baby from becoming overtired, which can make settling even harder.
 - **Consider Pain Relief (for teething):** If teething pain is significant, discuss appropriate pain relief options with your healthcare professional.
+- **Maintain a Safe Sleep Environment:** Ensure your baby's sleep space is always clear, firm, flat, and smoke-free. Keep their head and face uncovered to prevent overheating and ensure easy breathing.
 
-## When to Seek Help
-- If your baby is unusually sleepy, hard to wake, or their behaviour is concerning you.
-- If your baby's snoring is persistent, even when they don't have a cold, as it could indicate an underlying issue.
-- If sleep problems are prolonged or significantly impacting your baby's wellbeing or your family's mental health.
-- Always consult your doctor or child health nurse if you have any worries about your baby's health or sleep.
+## What Compromise is Acceptable
+- **Be Flexible with Routines:** During these times, your usual sleep-and-feed routine might need to be adjusted. Focus on responding to your baby's cues rather than sticking rigidly to a schedule.
+- **Offer Extra Comfort:** Gentle rocking, patting, cuddling, or soft singing can help soothe an unsettled baby. Your presence and reassurance are vital when they're not feeling their best.
+- **Pause sleep training:** Avoid introducing new sleep training methods or expecting consistent results during periods of illness or significant teething discomfort.
+
+## When to Review the Plan Again
+- Review when symptoms fade (usually 3-5 days for erupting teeth, or after the worst of a cold passes).
+- Once well, immediately return to your normal expectations and settling methods.
+- **Seek medical help if:** your baby is unusually sleepy, hard to wake, their breathing is labored, or their behaviour is concerning you; if their snoring is persistent even when not unwell; or if you have any worries about their health.

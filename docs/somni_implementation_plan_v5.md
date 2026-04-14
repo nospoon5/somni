@@ -27,8 +27,9 @@ In each new chat:
 3. AI quality hardening
    - Status: completed on 2026-04-14
 4. Real-world constraint coaching
-   - Status: next
+   - Status: completed on 2026-04-14
 5. Beta readiness
+   - Status: next
 
 Sections 3 and 4 can overlap later, but only after Section 1 is complete.
 
@@ -326,7 +327,9 @@ Why:
 - This section mixes product reasoning, prompt design, retrieval tuning, and evaluation design.
 - It benefits from stronger reasoning more than from raw code speed.
 
-## Section 4 - Real-World Constraint Coaching
+## Section 4 - Real-world constraint coaching
+
+Status: completed on 2026-04-14
 
 ### Goal
 
@@ -382,6 +385,24 @@ sleep textbook conditions.
 - Daily-plan updates remain coherent when scenario changes affect today's plan
 - Retrieval and response checks for the chosen scenarios pass
 - `npm run build` passes
+
+### Completed Work
+
+- Updated `src/lib/ai/prompt.ts` to include a mandatory "What compromise is okay" section for constraint questions.
+- Updated `src/lib/ai/prompt.ts` to enforce a "When to review the plan again" check on advice.
+- Standardised the headings across real-world constraint corpus chunks to ensure the LLM consistently returns: What is Happening, What To Do Tonight, Compromise, and Review.
+- Refactored:
+  - `corpus/chunks/all_ages_travel_sleep_porta_cot.md`
+  - `corpus/chunks/all_ages_teething_illness_impacting_sleep.md`
+  - `corpus/chunks/all_ages_daycare_nap_impact.md`
+  - `corpus/chunks/all_ages_schedule_constraints_daycare_work.md`
+- Created new corpus chunk for Caregiver confusion/split routines in:
+  - `corpus/chunks/all_ages_caregiver_handoff_split_routine.md`
+- Verified:
+  - `npm run build` passes
+  - `npm test -- --run` passes
+  - `node scripts/verify-stage4-retrieval.mjs` continues to pass
+  - `node scripts/verify-stage4-chat-e2e.mjs` ensures core constraints function without breaking the app.
 
 ### Recommended Codex Setup
 
