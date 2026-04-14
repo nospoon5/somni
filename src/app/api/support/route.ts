@@ -49,27 +49,21 @@ export async function POST(request: Request) {
     )
   }
 
-  const id = crypto.randomUUID()
+  // Stage 5 beta-readiness: Store in DB for easy manual querying.
+  const { error } = await supabase.from('support_tickets').insert({
+    profile_id: user.id,
+    email: user.email ?? null,
+    category: categoryRaw,
+    message,
+    origin_page: originPage || null,
+    support_page: supportPage || null,
+    user_agent: userAgent || null,
+  })
 
-  // Stage D beta-readiness: keep this lightweight and reliable.
-  // We log to runtime logs (searchable in Vercel) instead of introducing a new DB table
-  // or email provider dependency during the recovery phase.
-  console.log(
-    'SUPPORT_REQUEST',
-    JSON.stringify({
-      id,
-      profile_id: user.id,
-      email: user.email ?? null,
-      category: categoryRaw,
-      message,
-      origin_page: originPage || null,
-      support_page: supportPage || null,
-      // Kept for log query compatibility with older filters.
-      page_url: originPage || null,
-      user_agent: userAgent || null,
-      created_at: new Date().toISOString(),
-    })
-  )
+  if (error) {
+    console.error('Failed to insert support ticket:', error)
+    return NextResponse.json({ error: 'Failed to submit support request. Please try again.' }, { status: 500 })
+  }
 
-  return NextResponse.json({ id })
+  return NextResponse.json({ success: true })
 }

@@ -29,7 +29,7 @@ In each new chat:
 4. Real-world constraint coaching
    - Status: completed on 2026-04-14
 5. Beta readiness
-   - Status: next
+   - Status: completed on 2026-04-31
 
 Sections 3 and 4 can overlap later, but only after Section 1 is complete.
 
@@ -472,6 +472,16 @@ risk.
 - `npm run build` passes
 - There is a documented place to check when support issues arrive
 - A short release checklist exists and is usable
+
+### Completed Work
+
+- Added robust API-level smoke tests covering critical flows in `scripts/verify-stage5-smoke.mjs`.
+- Upgraded the support feedback UI workflow:
+  - Created a database schema migration `supabase/migrations/20260414_add_support_tickets.sql` to hold the data tracking.
+  - Re-routed `src/app/api/support/route.ts` to log into the database instead of the Vercel logs.
+- Wrote monitoring and manual ticket triage operational document: `docs/somni_support_triage.md`.
+- Finalized release hygiene procedures: `docs/somni_release_checklist.md`.
+- Quality gates verified: Tests passing, Typescript building correctly, lint completely clean.
 
 ### Recommended Codex Setup
 
