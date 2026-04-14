@@ -10,11 +10,24 @@ Run from project root:
 npm run lint
 npm test -- --run
 npm run build
+node scripts/verify-stage4-retrieval.mjs
 ```
 
 Expected result:
 
-- All three commands pass with no errors.
+- All four commands pass with no errors.
+
+AI-focused follow-up when retrieval or prompt logic changed:
+
+```bash
+node scripts/verify-stage4-chat-e2e.mjs
+```
+
+Expected result:
+
+- Normal chat still includes source attribution.
+- Emergency prompts still trigger the safety redirect.
+- Retrieval diagnostics are available in debug mode.
 
 ## 2) Fast product sanity check
 

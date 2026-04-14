@@ -1,0 +1,47 @@
+[
+  {
+    "id": "early-waking-5am",
+    "label": "Early morning waking",
+    "query": "She keeps waking up at 5:00 AM bright and ready to start the day. Bedtime is 7:00 PM. How do I shift her to a 6:30 AM wake up?",
+    "ageBand": "4-6 months",
+    "methodology": "fast-track",
+    "maxRank": 1,
+    "expectTopIds": ["all-ages-early-morning-waking"]
+  },
+  {
+    "id": "daycare-bedtime-clash",
+    "label": "Daycare bedtime clash",
+    "query": "He takes a massive 3-hour nap at daycare from 12pm to 3pm, but then at home he refuses to go to sleep until 9:30 PM. I get no evening.",
+    "ageBand": "12 months+",
+    "methodology": "balanced",
+    "maxRank": 2,
+    "expectTopIds": ["all-ages-daycare-nap-impact", "all-ages-schedule-constraints-daycare-work"]
+  },
+  {
+    "id": "daycare-dropoff-nap",
+    "label": "Daycare drop-off schedule constraint",
+    "query": "I literally can't do the morning nap anymore because of daycare dropoffs. Ignore whatever plan we had. Please push his first nap to exactly 11:30 AM every day going forward.",
+    "ageBand": "6-12 months",
+    "methodology": "balanced",
+    "maxRank": 2,
+    "expectTopIds": ["all-ages-schedule-constraints-daycare-work", "6-12m-nap-transition-2-to-1-bridging"]
+  },
+  {
+    "id": "toddler-nap-transition",
+    "label": "Toddler nap transition edge case",
+    "query": "Do toddlers need a morning nap at 13 months, or should they all be on one nap by this age?",
+    "ageBand": "12 months+",
+    "methodology": "fast-track",
+    "maxRank": 1,
+    "expectTopIds": ["12m-plus-nap-transitions"]
+  },
+  {
+    "id": "vague-reset",
+    "label": "Vague reset question",
+    "query": "Sleep is bad. Fix it.",
+    "ageBand": "6-12 months",
+    "methodology": "balanced",
+    "maxRank": 1,
+    "expectTopIds": ["6-12m-independent-settling-common-mistakes", "12m-plus-independent-settling-common-mistakes"]
+  }
+]

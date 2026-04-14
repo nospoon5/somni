@@ -18,6 +18,9 @@ and one-off prompt files have been moved to `archive/`.
 - `somni_verification_checklist.md`
   The minimum post-change checks to keep quality gates and docs consistency reliable.
 
+- `somni_ai_quality_hardening.md`
+  The current retrieval weakness list, diagnostics hooks, and targeted regression checks.
+
 ## Supporting current docs
 
 - `somni_ai_persona.md`

@@ -1,11 +1,18 @@
 import 'server-only'
 
 import { createClient } from '@/lib/supabase/server'
+import {
+  rerankRetrievedChunks,
+  type RetrievalDiagnostics,
+  type RetrievalRankingCandidate,
+} from '@/lib/ai/retrieval-ranking'
+export type { RetrievalDiagnostics } from '@/lib/ai/retrieval-ranking'
 
 const EMBEDDING_MODEL = process.env.GEMINI_EMBEDDING_MODEL || 'gemini-embedding-001'
 const EMBEDDING_DIMENSION = 768
 const DEFAULT_MATCH_LIMIT = 7
 const MIN_SIMILARITY = 0.3
+const MAX_INTERNAL_MATCH_LIMIT = 12
 
 export type SleepMethodology = 'gentle' | 'balanced' | 'fast-track' | 'all'
 
@@ -26,6 +33,11 @@ export type RetrieveChunksInput = {
   ageBand?: string | null
   methodology?: SleepMethodology | null
   limit?: number
+}
+
+export type RetrieveChunksResult = {
+  chunks: RetrievedCorpusChunk[]
+  diagnostics: RetrievalDiagnostics
 }
 
 function parseSources(value: unknown): Array<{ name: string; url: string }> {
@@ -71,6 +83,10 @@ function clampLimit(value: number | undefined) {
   }
 
   return Math.min(Math.max(Math.floor(value), 1), 20)
+}
+
+function getInternalMatchLimit(limit: number) {
+  return Math.min(Math.max(limit * 3, limit + 2), MAX_INTERNAL_MATCH_LIMIT)
 }
 
 function formatVectorLiteral(values: number[]) {
@@ -199,40 +215,110 @@ async function embedQuery(query: string) {
 export async function retrieveRelevantChunks(
   input: RetrieveChunksInput
 ): Promise<RetrievedCorpusChunk[]> {
+  const result = await retrieveRelevantChunksWithDiagnostics(input)
+  return result.chunks
+}
+
+function buildEmptyDiagnostics(input: RetrieveChunksInput, limit: number): RetrievalDiagnostics {
+  return {
+    queryPreview: '',
+    ageBand: input.ageBand?.trim() || null,
+    methodology: normalizeMethodology(input.methodology),
+    strategy: 'empty',
+    limit,
+    candidateCount: 0,
+    selectedCount: 0,
+    intents: [],
+    candidates: [],
+  }
+}
+
+function toRetrievedChunk(row: {
+  id: unknown
+  chunk_id: unknown
+  topic: unknown
+  age_band: unknown
+  methodology: unknown
+  content: unknown
+  sources: unknown
+  confidence: unknown
+  similarity: unknown
+}) {
+  return {
+    id: String(row.id),
+    chunkId: String(row.chunk_id),
+    topic: String(row.topic),
+    ageBand: row.age_band ? String(row.age_band) : null,
+    methodology: String(row.methodology) as SleepMethodology,
+    content: String(row.content),
+    sources: parseSources(row.sources),
+    confidence: String(row.confidence) as RetrievedCorpusChunk['confidence'],
+    similarity: Number(row.similarity ?? 0),
+  } satisfies RetrievedCorpusChunk
+}
+
+function rerankChunks(args: {
+  query: string
+  ageBand: string | null
+  methodology: SleepMethodology | null
+  strategy: RetrievalDiagnostics['strategy']
+  limit: number
+  candidates: RetrievedCorpusChunk[]
+}): RetrieveChunksResult {
+  const reranked = rerankRetrievedChunks({
+    query: args.query,
+    ageBand: args.ageBand,
+    methodology: args.methodology,
+    strategy: args.strategy,
+    limit: args.limit,
+    candidates: args.candidates as RetrievalRankingCandidate[],
+  })
+
+  return {
+    chunks: reranked.selected as RetrievedCorpusChunk[],
+    diagnostics: reranked.diagnostics,
+  }
+}
+
+export async function retrieveRelevantChunksWithDiagnostics(
+  input: RetrieveChunksInput
+): Promise<RetrieveChunksResult> {
   const trimmedQuery = input.query.trim()
+  const limit = clampLimit(input.limit)
+
   if (!trimmedQuery) {
-    return []
+    return {
+      chunks: [],
+      diagnostics: buildEmptyDiagnostics(input, limit),
+    }
   }
 
   const queryEmbedding = await embedQuery(trimmedQuery)
-  const limit = clampLimit(input.limit)
   const supabase = await createClient()
   const preferredMethodology = normalizeMethodology(input.methodology)
   const preferredAgeBand = input.ageBand?.trim() || null
+  const internalLimit = getInternalMatchLimit(limit)
 
   const { data, error } = await supabase.rpc('match_corpus_chunks', {
     query_embedding: formatVectorLiteral(queryEmbedding),
-    match_count: limit,
+    match_count: internalLimit,
     preferred_age_band: preferredAgeBand,
     preferred_methodology: preferredMethodology,
   })
 
   if (!error) {
-    const rows = Array.isArray(data) ? data : []
-
-    return rows
-      .map((row) => ({
-        id: String(row.id),
-        chunkId: String(row.chunk_id),
-        topic: String(row.topic),
-        ageBand: row.age_band ? String(row.age_band) : null,
-        methodology: String(row.methodology) as SleepMethodology,
-        content: String(row.content),
-        sources: parseSources(row.sources),
-        confidence: String(row.confidence) as RetrievedCorpusChunk['confidence'],
-        similarity: Number(row.similarity ?? 0),
-      }))
+    const rows = (Array.isArray(data) ? data : [])
+      .map((row) => toRetrievedChunk(row))
       .filter((row) => row.similarity >= MIN_SIMILARITY)
+
+    return rerankChunks({
+      query: trimmedQuery,
+      ageBand: preferredAgeBand,
+      methodology: preferredMethodology,
+      strategy: 'rpc',
+      limit,
+      candidates: rows,
+    })
   }
 
   const isMissingRpc =
@@ -280,7 +366,14 @@ export async function retrieveRelevantChunks(
     })
     .filter((row) => row.similarity >= MIN_SIMILARITY)
     .sort((a, b) => b.similarity - a.similarity)
-    .slice(0, limit)
+    .slice(0, internalLimit)
 
-  return ranked
+  return rerankChunks({
+    query: trimmedQuery,
+    ageBand: preferredAgeBand,
+    methodology: preferredMethodology,
+    strategy: 'fallback',
+    limit,
+    candidates: ranked,
+  })
 }

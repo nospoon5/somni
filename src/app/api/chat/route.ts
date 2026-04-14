@@ -13,7 +13,11 @@ import {
 } from '@/lib/daily-plan'
 import { buildChatPrompt } from '@/lib/ai/prompt'
 import { extractUpdatedAiMemory } from '@/lib/ai/memory'
-import { retrieveRelevantChunks, type SleepMethodology } from '@/lib/ai/retrieval'
+import {
+  retrieveRelevantChunksWithDiagnostics,
+  type RetrievalDiagnostics,
+  type SleepMethodology,
+} from '@/lib/ai/retrieval'
 import { checkEmergencyRisk, getEmergencyRedirectMessage } from '@/lib/ai/safety'
 import {
   buildSleepScorePromptSummary,
@@ -386,6 +390,45 @@ function createSseEvent(event: string, data: unknown) {
   return `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`
 }
 
+function shouldIncludeRetrievalDiagnostics(request: Request, isEvalMode: boolean) {
+  const url = new URL(request.url)
+  return (
+    process.env.SOMNI_INCLUDE_RETRIEVAL_DEBUG === 'true' ||
+    isEvalMode ||
+    request.headers.get('x-retrieval-debug') === 'true' ||
+    url.searchParams.get('retrieval_debug') === '1'
+  )
+}
+
+function shouldLogRetrievalDiagnostics(request: Request, isEvalMode: boolean) {
+  return (
+    shouldIncludeRetrievalDiagnostics(request, isEvalMode) ||
+    process.env.SOMNI_LOG_RETRIEVAL === 'true'
+  )
+}
+
+function buildRetrievalLogPayload(diagnostics: RetrievalDiagnostics, conversationId: string) {
+  return {
+    conversationId,
+    queryPreview: diagnostics.queryPreview,
+    strategy: diagnostics.strategy,
+    ageBand: diagnostics.ageBand,
+    methodology: diagnostics.methodology,
+    intents: diagnostics.intents,
+    selectedCount: diagnostics.selectedCount,
+    candidates: diagnostics.candidates
+      .filter((candidate) => candidate.selected)
+      .map((candidate) => ({
+        chunkId: candidate.chunkId,
+        topic: candidate.topic,
+        retrievalScore: candidate.retrievalScore,
+        rerankBoost: candidate.rerankBoost,
+        finalScore: candidate.finalScore,
+        reasons: candidate.reasons.map((reason) => reason.label),
+      })),
+  }
+}
+
 type PersistAiMemoryArgs = {
   supabase: Awaited<ReturnType<typeof createClient>>
   profileId: string
@@ -548,6 +591,8 @@ export async function POST(request: Request) {
   }
 
   const isEvalMode = request.headers.get('x-eval-mode') === 'true'
+  const includeRetrievalDiagnostics = shouldIncludeRetrievalDiagnostics(request, isEvalMode)
+  const logRetrievalDiagnostics = shouldLogRetrievalDiagnostics(request, isEvalMode)
 
   const requestedConversationId =
     typeof body.conversationId === 'string' ? body.conversationId.trim() : ''
@@ -701,12 +746,21 @@ export async function POST(request: Request) {
           }
 
           const ageBand = getAgeBand(baby.date_of_birth)
-          const retrievedChunks = await retrieveRelevantChunks({
+          const retrievalResult = await retrieveRelevantChunksWithDiagnostics({
             query: message,
             ageBand,
             methodology: (preferences?.sleep_style_label as SleepMethodology | null) ?? 'all',
             limit: 5,
           })
+          const retrievedChunks = retrievalResult.chunks
+          const retrievalDiagnostics = retrievalResult.diagnostics
+
+          if (logRetrievalDiagnostics) {
+            console.info(
+              '[chat] retrieval',
+              JSON.stringify(buildRetrievalLogPayload(retrievalDiagnostics, conversationId))
+            )
+          }
 
           const sources = toSourceAttribution(retrievedChunks)
           const confidence = getConfidenceLabel(retrievedChunks.length)
@@ -827,6 +881,12 @@ export async function POST(request: Request) {
                 confidence,
                 conversation_id: conversationId,
                 replace_message: replaceMessage,
+                retrieval:
+                  includeRetrievalDiagnostics && retrievalDiagnostics.selectedCount > 0
+                    ? retrievalDiagnostics
+                    : includeRetrievalDiagnostics
+                      ? retrievalDiagnostics
+                      : undefined,
               })
             )
           )

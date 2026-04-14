@@ -25,8 +25,9 @@ In each new chat:
 2. Sleep score v2
    - Status: completed on 2026-04-14
 3. AI quality hardening
-   - Status: next
+   - Status: completed on 2026-04-14
 4. Real-world constraint coaching
+   - Status: next
 5. Beta readiness
 
 Sections 3 and 4 can overlap later, but only after Section 1 is complete.
@@ -206,6 +207,8 @@ Why:
 
 ## Section 3 - AI Quality Hardening
 
+Status: completed on 2026-04-14
+
 ### Goal
 
 Push Somni's retrieval, prompt discipline, and evaluation workflow from "good first cut" to
@@ -260,6 +263,59 @@ especially around edge-case or vague queries.
 - `npm run build` passes
 - At least one targeted re-run shows net improvement on the chosen weakness set
 
+### Completed Work
+
+- Added a lightweight second-pass retrieval re-ranker in:
+  - `src/lib/ai/retrieval-ranking.ts`
+  - `src/lib/ai/retrieval.ts`
+- Added retrieval diagnostics to the chat route in:
+  - `src/app/api/chat/route.ts`
+- Added focused weak-scenario coverage for:
+  - early morning waking
+  - daycare bedtime clashes
+  - daycare drop-off nap constraints
+  - toddler nap-transition edge cases
+  - vague reset questions
+- Added repeatable retrieval checks in:
+  - `scripts/eval_data/retrieval_weakness_cases.json`
+  - `scripts/verify-stage4-retrieval.mjs`
+- Added focused ranking tests in:
+  - `src/lib/ai/retrieval-ranking.test.ts`
+- Updated end-to-end chat verification to confirm:
+  - citations still appear
+  - emergency redirects still fire
+  - retrieval diagnostics are available in debug mode
+- Documented the hardening work in:
+  - `docs/somni_ai_quality_hardening.md`
+
+### Verified Result
+
+- Weakness-set comparison:
+  - improved: 1
+  - regressed: 0
+  - unchanged: 4
+- Most important retrieval fix:
+  - the dedicated early-morning-waking chunk moved from rank 3 to rank 1 for the target case
+- Verified:
+  - `npm run lint`
+  - `npm test -- --run`
+  - `npm run build`
+  - `node scripts/verify-stage4-retrieval.mjs`
+  - `node scripts/verify-stage4-chat-e2e.mjs`
+
+### Retrieval Inspection Notes
+
+Use these before changing corpus content, prompt rules, or retrieval logic again:
+
+1. Run the focused weakness set:
+   - `node scripts/verify-stage4-retrieval.mjs`
+2. If you need server-side retrieval logs:
+   - set `SOMNI_LOG_RETRIEVAL=true`
+3. If you need retrieval diagnostics returned by `/api/chat`:
+   - set `SOMNI_INCLUDE_RETRIEVAL_DEBUG=true`
+4. Read:
+   - `docs/somni_ai_quality_hardening.md`
+
 ### Recommended Codex Setup
 
 - Model: `5.4`
@@ -298,6 +354,10 @@ sleep textbook conditions.
 2. Audit current coverage
    - Check corpus, prompt behavior, and daily-plan behavior for each scenario.
    - Note whether the problem is missing content, weak retrieval, weak phrasing, or missing UI support.
+   - Before changing anything, inspect current retrieval for the chosen scenarios using:
+     - `node scripts/verify-stage4-retrieval.mjs`
+     - `docs/somni_ai_quality_hardening.md`
+   - If a scenario already retrieves the right chunk, prefer prompt or product fixes over broad retrieval changes.
 
 3. Fill the gaps
    - Add or revise chunks where the corpus is thin.

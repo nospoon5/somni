@@ -179,7 +179,15 @@ Important data notes:
 - Current retrieval breadth is 7 chunks.
 - Current minimum similarity threshold is `0.3`.
 - Age band and methodology are soft relevance hints, not hard filters.
+- A lightweight second-pass re-ranker helps surface stronger matches for:
+  - early morning waking
+  - daycare or work constraints
+  - nap transitions
+  - vague reset-plan queries
 - Safety-relevant guidance must still surface even when methodology differs.
+- Retrieval diagnostics can be logged with `SOMNI_LOG_RETRIEVAL=true`.
+- Retrieval diagnostics can be returned in chat debug flows with
+  `SOMNI_INCLUDE_RETRIEVAL_DEBUG=true`, eval mode, or `?retrieval_debug=1`.
 
 ## Environment Variables
 
@@ -211,7 +219,8 @@ Main runtime variables:
 ## Known Architecture Gaps
 
 - Support is runtime-log based rather than inbox based.
-- Retrieval still needs better observability for edge-case misses.
+- Retrieval ranking is now inspectable, but the heuristics should stay narrow and be reviewed
+  whenever the corpus changes materially.
 
 ## Companion Docs
 

@@ -31,6 +31,42 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+async function stopProcessTree(child) {
+  if (!child?.pid) {
+    return;
+  }
+
+  if (process.platform === "win32") {
+    await new Promise((resolve) => {
+      const killer = spawn("taskkill", ["/PID", String(child.pid), "/T", "/F"], {
+        stdio: "ignore",
+        shell: true,
+      });
+      killer.on("close", () => resolve());
+      killer.on("error", () => resolve());
+    });
+    return;
+  }
+
+  child.kill("SIGTERM");
+}
+
+async function waitForServer(url, timeoutMs = 60000) {
+  const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    try {
+      const response = await fetch(url);
+      if (response.ok || response.status === 401) {
+        return;
+      }
+    } catch {
+      // Keep waiting for the server to start.
+    }
+    await sleep(1000);
+  }
+  throw new Error(`Server did not become ready within ${timeoutMs}ms: ${url}`);
+}
+
 function base64url(value) {
   return Buffer.from(value, "utf8")
     .toString("base64")
@@ -133,8 +169,10 @@ async function main() {
 
   const email = `stage4-e2e-${Date.now()}@somni.test`;
   const password = `SomniE2E!${Math.floor(Math.random() * 100000)}`;
+  const port = 3200 + Math.floor(Math.random() * 300);
   let createdUserId = null;
   let serverProcess = null;
+  const serverLogs = [];
 
   try {
     console.log("Step 1: Creating temporary test user...");
@@ -213,25 +251,43 @@ async function main() {
     const cookieName = `sb-${projectRef}-auth-token`;
     const cookieValue = `base64-${base64url(JSON.stringify(signInData.session))}`;
     const cookieHeader = `${cookieName}=${cookieValue}`;
-    console.log("Step 3: Starting local app server on port 3011...");
+    console.log(`Step 3: Starting local app server on port ${port}...`);
 
     serverProcess = spawn("npm", ["run", "start"], {
       cwd: process.cwd(),
-      env: { ...process.env, PORT: "3011" },
+      env: { ...process.env, PORT: String(port), SOMNI_INCLUDE_RETRIEVAL_DEBUG: "true" },
       stdio: "pipe",
       shell: true,
     });
+    serverProcess.stdout?.on("data", (chunk) => {
+      serverLogs.push(chunk.toString());
+      if (serverLogs.length > 40) serverLogs.shift();
+    });
+    serverProcess.stderr?.on("data", (chunk) => {
+      serverLogs.push(chunk.toString());
+      if (serverLogs.length > 40) serverLogs.shift();
+    });
 
-    await sleep(5000);
+    try {
+      await waitForServer(`http://127.0.0.1:${port}/login`);
+    } catch (error) {
+      const recentLogs = serverLogs.join("").trim();
+      throw new Error(
+        `${error instanceof Error ? error.message : "Server did not start"}${
+          recentLogs ? `\nRecent server logs:\n${recentLogs}` : ""
+        }`
+      );
+    }
     console.log("Step 4: Calling normal chat endpoint...");
 
     const normalController = new AbortController();
     const normalTimeout = setTimeout(() => normalController.abort(), 120000);
-    const normalResponse = await fetch("http://127.0.0.1:3011/api/chat", {
+    const normalResponse = await fetch(`http://127.0.0.1:${port}/api/chat?retrieval_debug=1`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Cookie: cookieHeader,
+        "x-eval-mode": "true",
       },
       body: JSON.stringify({
         message: "My 5 month old has short naps and multiple night wakes. What should we try tonight?",
@@ -258,6 +314,12 @@ async function main() {
     if (!Array.isArray(normalResult.donePayload?.sources) || normalResult.donePayload.sources.length === 0) {
       throw new Error("Normal chat response did not include source attribution");
     }
+    if (!normalResult.donePayload?.retrieval?.selectedCount) {
+      throw new Error("Normal chat response did not include retrieval diagnostics");
+    }
+    if (!Array.isArray(normalResult.donePayload?.retrieval?.candidates) || normalResult.donePayload.retrieval.candidates.length === 0) {
+      throw new Error("Retrieval diagnostics did not include candidate details");
+    }
 
     const conversationId = normalResult.donePayload.conversation_id;
 
@@ -283,7 +345,7 @@ async function main() {
     console.log("Step 6: Calling emergency chat endpoint...");
     const emergencyController = new AbortController();
     const emergencyTimeout = setTimeout(() => emergencyController.abort(), 120000);
-    const emergencyResponse = await fetch("http://127.0.0.1:3011/api/chat", {
+    const emergencyResponse = await fetch(`http://127.0.0.1:${port}/api/chat`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -310,12 +372,13 @@ async function main() {
 
     console.log("Stage 4 chat e2e verification passed:");
     console.log("- Authenticated streaming response succeeded");
+    console.log("- Retrieval diagnostics returned for debug mode");
     console.log("- Messages persisted for normal conversation");
     console.log("- Emergency redirect behavior succeeded");
   } finally {
     console.log("Final step: Cleaning up test resources...");
     if (serverProcess) {
-      serverProcess.kill("SIGTERM");
+      await stopProcessTree(serverProcess);
     }
 
     if (createdUserId) {

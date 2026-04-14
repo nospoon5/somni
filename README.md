@@ -72,6 +72,15 @@ Evaluation-only variables:
 Debug-only variable:
 
 - `SOMNI_FORCE_BILLING_FAILURE`
+- `SOMNI_LOG_RETRIEVAL`
+- `SOMNI_INCLUDE_RETRIEVAL_DEBUG`
+
+Retrieval inspection note:
+
+- Run `node scripts/verify-stage4-retrieval.mjs` for the focused weak-scenario check.
+- Use `SOMNI_LOG_RETRIEVAL=true` for server logs.
+- Use `SOMNI_INCLUDE_RETRIEVAL_DEBUG=true` if you want retrieval diagnostics included in the
+  `/api/chat` debug payload.
 
 ## Local setup
 
@@ -102,12 +111,6 @@ npm run verify:stage5:usage
 npm run verify:stage5:stripe
 ```
 
-Known issue:
-
-- `npm run lint` currently fails because `scripts/cleanup_csv.js` and
-  `scripts/debug_chat.js` still use older CommonJS helpers. That cleanup is tracked in
-  `docs/somni_implementation_plan_v5.md`.
-
 ## Docs
 
 Start here when orienting yourself:
@@ -116,5 +119,6 @@ Start here when orienting yourself:
 - `docs/somni_context.md`
 - `docs/somni_architecture.md`
 - `docs/somni_implementation_plan_v5.md`
+- `docs/somni_ai_quality_hardening.md`
 
 Historical planning and handoff files have been moved to `archive/`.
