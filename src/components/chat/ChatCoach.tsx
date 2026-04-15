@@ -94,6 +94,17 @@ function formatResetTime(resetAt: string, timezone: string) {
   }
 }
 
+function formatText(text: string) {
+  if (!text) return text;
+  const parts = text.split('**');
+  return parts.map((part, index) => {
+    if (index % 2 === 1) {
+      return <strong key={index}>{part}</strong>;
+    }
+    return <span key={index}>{part}</span>;
+  });
+}
+
 export function ChatCoach({
   babyName,
   billingEnabled,
@@ -482,10 +493,10 @@ export function ChatCoach({
             }
           >
             <p className={`${styles.roleLabel} text-label`}>
-              {message.role === 'assistant' ? 'Somni Coach' : 'You'}
+              {message.role === 'assistant' ? 'Somni' : 'You'}
             </p>
             <p className={styles.messageText}>
-              {message.content || (message.role === 'assistant' && isSending ? 'Thinking...' : '')}
+              {message.content ? formatText(message.content) : (message.role === 'assistant' && isSending ? 'Thinking...' : '')}
             </p>
 
             {message.safetyNote ? (
@@ -494,16 +505,14 @@ export function ChatCoach({
 
             {message.sources && message.sources.length > 0 ? (
               <div className={styles.sources}>
-                {message.sources.map((source) => (
-                  <span className={styles.sourceChip} key={`${source.name}-${source.topic}`}>
-                    {source.name} ({source.topic})
-                  </span>
-                ))}
+                {Array.from(new Set(message.sources.map((s) => s.name)))
+                  .slice(0, 2)
+                  .map((name) => (
+                    <span className={styles.sourceChip} key={name}>
+                      {name}
+                    </span>
+                  ))}
               </div>
-            ) : null}
-
-            {message.confidence ? (
-              <p className={styles.confidence}>Confidence: {message.confidence}</p>
             ) : null}
           </article>
         ))}
