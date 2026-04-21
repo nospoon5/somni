@@ -501,3 +501,59 @@ If you want the shortest practical rule set:
 - Use `5.4` + `high` for scoring logic, AI quality, and product-judgment work.
 - Use `5.4 Mini` only for small, tightly scoped follow-ups where cost matters more than depth.
 - Skip `extra high` unless the task is unusually ambiguous or a section is getting stuck.
+
+## Section 6 - Beta UX Improvements
+
+Status: completed on 2026-04-21
+
+### Goal
+
+Resolve the most important UI and UX friction points raised during beta testing, without
+changing any product logic or data flows.
+
+### Why This Matters
+
+Beta testers highlighted four friction areas that erode confidence in the product even before
+the AI quality is evaluated. Fast UI polish builds trust and improves first impressions.
+
+### Scope
+
+- Onboarding form touch targets and button breathing room
+- Chat loading state (replace static text with animated indicator)
+- Global navigation (explicit back-to-dashboard escape hatch)
+- Sleep history readability (spacing and visual separation)
+
+### Completed Work
+
+1. **Onboarding form touch targets** (`src/components/onboarding/OnboardingForm.module.css`)
+   - Increased `min-height` on `.field input` and `.field select` from `52px` to `56px`
+   - Increased padding from `0.875rem` to `1.125rem` on both for consistent, tap-friendly targets
+   - Added `padding-bottom: 1.5rem` to `.actions` to prevent the primary button crowding the
+     viewport bottom on tablet/laptop vertical heights
+
+2. **Chat loading state** (`src/components/chat/ChatCoach.tsx`, `ChatCoach.module.css`)
+   - Replaced the static `'Thinking...'` fallback text with an animated three-dot pulse
+   - Added `@keyframes typing` with `scale` and `opacity` interpolation plus staggered
+     `animation-delay` per dot so the animation feels smooth and natural
+   - The JSX renders `<span className={styles.loadingDots}><span>.</span>…</span>` inside the
+     existing `messageText` paragraph so no structural layout changes were needed
+
+3. **Back to Dashboard links** (`src/app/chat/page.tsx`, `src/app/sleep/page.tsx`)
+   - Added `import Link from 'next/link'` to both server component pages
+   - Inserted `← Back to Dashboard` link at the bottom of each page's header section, styled
+     with `var(--color-text-muted)` to match the Somni design system's muted text convention
+
+4. **Sleep history readability** (`src/components/sleep/SleepTracker.module.css`)
+   - Increased `.historyList` gap from `14px` to `24px`
+   - Increased `.historyItem` padding from `18px` to `24px`
+   - Added `border-top: 1px solid var(--color-border-subtle)` to each `.historyItem` for
+     subtle visual separation that aligns with the existing `var(--color-border-subtle)` token
+
+### Quality Gates
+
+- App loads and compiles without errors
+- Back-to-dashboard link appears in the header on both `/chat` and `/sleep`
+- Chat thread shows animated dots instead of "Thinking..." while a message is pending
+- Sleep history entries have clear separation and increased padding
+- `npm run build` passes
+
