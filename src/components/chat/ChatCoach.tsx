@@ -497,12 +497,12 @@ export function ChatCoach({
             required
           />
           <button
-            className={styles.sendButton}
+            className={`${styles.sendButton} ${isSending ? styles.sendButtonLoading : ''}`}
             type="submit"
             disabled={isSending || !draft.trim() || isReadOnly}
             aria-label={isSending ? 'Sending message' : 'Send message'}
           >
-            {isSending ? '...' : '>'}
+            {isSending ? null : '>'}
           </button>
         </div>
       </form>

@@ -632,6 +632,13 @@ icon is replaced with an animated SVG spinner or a pulsing dot.
 - `npm test -- --run` passes
 - `npm run build` passes
 
+### Completed Work
+
+- `src/components/chat/ChatCoach.module.css`: Added `@keyframes send-spin` and a `.sendButtonLoading` state that dims and disables the send button while rendering an animated spinner via `::after`.
+- `src/components/chat/ChatCoach.tsx`: Updated the send button to apply `styles.sendButtonLoading` and render no text while `isSending`; restored `>` when not sending.
+- `src/app/sleep/page.tsx`: Renamed the sleep page H1 to `{babyName}'s sleep log`.
+- `docs/somni_implementation_plan_v6.md`: Added this Section 6 completion summary and listed every changed file.
+
 ---
 
 ## Section 7 — Plan-Save Inline Feedback on Dashboard
