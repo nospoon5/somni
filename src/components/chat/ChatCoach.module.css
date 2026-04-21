@@ -73,25 +73,29 @@
 }
 
 .thread {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.assistantBubble,
-.userBubble {
-  border-radius: var(--radius-lg);
-  padding: 0.9rem 1rem;
-  border: 1px solid var(--color-border-glass);
-  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
 }
 
 .assistantBubble {
-  background: var(--color-card-glass);
-  border-left: 2px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
+  align-self: flex-start;
+  max-width: 80%;
+  background: var(--color-card);
+  border: 1px solid var(--color-border-glass);
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) 4px;
+  padding: 0.9rem 1rem;
+  box-shadow: var(--shadow-card);
 }
 
 .userBubble {
+  align-self: flex-end;
+  max-width: 80%;
   background: var(--color-accent-glow);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg);
+  padding: 0.9rem 1rem;
+  box-shadow: var(--shadow-card);
 }
 
 .roleLabel {
@@ -141,6 +145,10 @@
 }
 
 .form {
+  position: sticky;
+  bottom: 0;
+  background: var(--color-bg);
+  padding: 0.75rem 0 env(safe-area-inset-bottom, 0.5rem);
   display: grid;
   gap: 0.5rem;
 }
@@ -220,7 +228,7 @@
 @media (max-width: 700px) {
   .assistantBubble,
   .userBubble {
-    border-radius: var(--radius-md);
+    max-width: 88%;
   }
 
   .limitActions {

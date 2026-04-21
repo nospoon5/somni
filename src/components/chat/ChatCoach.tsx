@@ -479,7 +479,7 @@ export function ChatCoach({
       </div>
 
       <form className={styles.form} onSubmit={submitMessage}>
-        <label className={`${styles.label} text-label`} htmlFor="chat-message">
+        <label className="sr-only" htmlFor="chat-message">
           {isReadOnly ? 'Chat temporarily read-only' : 'Ask Somni'}
         </label>
         <div className={styles.inputRow}>

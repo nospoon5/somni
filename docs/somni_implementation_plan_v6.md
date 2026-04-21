@@ -242,6 +242,12 @@ what.
 - `npm test -- --run` passes
 - `npm run build` passes
 
+### Completed Work
+
+- `src/components/chat/ChatCoach.module.css`: Replaced the thread and bubble layout with left/right WhatsApp-style bubbles, updated bubble widths and borders to match the Section 2 spec, and made the chat form sticky with the requested background and iOS safe-area padding.
+- `src/components/chat/ChatCoach.tsx`: Switched the "Ask Somni" form label to the global `sr-only` class so it stays accessible while being visually hidden.
+- `docs/somni_implementation_plan_v6.md`: Added this Section 2 completion summary and recorded the exact files changed.
+
 ---
 
 ## Section 3 — Dashboard Header Declutter
