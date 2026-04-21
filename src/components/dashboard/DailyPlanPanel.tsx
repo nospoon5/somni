@@ -76,6 +76,42 @@ function renderTimeBlock(time: string | null, detail?: string | null) {
   return formattedTime ?? detail ?? 'Time to be confirmed'
 }
 
+function formatRelativeTime(updatedAt: string): string {
+  const updatedDate = new Date(updatedAt)
+
+  if (Number.isNaN(updatedDate.getTime())) {
+    return 'just now'
+  }
+
+  const now = new Date()
+  const diffMs = Math.max(0, now.getTime() - updatedDate.getTime())
+  const diffMinutes = Math.floor(diffMs / (1000 * 60))
+
+  if (diffMinutes < 2) {
+    return 'just now'
+  }
+
+  if (diffMinutes < 60) {
+    return `${diffMinutes} minutes ago`
+  }
+
+  const isSameDay =
+    now.getFullYear() === updatedDate.getFullYear() &&
+    now.getMonth() === updatedDate.getMonth() &&
+    now.getDate() === updatedDate.getDate()
+
+  if (isSameDay) {
+    const time = updatedDate.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    })
+    return `today at ${time}`
+  }
+
+  return updatedDate.toLocaleDateString()
+}
+
 function TargetList<T extends DailyPlanSleepTarget | DailyPlanFeedTarget>({
   targets,
   kind,
@@ -172,6 +208,10 @@ export function DailyPlanPanel({ babyName, initialPlan, todayPlanDate }: DailyPl
 
       {plan ? (
         <>
+          {plan.updatedAt ? (
+            <p className={styles.lastUpdated}>Updated {formatRelativeTime(plan.updatedAt)}</p>
+          ) : null}
+
           <p className={styles.body}>
             This is the shared plan Somni is keeping in sync for {babyName} today.
           </p>

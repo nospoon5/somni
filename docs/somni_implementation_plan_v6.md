@@ -695,6 +695,12 @@ plan data is written, so the parent knows the save happened without switching ta
 - `npm test -- --run` passes
 - `npm run build` passes
 
+### Completed Work
+
+- `src/components/dashboard/DailyPlanPanel.tsx`: Added a `formatRelativeTime(updatedAt)` helper with the Section 7 behavior (`just now`, `X minutes ago`, `today at HH:MM`, otherwise locale date), and rendered `Updated {formatRelativeTime(plan.updatedAt)}` in the active-plan view below the title and above target lists when `plan.updatedAt` exists.
+- `src/components/dashboard/DailyPlanPanel.module.css`: Added the required `.lastUpdated` style for the inline timestamp.
+- `docs/somni_implementation_plan_v6.md`: Added this Section 7 completion summary and listed all files changed for this section.
+
 ---
 
 ## Section 8 — Bottom Nav Active Tab Indicator Upgrade

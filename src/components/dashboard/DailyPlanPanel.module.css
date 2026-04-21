@@ -26,6 +26,13 @@
   line-height: 1.8;
 }
 
+.lastUpdated {
+  margin: 12px 0 0;
+  font-size: 0.8rem;
+  color: var(--color-text-faint);
+  letter-spacing: 0.02em;
+}
+
 .sectionGrid {
   display: grid;
   gap: 16px;
