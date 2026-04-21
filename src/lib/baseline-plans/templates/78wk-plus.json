@@ -1,0 +1,49 @@
+{
+  "id": "baseline-78wk-plus",
+  "babyId": "baseline",
+  "planDate": "baseline",
+  "sleepTargets": [
+    {
+      "label": "Nap",
+      "targetTime": "12:30",
+      "window": "1 nap",
+      "notes": "Aim for a settled midday nap before overtiredness builds."
+    },
+    {
+      "label": "Wake windows",
+      "targetTime": null,
+      "window": "4-5 hr",
+      "notes": "A steady midday nap usually protects both wake windows."
+    },
+    {
+      "label": "Bedtime",
+      "targetTime": "19:30",
+      "window": "4-5 hr after nap",
+      "notes": "Move bedtime earlier after daycare or a short nap."
+    }
+  ],
+  "feedTargets": [
+    {
+      "label": "Breakfast",
+      "targetTime": "Morning",
+      "notes": "Start the day with breakfast and milk if that is still part of your routine."
+    },
+    {
+      "label": "Lunch",
+      "targetTime": "Midday",
+      "notes": "Keep lunch predictable before the nap."
+    },
+    {
+      "label": "Snack",
+      "targetTime": "Afternoon",
+      "notes": "A simple snack helps the afternoon stay smooth."
+    },
+    {
+      "label": "Dinner + bedtime milk",
+      "targetTime": "Evening",
+      "notes": "Keep dinner and the bedtime routine calm and repeatable."
+    }
+  ],
+  "notes": "Here's Somni's customised baseline plan to help {{babyName}} start sleeping better. Somni will adjust it as we learn more and as your baby grows and develops.",
+  "updatedAt": null
+}

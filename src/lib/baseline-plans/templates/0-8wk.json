@@ -1,0 +1,44 @@
+{
+  "id": "baseline-0-8wk",
+  "babyId": "baseline",
+  "planDate": "baseline",
+  "sleepTargets": [
+    {
+      "label": "Day rhythm",
+      "targetTime": null,
+      "window": "Demand-led naps",
+      "notes": "Offer sleep after 45-60 min awake and expect frequent short naps."
+    },
+    {
+      "label": "Wake windows",
+      "targetTime": null,
+      "window": "45-60 min",
+      "notes": "Follow sleepy cues and reset quickly after overtired stretches."
+    },
+    {
+      "label": "Bedtime",
+      "targetTime": null,
+      "window": "Flexible evening settle",
+      "notes": "Aim for a calm feed, dim lights, and an early bedtime when needed."
+    }
+  ],
+  "feedTargets": [
+    {
+      "label": "Day feeds",
+      "targetTime": "Every 2-3 hours",
+      "notes": "Feed on demand and watch for hunger cues between naps."
+    },
+    {
+      "label": "Evening top-up",
+      "targetTime": "Late afternoon/evening",
+      "notes": "Cluster feeding can be normal in this stage."
+    },
+    {
+      "label": "Night feeds",
+      "targetTime": "Overnight as needed",
+      "notes": "Night feeds are still expected for most babies this young."
+    }
+  ],
+  "notes": "Here's Somni's customised baseline plan to help {{babyName}} start sleeping better. Somni will adjust it as we learn more and as your baby grows and develops.",
+  "updatedAt": null
+}

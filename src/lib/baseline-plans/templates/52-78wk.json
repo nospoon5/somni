@@ -1,0 +1,49 @@
+{
+  "id": "baseline-52-78wk",
+  "babyId": "baseline",
+  "planDate": "baseline",
+  "sleepTargets": [
+    {
+      "label": "Nap 1",
+      "targetTime": "09:30",
+      "window": "~3 hr after wake",
+      "notes": "This nap usually stays longest while the second nap starts to wobble."
+    },
+    {
+      "label": "Nap 2 / quiet time",
+      "targetTime": "14:00",
+      "window": "Optional while moving toward 1 nap",
+      "notes": "Use quiet time or a short catnap if your child is not ready for a full one-nap day."
+    },
+    {
+      "label": "Bedtime",
+      "targetTime": "19:30",
+      "window": "~4 hr after last sleep",
+      "notes": "On one-nap days, bedtime may need to move earlier."
+    }
+  ],
+  "feedTargets": [
+    {
+      "label": "Breakfast milk/solids",
+      "targetTime": "Morning",
+      "notes": "Keep breakfast anchored close to wake-up."
+    },
+    {
+      "label": "Lunch",
+      "targetTime": "Midday",
+      "notes": "A reliable lunch can make the afternoon more predictable."
+    },
+    {
+      "label": "Afternoon snack",
+      "targetTime": "Late afternoon",
+      "notes": "Use a snack to bridge to dinner without pushing dinner too late."
+    },
+    {
+      "label": "Bedtime milk",
+      "targetTime": "Before bed",
+      "notes": "A bedtime milk feed can stay as a calming anchor."
+    }
+  ],
+  "notes": "Here's Somni's customised baseline plan to help {{babyName}} start sleeping better. Somni will adjust it as we learn more and as your baby grows and develops.",
+  "updatedAt": null
+}

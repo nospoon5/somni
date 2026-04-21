@@ -181,48 +181,8 @@
   line-height: 1.7;
 }
 
-.grid {
-  display: grid;
-  gap: 16px;
-  margin-top: 28px;
-}
-
-.panel {
-  padding: 20px;
-}
-
-.panel h2 {
-  margin: 0;
-  font-size: 1.25rem;
-}
-
-.panel p {
-  margin: 12px 0 0;
-}
-
-.linkGroup {
-  margin-top: 16px;
-}
-
-.inlineLink {
-  display: inline-flex;
-  margin-top: 16px;
-  color: var(--color-accent-light);
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-
-.linkGroup .inlineLink {
-  margin-top: 0;
-}
-
 .metricGrid .metricCard:nth-child(1),
-.grid .panel:nth-child(1) {
-  animation-delay: 0.05s;
-}
-
-.metricGrid .metricCard:nth-child(2),
-.grid .panel:nth-child(2) {
+.metricGrid .metricCard:nth-child(2) {
   animation-delay: 0.1s;
 }
 
@@ -240,10 +200,6 @@
   }
 
   .metricGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

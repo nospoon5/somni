@@ -1,0 +1,55 @@
+{
+  "id": "baseline-28-40wk",
+  "babyId": "baseline",
+  "planDate": "baseline",
+  "sleepTargets": [
+    {
+      "label": "Nap 1",
+      "targetTime": "09:00",
+      "window": "~2 hr after wake",
+      "notes": "A slightly earlier first nap is kinder than pushing through."
+    },
+    {
+      "label": "Nap 2",
+      "targetTime": "12:30",
+      "window": "~2 hr",
+      "notes": "Protect this nap if the first nap ran short."
+    },
+    {
+      "label": "Nap 3",
+      "targetTime": "16:00",
+      "window": "Short catnap",
+      "notes": "Keep this one brief so bedtime still lands smoothly."
+    },
+    {
+      "label": "Bedtime",
+      "targetTime": "19:30",
+      "window": "~2.5 hr after last nap",
+      "notes": "A short final wake window usually works better than stretching too far."
+    }
+  ],
+  "feedTargets": [
+    {
+      "label": "Morning feed",
+      "targetTime": "On waking",
+      "notes": "Offer milk soon after wake-up."
+    },
+    {
+      "label": "Day feeds",
+      "targetTime": "Across 4 daytime windows",
+      "notes": "Keep feeds predictable around naps."
+    },
+    {
+      "label": "Early evening feed",
+      "targetTime": "Late afternoon",
+      "notes": "This helps the late part of the day feel less frantic."
+    },
+    {
+      "label": "Bedtime feed",
+      "targetTime": "Before bed",
+      "notes": "Use the bedtime feed as part of the wind-down."
+    }
+  ],
+  "notes": "Here's Somni's customised baseline plan to help {{babyName}} start sleeping better. Somni will adjust it as we learn more and as your baby grows and develops.",
+  "updatedAt": null
+}

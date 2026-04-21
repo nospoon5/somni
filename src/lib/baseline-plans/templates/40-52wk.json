@@ -1,0 +1,49 @@
+{
+  "id": "baseline-40-52wk",
+  "babyId": "baseline",
+  "planDate": "baseline",
+  "sleepTargets": [
+    {
+      "label": "Nap 1",
+      "targetTime": "09:30",
+      "window": "~2.5 hr after wake",
+      "notes": "Keep the first nap anchored so the second nap lands well."
+    },
+    {
+      "label": "Nap 2",
+      "targetTime": "13:30",
+      "window": "~2.5 hr",
+      "notes": "Wake gently if this nap runs too late into the afternoon."
+    },
+    {
+      "label": "Bedtime",
+      "targetTime": "19:30",
+      "window": "~3.5-4 hr after last nap",
+      "notes": "An earlier bedtime is usually the best rescue after a skipped second nap."
+    }
+  ],
+  "feedTargets": [
+    {
+      "label": "Morning milk",
+      "targetTime": "On waking",
+      "notes": "Start the day with milk before solids if that suits your routine."
+    },
+    {
+      "label": "Lunch feed",
+      "targetTime": "Midday",
+      "notes": "Keep lunch consistent so the second nap stays easier."
+    },
+    {
+      "label": "Afternoon top-up",
+      "targetTime": "After Nap 2",
+      "notes": "A small milk feed can steady the run to bedtime."
+    },
+    {
+      "label": "Bedtime milk",
+      "targetTime": "Before bed",
+      "notes": "Keep the bedtime feed calm and predictable."
+    }
+  ],
+  "notes": "Here's Somni's customised baseline plan to help {{babyName}} start sleeping better. Somni will adjust it as we learn more and as your baby grows and develops.",
+  "updatedAt": null
+}

@@ -448,6 +448,23 @@ No AI call required. The dashboard page reads the baby's age and selects the rig
 - `npm test -- --run` passes
 - `npm run build` passes
 
+### Completed Work
+
+- `src/app/dashboard/page.tsx`: Imported `getBaselinePlan`, calculated baby age in weeks from `baby.date_of_birth`, used a static baseline plan when no saved daily plan exists, and removed the `Current focus` / `Recent activity` dashboard cards.
+- `src/app/dashboard/page.module.css`: Removed the unused grid, panel, and link styles that belonged to the deleted dashboard cards.
+- `src/components/dashboard/DailyPlanPanel.tsx`: Renamed the kicker to `Today's plan`, removed the badge, updated the true empty-state copy and steps, and made baseline plans render through the same active-plan layout while still allowing live plan payloads to replace them cleanly.
+- `src/components/dashboard/DailyPlanPanel.module.css`: Removed the obsolete `.badge` styles after deleting the badge element from the panel.
+- `src/lib/baseline-plans/index.ts`: Added the static age-band selector and personalised baseline-plan builder used by the dashboard fallback flow.
+- `src/lib/baseline-plans/templates/0-8wk.json`: Added the 0-8 week baseline plan template with demand-led sleep guidance and newborn feed anchors.
+- `src/lib/baseline-plans/templates/8-16wk.json`: Added the 8-16 week baseline plan template with a four-nap baseline and 60-90 minute wake windows.
+- `src/lib/baseline-plans/templates/16-28wk.json`: Added the 16-28 week baseline plan template with a 3-4 nap baseline and 90-120 minute wake windows.
+- `src/lib/baseline-plans/templates/28-40wk.json`: Added the 28-40 week baseline plan template with a three-nap baseline and roughly two-hour wake windows.
+- `src/lib/baseline-plans/templates/40-52wk.json`: Added the 40-52 week baseline plan template with a two-nap baseline and roughly 2.5-hour wake windows.
+- `src/lib/baseline-plans/templates/52-78wk.json`: Added the 52-78 week baseline plan template for the 2-nap to 1-nap transition stage.
+- `src/lib/baseline-plans/templates/78wk-plus.json`: Added the 78+ week baseline plan template with a one-nap baseline and 4-5 hour wake windows.
+- `src/lib/baseline-plans/index.test.ts`: Added focused tests for baseline-plan age-band selection and baby-name note personalisation.
+- `docs/somni_implementation_plan_v6.md`: Added this Section 4 completion summary and recorded the exact files changed.
+
 ---
 
 ## Section 5 — Polish: Scrollbars, Arrow Alignment, and Chat Caret

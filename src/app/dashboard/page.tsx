@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { DailyPlanPanel } from '@/components/dashboard/DailyPlanPanel'
 import { SleepScorePanel } from '@/components/dashboard/SleepScorePanel'
+import { getBaselinePlan } from '@/lib/baseline-plans'
 import { getDateStringForTimezone, normalizeDailyPlanRow } from '@/lib/daily-plan'
 import { createClient } from '@/lib/supabase/server'
 import { sanitizeTimezone } from '@/lib/billing/usage'
@@ -11,6 +12,31 @@ import {
   SLEEP_SCORE_FETCH_LIMIT,
 } from '@/lib/scoring/sleep-score'
 import styles from './page.module.css'
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000
+
+function parseDateOnly(value: string | null | undefined) {
+  if (typeof value !== 'string') {
+    return Number.NaN
+  }
+
+  const trimmed = value.trim()
+  const normalized = /^\d{4}-\d{2}-\d{2}$/.test(trimmed) ? `${trimmed}T00:00:00Z` : trimmed
+
+  return new Date(normalized).getTime()
+}
+
+function getAgeInWeeks(dateOfBirth: string | null | undefined, todayDate: string) {
+  const dateOfBirthTime = parseDateOnly(dateOfBirth)
+  const todayTime = parseDateOnly(todayDate)
+
+  if (!Number.isFinite(dateOfBirthTime) || !Number.isFinite(todayTime)) {
+    return null
+  }
+
+  const ageInDays = Math.floor((todayTime - dateOfBirthTime) / MS_PER_DAY)
+  return ageInDays >= 0 ? Math.floor(ageInDays / 7) : null
+}
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -58,6 +84,10 @@ export default async function DashboardPage() {
   }
 
   const dailyPlan = normalizeDailyPlanRow(dailyPlanRow)
+  const ageInWeeks = baby ? getAgeInWeeks(baby.date_of_birth, todayPlanDate) : null
+  const baselinePlan =
+    !dailyPlan && baby && ageInWeeks !== null ? getBaselinePlan(ageInWeeks, baby.name) : null
+  const initialPlan = dailyPlan ?? baselinePlan
   const lookbackStart = getSleepScoreLookbackStart()
 
   const { data: activeLog } = baby
@@ -102,7 +132,6 @@ export default async function DashboardPage() {
       ])
     : null
 
-  const hasAnySleepData = Boolean((recentSleepLogs?.length ?? 0) > 0 || activeLog)
   const firstName = profile.full_name?.trim().split(/\s+/)[0]
   const dashboardTitle = firstName ? `Hi, ${firstName}.` : 'Hi there.'
 
@@ -132,43 +161,9 @@ export default async function DashboardPage() {
 
         <DailyPlanPanel
           babyName={baby?.name ?? 'your baby'}
-          initialPlan={dailyPlan}
+          initialPlan={initialPlan}
           todayPlanDate={todayPlanDate}
         />
-
-        <div className={styles.grid}>
-          <article className={`${styles.panel} card animate-fade-up`}>
-            <h2 className="text-display">Current focus</h2>
-            <p className="text-body">
-              {baby?.name
-                ? `${baby.name}'s profile is set up and ready for real sleep data.`
-                : 'Your profile is set up and ready for real sleep data.'}
-            </p>
-            <p className={styles.linkGroup}>
-              <Link className={styles.inlineLink} href="/sleep">
-                Open sleep logging
-              </Link>
-              {' | '}
-              <Link className={styles.inlineLink} href="/chat">
-                Open coaching chat
-              </Link>
-            </p>
-          </article>
-
-          <article className={`${styles.panel} card animate-fade-up`}>
-            <h2 className="text-display">Recent activity</h2>
-            <p className="text-body">
-              {activeLog
-                ? 'A sleep session is currently in progress.'
-                : hasAnySleepData
-                  ? `You have ${recentSleepLogs?.length ?? 0} logged sleep session${(recentSleepLogs?.length ?? 0) === 1 ? '' : 's'} so far.`
-                  : 'No sleep sessions logged yet. Log your first sleep and Somni will start spotting patterns.'}
-            </p>
-            <Link className={styles.inlineLink} href="/sleep">
-              {hasAnySleepData ? 'View sleep history' : 'Log your first sleep'}
-            </Link>
-          </article>
-        </div>
       </section>
     </main>
   )

@@ -1,0 +1,61 @@
+{
+  "id": "baseline-8-16wk",
+  "babyId": "baseline",
+  "planDate": "baseline",
+  "sleepTargets": [
+    {
+      "label": "Nap 1",
+      "targetTime": "08:30",
+      "window": "60-90 min",
+      "notes": "Start the first nap after a calm first wake window."
+    },
+    {
+      "label": "Nap 2",
+      "targetTime": "11:00",
+      "window": "60-90 min",
+      "notes": "Keep the room dark and the wind-down short."
+    },
+    {
+      "label": "Nap 3",
+      "targetTime": "13:30",
+      "window": "60-90 min",
+      "notes": "A contact nap is okay if the day is starting to unravel."
+    },
+    {
+      "label": "Nap 4",
+      "targetTime": "16:00",
+      "window": "Short catnap",
+      "notes": "Protect this nap if bedtime is drifting too early."
+    },
+    {
+      "label": "Bedtime",
+      "targetTime": "19:00",
+      "window": "2-2.5 hr after last nap",
+      "notes": "Bring bedtime earlier after a rough nap day."
+    }
+  ],
+  "feedTargets": [
+    {
+      "label": "Morning feed",
+      "targetTime": "On waking",
+      "notes": "Offer a full feed soon after the day starts."
+    },
+    {
+      "label": "Day feeds",
+      "targetTime": "About every 3 hours",
+      "notes": "Aim for regular daytime feeds before overtiredness builds."
+    },
+    {
+      "label": "Late afternoon feed",
+      "targetTime": "Late afternoon",
+      "notes": "This can help bridge the last nap and bedtime."
+    },
+    {
+      "label": "Bedtime feed",
+      "targetTime": "Before bed",
+      "notes": "Keep the last feed calm and unhurried."
+    }
+  ],
+  "notes": "Here's Somni's customised baseline plan to help {{babyName}} start sleeping better. Somni will adjust it as we learn more and as your baby grows and develops.",
+  "updatedAt": null
+}

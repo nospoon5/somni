@@ -17,13 +17,19 @@ type DailyPlanPanelProps = {
   todayPlanDate: string
 }
 
+function isBaselinePlan(plan: DailyPlanRecord | null) {
+  return plan?.id.startsWith('baseline-') ?? false
+}
+
 function hydratePlanFromPayload(
   currentPlan: DailyPlanRecord | null,
   payload: DailyPlanStreamPayload
 ): DailyPlanRecord {
+  const preservedPlan = currentPlan && !isBaselinePlan(currentPlan) ? currentPlan : null
+
   return {
-    id: currentPlan?.id ?? `live-${payload.planDate}`,
-    babyId: currentPlan?.babyId ?? 'live',
+    id: preservedPlan?.id ?? `live-${payload.planDate}`,
+    babyId: preservedPlan?.babyId ?? 'live',
     planDate: payload.planDate,
     sleepTargets: payload.sleepTargets,
     feedTargets: payload.feedTargets,
@@ -157,12 +163,11 @@ export function DailyPlanPanel({ babyName, initialPlan, todayPlanDate }: DailyPl
     <section className={`${styles.shell} card card-glass animate-fade-up`}>
       <div className={styles.header}>
         <div>
-          <p className={`${styles.kicker} text-label`}>Today&apos;s dashboard plan</p>
+          <p className={`${styles.kicker} text-label`}>Today&apos;s plan</p>
           <h2 className={`${styles.title} text-display`}>
             {plan ? 'Live targets for today' : 'No live plan yet'}
           </h2>
         </div>
-        <span className={styles.badge}>{plan ? 'Active plan' : 'Empty state'}</span>
       </div>
 
       {plan ? (
@@ -193,22 +198,19 @@ export function DailyPlanPanel({ babyName, initialPlan, todayPlanDate }: DailyPl
       ) : (
         <>
           <p className={styles.body}>
-            When you make a concrete schedule change in chat, Somni can save it here as
-            today&apos;s live target plan.
+            Here&apos;s Somni&apos;s customised baseline plan to help {babyName} start sleeping
+            better. Somni will adjust it as we learn more and as your baby grows and
+            develops.
           </p>
 
           <div className={styles.emptySteps}>
             <div className={styles.emptyStep}>
               <strong>1. Talk naturally in chat</strong>
-              <span>Example: “Let&apos;s push her afternoon nap to 3pm.”</span>
+              <span>Example: &quot;Let&apos;s push her afternoon nap to 3pm.&quot;</span>
             </div>
             <div className={styles.emptyStep}>
               <strong>2. Somni saves today&apos;s target</strong>
-              <span>The dashboard becomes the shared source of truth for the rest of the day.</span>
-            </div>
-            <div className={styles.emptyStep}>
-              <strong>3. Tomorrow starts clean</strong>
-              <span>Each day gets its own plan, so older dates stay untouched.</span>
+              <span>The dashboard updates with the latest plan for the rest of the day.</span>
             </div>
           </div>
         </>
