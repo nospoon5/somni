@@ -14,25 +14,25 @@ export function DaySleepProgress({
   loggedMinutes,
   activeNapStart,
 }: DaySleepProgressProps) {
-  const [activeMinutes, setActiveMinutes] = useState(0)
+  const [minuteTick, setMinuteTick] = useState(() => Math.floor(Date.now() / 60000))
 
   useEffect(() => {
-    if (!activeNapStart) {
-      setActiveMinutes(0)
-      return
-    }
+    const interval = setInterval(() => {
+      setMinuteTick(Math.floor(Date.now() / 60000))
+    }, 60000)
 
-    const calculateActive = () => {
-      const start = new Date(activeNapStart).getTime()
-      const now = Date.now()
-      const diff = Math.max(0, Math.floor((now - start) / 60000))
-      setActiveMinutes(diff)
-    }
-
-    calculateActive()
-    const interval = setInterval(calculateActive, 60000)
     return () => clearInterval(interval)
-  }, [activeNapStart])
+  }, [])
+
+  const activeMinutes = (() => {
+    if (!activeNapStart) {
+      return 0
+    }
+
+    const start = new Date(activeNapStart).getTime()
+    const now = minuteTick * 60000
+    return Math.max(0, Math.floor((now - start) / 60000))
+  })()
 
   const totalMinutes = loggedMinutes + activeMinutes
   const isOver = totalMinutes > targetMinutes

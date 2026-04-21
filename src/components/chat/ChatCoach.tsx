@@ -1,6 +1,7 @@
 'use client'
 
 import { FormEvent, useState } from 'react'
+import Link from 'next/link'
 import {
   DAILY_PLAN_STORAGE_KEY,
   type DailyPlanStreamPayload,
@@ -24,9 +25,10 @@ type ChatMessage = {
 
 type ChatCoachProps = {
   babyName: string
+  pageEyebrow: string
+  pageTitle: string
+  pageSubtitle: string
   billingEnabled: boolean
-  subscriptionPlan: 'free' | 'monthly' | 'annual'
-  subscriptionStatus: 'inactive' | 'trialing' | 'active' | 'past_due' | 'canceled'
   hasPremiumAccess: boolean
   isReadOnly?: boolean
   billingDegradedReason?: string | null
@@ -107,9 +109,10 @@ function formatText(text: string) {
 
 export function ChatCoach({
   babyName,
+  pageEyebrow,
+  pageTitle,
+  pageSubtitle,
   billingEnabled,
-  subscriptionPlan,
-  subscriptionStatus,
   hasPremiumAccess,
   isReadOnly = false,
   billingDegradedReason = null,
@@ -127,7 +130,7 @@ export function ChatCoach({
   const [error, setError] = useState<string | null>(null)
   const [limitState, setLimitState] = useState<LimitState | null>(null)
   const [planUpdate, setPlanUpdate] = useState<PlanUpdateState | null>(null)
-  const [billingAction, setBillingAction] = useState<'monthly' | 'annual' | 'portal' | null>(null)
+  const [billingAction, setBillingAction] = useState<'monthly' | 'annual' | null>(null)
 
   async function openCheckout(plan: 'monthly' | 'annual') {
     if (!billingEnabled || billingAction) {
@@ -155,36 +158,6 @@ export function ChatCoach({
     } catch (caughtError) {
       const messageText =
         caughtError instanceof Error ? caughtError.message : 'Unable to start checkout right now.'
-      setError(messageText)
-    } finally {
-      setBillingAction(null)
-    }
-  }
-
-  async function openPortal() {
-    if (!billingEnabled || billingAction) {
-      return
-    }
-
-    setError(null)
-    setBillingAction('portal')
-
-    try {
-      const response = await fetch('/api/billing/portal', {
-        method: 'POST',
-      })
-      const payload = await response.json().catch(() => null)
-
-      if (!response.ok || typeof payload?.url !== 'string') {
-        throw new Error(payload?.error ?? 'Unable to open billing settings right now.')
-      }
-
-      window.location.assign(payload.url)
-    } catch (caughtError) {
-      const messageText =
-        caughtError instanceof Error
-          ? caughtError.message
-          : 'Unable to open billing settings right now.'
       setError(messageText)
     } finally {
       setBillingAction(null)
@@ -399,33 +372,16 @@ export function ChatCoach({
 
   return (
     <section className={styles.shell}>
-      <section className={`${styles.planCard} card`}>
-        <div>
-          <p className={`${styles.planLabel} text-label`}>Plan</p>
-          <p className={styles.planValue}>
-            {hasPremiumAccess ? `Somni Premium (${subscriptionPlan})` : 'Somni Free'}
-          </p>
-          <p className={styles.planBody}>
-            {isReadOnly
-              ? 'Chat is temporarily in read-only mode while billing reconnects.'
-              : hasPremiumAccess
-              ? 'Premium access is active, so your coaching chat is not capped.'
-              : 'Free access includes 10 coaching chats per day, resetting at midnight in your timezone.'}
-          </p>
-        </div>
-
-        {hasPremiumAccess ? (
-          <button
-            className="btn-secondary"
-            type="button"
-            onClick={openPortal}
-            disabled={!billingEnabled || billingAction !== null || isReadOnly}
-          >
-            {billingAction === 'portal' ? 'Opening...' : 'Manage billing'}
-          </button>
-        ) : (
-          <p className={styles.planMeta}>Status: {subscriptionStatus}</p>
-        )}
+      <section className={`${styles.headerCard} card`}>
+        <p className={`${styles.headerEyebrow} text-label`}>{pageEyebrow}</p>
+        <h1 className={`${styles.headerTitle} text-display`}>{pageTitle}</h1>
+        <p className={`${styles.headerSubtitle} text-body`}>{pageSubtitle}</p>
+        <p className={`${styles.headerQuota} text-body`}>
+          {hasPremiumAccess ? 'Premium access active' : 'Free plan · 10 chats per day'}
+        </p>
+        <Link href="/dashboard" className={`${styles.backLink} text-body`}>
+          &larr; Back to Dashboard
+        </Link>
       </section>
 
       {billingDegradedReason ? (
