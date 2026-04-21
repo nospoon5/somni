@@ -3,3 +3,8 @@
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
+
+<!-- BEGIN:testing-rules -->
+# Testing & Browser Subagents
+When testing the app, DO NOT sign up a new user. Always use the pre-created test credentials located at `docs/TEST_ACCOUNTS.md`. This saves time and avoids rate limits.
+<!-- END:testing-rules -->
