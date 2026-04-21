@@ -173,13 +173,22 @@
 
 .textarea {
   width: 100%;
-  min-height: 5rem;
+  min-height: 2.5rem;
+  max-height: 12rem;
   border-radius: var(--radius-md);
   border: none;
   padding: 0.65rem 0.75rem;
   background: transparent;
   color: var(--color-text);
-  resize: vertical;
+  resize: none;
+  overflow-y: auto;
+  scrollbar-width: none;
+  field-sizing: content;
+  caret-color: var(--color-accent);
+}
+
+.textarea::-webkit-scrollbar {
+  display: none;
 }
 
 .textarea:focus-visible {

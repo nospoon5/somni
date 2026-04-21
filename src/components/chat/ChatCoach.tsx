@@ -493,7 +493,6 @@ export function ChatCoach({
                 ? 'Chat is temporarily unavailable while billing reconnects.'
                 : 'Example: We had three night wakes and short naps today. What should I try tonight?'
             }
-            rows={3}
             disabled={isSending || isReadOnly}
             required
           />

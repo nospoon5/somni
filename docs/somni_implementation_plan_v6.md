@@ -555,6 +555,14 @@ Blinking cursor "creeps over" the text box boundary due to the resize handle.
 - `npm test -- --run` passes
 - `npm run build` passes
 
+### Completed Work
+
+- `src/components/sleep/SleepTracker.tsx`: Added a `historyRow` wrapper and `historyArrow` element for each sleep history item so the arrow can be aligned and spaced consistently.
+- `src/components/sleep/SleepTracker.module.css`: Added scrollbar-hiding rules to `historyList`, made the history row container explicitly `display: flex` with `align-items: center`, and set `historyArrow` to `padding-right: 12px`.
+- `src/components/chat/ChatCoach.module.css`: Updated `.textarea` to the Section 5 spec (`min-height: 2.5rem`, `max-height: 12rem`, `resize: none`, hidden scrollbars, `field-sizing: content`, `caret-color: var(--color-accent)`).
+- `src/components/chat/ChatCoach.tsx`: Removed `rows={3}` from the chat textarea so sizing is controlled by CSS.
+- `docs/somni_implementation_plan_v6.md`: Added this Section 5 completion summary and listed all changed files.
+
 ---
 
 ## Section 6 — Send Button Micro-animation + Sleep Page H1 Rename

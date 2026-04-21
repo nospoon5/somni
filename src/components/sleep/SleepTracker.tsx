@@ -157,9 +157,14 @@ export function SleepTracker({ activeLog, recentLogs }: SleepTrackerProps) {
           <ul className={styles.historyList}>
             {recentLogs.map((log) => (
               <li className={`${styles.historyItem} card`} key={log.id}>
-                <div className={styles.historyMeta}>
-                  <strong>{log.isNight ? 'Night sleep' : 'Day sleep'}</strong>
-                  <span>{formatDateTime(log.startedAt)}</span>
+                <div className={styles.historyRow}>
+                  <div className={styles.historyMeta}>
+                    <strong>{log.isNight ? 'Night sleep' : 'Day sleep'}</strong>
+                    <span>{formatDateTime(log.startedAt)}</span>
+                  </div>
+                  <span className={styles.historyArrow} aria-hidden="true">
+                    &gt;
+                  </span>
                 </div>
                 <div className={styles.historyDuration}>
                   {formatDuration(log.startedAt, log.endedAt)}
