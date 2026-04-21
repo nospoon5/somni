@@ -103,7 +103,7 @@ export function getAgeBand(dateOfBirth: string, now = new Date()) {
   return '12 months+'
 }
 
-function getTargetsForAgeBand(ageBand: string): SleepTargets {
+export function getTargetsForAgeBand(ageBand: string): SleepTargets {
   switch (ageBand) {
     case '0-3 months':
       return {

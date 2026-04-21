@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { ChatCoach } from '@/components/chat/ChatCoach'
 import { createClient } from '@/lib/supabase/server'
@@ -89,6 +90,13 @@ export default async function ChatPage() {
           Ask one question at a time and Somni will respond with calm, source-backed
           guidance in Australian English.
         </p>
+      <Link
+          href="/dashboard"
+          className="text-body"
+          style={{ display: 'inline-block', marginBottom: '1rem', color: 'var(--color-text-muted)' }}
+        >
+          &larr; Back to Dashboard
+        </Link>
       </section>
 
       <ChatCoach

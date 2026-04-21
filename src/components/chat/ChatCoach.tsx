@@ -496,7 +496,11 @@ export function ChatCoach({
               {message.role === 'assistant' ? 'Somni' : 'You'}
             </p>
             <p className={styles.messageText}>
-              {message.content ? formatText(message.content) : (message.role === 'assistant' && isSending ? 'Thinking...' : '')}
+              {message.content
+                ? formatText(message.content)
+                : (message.role === 'assistant' && isSending
+                    ? <span className={styles.loadingDots}><span>.</span><span>.</span><span>.</span></span>
+                    : '')}
             </p>
 
             {message.safetyNote ? (

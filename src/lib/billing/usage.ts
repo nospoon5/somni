@@ -25,7 +25,7 @@ export type ChatQuotaStatus = {
   timezone: string
 }
 
-function getTimeZoneParts(timezone: string, date: Date) {
+export function getTimeZoneParts(timezone: string, date: Date) {
   const formatter = new Intl.DateTimeFormat('en-CA', {
     timeZone: timezone,
     year: 'numeric',
@@ -59,7 +59,7 @@ function getUsageDateForTimezone(timezone: string, date = new Date()) {
   )}`
 }
 
-function zonedTimeToUtc(input: {
+export function zonedTimeToUtc(input: {
   year: number
   month: number
   day: number

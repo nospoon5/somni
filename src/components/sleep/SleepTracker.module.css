@@ -139,11 +139,12 @@
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 14px;
+  gap: 24px;
 }
 
 .historyItem {
-  padding: 18px;
+  padding: 24px;
+  border-top: 1px solid var(--color-border-subtle);
 }
 
 .historyMeta {
