@@ -339,6 +339,12 @@ action buttons replaced with small pill quick-links labelled exactly as the bott
 - `npm test -- --run` passes
 - `npm run build` passes
 
+### Completed Work
+
+- `src/app/dashboard/page.tsx`: Updated the dashboard H1 to use first-name greeting (`Hi, [FirstName].`) with `Hi there.` fallback, removed the subtitle paragraph, removed the header Sign out form and `logoutAction` import, and replaced the two large action buttons with `Sleep` and `Chat` quick-links.
+- `src/app/dashboard/page.module.css`: Removed the `.subtitle` styles, replaced `.actions` with the requested flex-wrap pill layout, and added `.quickLink`/`.quickLink:hover` styles exactly as specified for the new quick-links.
+- `docs/somni_implementation_plan_v6.md`: Added this Section 3 completion summary and recorded the exact files changed.
+
 ---
 
 ## Section 4 — DailyPlanPanel: Copy Overhaul + Static Baseline Plans

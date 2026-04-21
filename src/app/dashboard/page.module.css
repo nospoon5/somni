@@ -27,17 +27,28 @@
   font-size: clamp(2rem, 5vw, 3.4rem);
 }
 
-.subtitle {
-  margin: 14px 0 0;
-  max-width: 40rem;
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
 }
 
-.actions {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  margin-top: 18px;
-  width: min(360px, 100%);
+.quickLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-glass);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.quickLink:hover {
+  border-color: var(--color-accent);
+  background: var(--color-accent-glow);
 }
 
 .scorePanel {
@@ -222,11 +233,6 @@
 @media (min-width: 820px) {
   .card {
     padding: 36px;
-  }
-
-  .actions {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    width: min(520px, 100%);
   }
 
   .scorePanel {

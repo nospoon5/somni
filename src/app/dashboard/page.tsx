@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { logoutAction } from '@/app/auth-actions'
 import { DailyPlanPanel } from '@/components/dashboard/DailyPlanPanel'
 import { SleepScorePanel } from '@/components/dashboard/SleepScorePanel'
 import { getDateStringForTimezone, normalizeDailyPlanRow } from '@/lib/daily-plan'
@@ -104,6 +103,8 @@ export default async function DashboardPage() {
     : null
 
   const hasAnySleepData = Boolean((recentSleepLogs?.length ?? 0) > 0 || activeLog)
+  const firstName = profile.full_name?.trim().split(/\s+/)[0]
+  const dashboardTitle = firstName ? `Hi, ${firstName}.` : 'Hi there.'
 
   return (
     <main className={styles.page}>
@@ -111,27 +112,16 @@ export default async function DashboardPage() {
         <div className={styles.header}>
           <div>
             <p className={`${styles.eyebrow} text-label`}>Dashboard</p>
-            <h1 className={`${styles.title} text-display`}>
-              {profile.full_name ? `Welcome, ${profile.full_name}.` : 'Welcome to Somni.'}
-            </h1>
-            <p className={`${styles.subtitle} text-body`}>
-              A calm snapshot of the last week, plus the fastest next steps for tonight.
-            </p>
+            <h1 className={`${styles.title} text-display`}>{dashboardTitle}</h1>
             <div className={styles.actions}>
-              <Link className="btn-primary" href="/sleep">
-                Log sleep
+              <Link className={styles.quickLink} href="/sleep">
+                Sleep
               </Link>
-              <Link className="btn-primary" href="/chat">
-                Ask Somni
+              <Link className={styles.quickLink} href="/chat">
+                Chat
               </Link>
             </div>
           </div>
-
-          <form action={logoutAction}>
-            <button className="btn-secondary" type="submit">
-              Sign out
-            </button>
-          </form>
         </div>
 
         <SleepScorePanel
