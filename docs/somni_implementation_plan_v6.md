@@ -760,6 +760,11 @@ find where the bottom nav is rendered (likely `src/components/pwa/` or `src/comp
 - `npm test -- --run` passes
 - `npm run build` passes
 
+### Completed Work
+
+- `src/components/ui/AppBottomNav.module.css`: Updated bottom-nav active state to use `var(--color-accent)`, added a top-edge accent bar via `.active::before`, added a subtle `color` transition on `.link`, and ensured icon SVG color inherits parent color so active tab icon/label switch together.
+- `docs/somni_implementation_plan_v6.md`: Added this Section 8 completion summary and listed all files changed for this section.
+
 ---
 
 ## Execution Order Summary
