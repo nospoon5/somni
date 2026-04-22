@@ -1,7 +1,18 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import {
+  ensureSleepPlanProfile,
+} from '@/lib/sleep-plan-profile-init'
 import { createClient } from '@/lib/supabase/server'
+import {
+  getSleepStyleLabel,
+  normalizeDayStructure,
+  normalizeNapPattern,
+  normalizeSchedulePreference,
+  parseNightFeeds,
+} from '@/lib/onboarding-preferences'
+import { normalizeSleepPlanClockTime } from '@/lib/sleep-plan-profile'
 
 export type OnboardingState = {
   error?: string
@@ -16,18 +27,6 @@ function getQuestionScore(formData: FormData, key: string) {
   const raw = getString(formData, key)
   const parsed = Number(raw)
   return Number.isFinite(parsed) ? parsed : NaN
-}
-
-function getSleepStyleLabel(score: number) {
-  if (score <= 3.9) {
-    return 'gentle'
-  }
-
-  if (score <= 6.9) {
-    return 'balanced'
-  }
-
-  return 'fast-track'
 }
 
 export async function completeOnboardingAction(
@@ -48,6 +47,11 @@ export async function completeOnboardingAction(
   const biggestIssue = getString(formData, 'biggestIssue')
   const feedingType = getString(formData, 'feedingType')
   const bedtimeRange = getString(formData, 'bedtimeRange')
+  const typicalWakeTime = normalizeSleepPlanClockTime(getString(formData, 'typicalWakeTime'))
+  const dayStructure = normalizeDayStructure(getString(formData, 'dayStructure'))
+  const napPattern = normalizeNapPattern(getString(formData, 'napPattern'))
+  const nightFeeds = parseNightFeeds(getString(formData, 'nightFeeds'))
+  const schedulePreference = normalizeSchedulePreference(getString(formData, 'schedulePreference'))
 
   const questionScores = [
     getQuestionScore(formData, 'question1'),
@@ -57,7 +61,18 @@ export async function completeOnboardingAction(
     getQuestionScore(formData, 'question5'),
   ]
 
-  if (!babyName || !dateOfBirth || !biggestIssue || !feedingType || !bedtimeRange) {
+  if (
+    !babyName ||
+    !dateOfBirth ||
+    !biggestIssue ||
+    !feedingType ||
+    !bedtimeRange ||
+    !typicalWakeTime ||
+    !dayStructure ||
+    !napPattern ||
+    nightFeeds === null ||
+    !schedulePreference
+  ) {
     return { error: 'Please complete every onboarding step before continuing.' }
   }
 
@@ -97,11 +112,39 @@ export async function completeOnboardingAction(
     question_5_score: questionScores[4],
     sleep_style_score: sleepStyleScore,
     sleep_style_label: sleepStyleLabel,
+    typical_wake_time: typicalWakeTime,
+    day_structure: dayStructure,
+    nap_pattern: napPattern,
+    night_feeds: nightFeeds,
+    schedule_preference: schedulePreference,
   })
 
   if (preferencesError) {
     return {
       error: preferencesError.message ?? 'We could not save the sleep style answers.',
+    }
+  }
+
+  try {
+    await ensureSleepPlanProfile({
+      supabase,
+      source: 'onboarding',
+      id: baby.id,
+      name: babyName,
+      dateOfBirth,
+      sleepStyleLabel,
+      typicalWakeTime,
+      dayStructure,
+      napPattern,
+      nightFeeds,
+      schedulePreference,
+    })
+  } catch (profileBootstrapError) {
+    return {
+      error:
+        profileBootstrapError instanceof Error
+          ? profileBootstrapError.message
+          : 'We could not create the starting sleep plan profile.',
     }
   }
 

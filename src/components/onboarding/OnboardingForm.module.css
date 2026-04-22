@@ -59,6 +59,13 @@
   font-size: 0.94rem;
 }
 
+.helpText {
+  margin-top: -2px;
+  color: var(--color-text-muted);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
 .field input,
 .field select {
   min-height: 56px;

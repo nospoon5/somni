@@ -29,6 +29,8 @@ describe('sleep plan profile helpers', () => {
           },
         ],
         flexibility_minutes: 20,
+        assertiveness: 'balanced',
+        adaptation_pace: 'steady',
       },
       feed_anchor_profile: {
         anchors: [
@@ -39,6 +41,7 @@ describe('sleep plan profile helpers', () => {
           },
         ],
         notes: 'Keep feed anchors supportive.',
+        night_feeds_expected: true,
       },
       schedule_preference: 'mix_of_cues_and_anchors',
       day_structure: 'mostly_home_flexible',
@@ -67,6 +70,8 @@ describe('sleep plan profile helpers', () => {
           },
         ],
         flexibilityMinutes: 20,
+        assertiveness: 'balanced',
+        adaptationPace: 'steady',
       },
       feedAnchorProfile: {
         anchors: [
@@ -77,6 +82,7 @@ describe('sleep plan profile helpers', () => {
           },
         ],
         notes: 'Keep feed anchors supportive.',
+        nightFeedsExpected: true,
       },
       schedulePreference: 'mix_of_cues_and_anchors',
       dayStructure: 'mostly_home_flexible',
@@ -110,7 +116,10 @@ describe('sleep plan profile helpers', () => {
     expect(profile?.adaptationConfidence).toBe('low')
     expect(profile?.learningState).toBe('starting')
     expect(profile?.wakeWindowProfile.windows).toEqual([])
+    expect(profile?.wakeWindowProfile.assertiveness).toBe('balanced')
+    expect(profile?.wakeWindowProfile.adaptationPace).toBe('steady')
     expect(profile?.feedAnchorProfile.anchors).toEqual([])
+    expect(profile?.feedAnchorProfile.nightFeedsExpected).toBeNull()
   })
 
   it('normalises change events with snapshots for audit reads', () => {
@@ -172,6 +181,8 @@ describe('sleep plan profile helpers', () => {
             max_minutes: 180,
           },
         ],
+        assertiveness: 'assertive',
+        adaptation_pace: 'responsive',
       },
       feed_anchor_profile: {
         anchors: [
@@ -180,6 +191,7 @@ describe('sleep plan profile helpers', () => {
             target_time: '18:30',
           },
         ],
+        night_feeds_expected: false,
       },
       schedule_preference: 'more_clock_based',
       day_structure: 'work_constrained',
@@ -192,10 +204,14 @@ describe('sleep plan profile helpers', () => {
 
     const profileSnapshot = buildSleepPlanProfileSnapshot(profile!)
     profileSnapshot.wakeWindowProfile.windows[0].label = 'Changed in snapshot'
+    profileSnapshot.wakeWindowProfile.assertiveness = 'gentle'
     profileSnapshot.feedAnchorProfile.anchors[0].label = 'Changed feed label'
+    profileSnapshot.feedAnchorProfile.nightFeedsExpected = true
 
     expect(profile?.wakeWindowProfile.windows[0].label).toBe('First window')
+    expect(profile?.wakeWindowProfile.assertiveness).toBe('assertive')
     expect(profile?.feedAnchorProfile.anchors[0].label).toBe('Bedtime feed')
+    expect(profile?.feedAnchorProfile.nightFeedsExpected).toBe(false)
 
     const dailyPlanSnapshot = buildDailyPlanSnapshot({
       id: 'plan-1',

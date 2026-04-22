@@ -4,6 +4,15 @@ import { DailyPlanPanel } from '@/components/dashboard/DailyPlanPanel'
 import { SleepScorePanel } from '@/components/dashboard/SleepScorePanel'
 import { getBaselinePlan } from '@/lib/baseline-plans'
 import { getDateStringForTimezone, normalizeDailyPlanRow } from '@/lib/daily-plan'
+import {
+  normalizeDayStructure,
+  normalizeNapPattern,
+  normalizeSchedulePreference,
+  normalizeSleepStyleLabel,
+  parseNightFeeds,
+} from '@/lib/onboarding-preferences'
+import { ensureSleepPlanProfile } from '@/lib/sleep-plan-profile-init'
+import { normalizeSleepPlanClockTime } from '@/lib/sleep-plan-profile'
 import { createClient } from '@/lib/supabase/server'
 import { sanitizeTimezone } from '@/lib/billing/usage'
 import {
@@ -67,6 +76,42 @@ export default async function DashboardPage() {
     .order('created_at', { ascending: true })
     .limit(1)
     .maybeSingle()
+
+  const { data: preferencesRow } = baby
+    ? await supabase
+        .from('onboarding_preferences')
+        .select(
+          'sleep_style_label, typical_wake_time, day_structure, nap_pattern, night_feeds, schedule_preference'
+        )
+        .eq('baby_id', baby.id)
+        .maybeSingle()
+    : { data: null }
+
+  if (baby) {
+    try {
+      await ensureSleepPlanProfile({
+        supabase,
+        source: 'system',
+        id: baby.id,
+        name: baby.name,
+        dateOfBirth: baby.date_of_birth,
+        sleepStyleLabel: normalizeSleepStyleLabel(preferencesRow?.sleep_style_label),
+        typicalWakeTime: normalizeSleepPlanClockTime(preferencesRow?.typical_wake_time),
+        dayStructure: normalizeDayStructure(preferencesRow?.day_structure),
+        napPattern: normalizeNapPattern(preferencesRow?.nap_pattern),
+        nightFeeds: parseNightFeeds(
+          typeof preferencesRow?.night_feeds === 'boolean'
+            ? preferencesRow.night_feeds
+              ? 'yes'
+              : 'no'
+            : null
+        ),
+        schedulePreference: normalizeSchedulePreference(preferencesRow?.schedule_preference),
+      })
+    } catch (profileBootstrapError) {
+      console.error('[dashboard] failed to bootstrap sleep plan profile', profileBootstrapError)
+    }
+  }
 
   const todayPlanDate = getDateStringForTimezone(timezone)
 

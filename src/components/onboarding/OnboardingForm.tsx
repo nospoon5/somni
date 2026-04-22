@@ -3,6 +3,12 @@
 import { useActionState, useMemo, useState } from 'react'
 import type { OnboardingState } from '@/app/onboarding/actions'
 import { completeOnboardingAction } from '@/app/onboarding/actions'
+import {
+  dayStructureOptions,
+  napPatternOptions,
+  nightFeedOptions,
+  schedulePreferenceOptions,
+} from '@/lib/onboarding-preferences'
 import styles from './OnboardingForm.module.css'
 
 const initialState: OnboardingState = {}
@@ -59,6 +65,11 @@ export function OnboardingForm() {
   const [biggestIssue, setBiggestIssue] = useState('')
   const [feedingType, setFeedingType] = useState('')
   const [bedtimeRange, setBedtimeRange] = useState('')
+  const [typicalWakeTime, setTypicalWakeTime] = useState('')
+  const [dayStructure, setDayStructure] = useState('')
+  const [napPattern, setNapPattern] = useState('')
+  const [nightFeeds, setNightFeeds] = useState('')
+  const [schedulePreference, setSchedulePreference] = useState('')
   const [questionScores, setQuestionScores] = useState([5, 5, 5, 5, 5])
 
   const stylePreview = useMemo(() => {
@@ -78,7 +89,12 @@ export function OnboardingForm() {
     dateOfBirth &&
     biggestIssue &&
     feedingType &&
-    bedtimeRange
+    bedtimeRange &&
+    typicalWakeTime &&
+    dayStructure &&
+    napPattern &&
+    nightFeeds &&
+    schedulePreference
 
   return (
     <form className={`${styles.form} card`} action={formAction}>
@@ -161,6 +177,81 @@ export function OnboardingForm() {
                 ))}
               </select>
             </label>
+
+            <label className={styles.field}>
+              <span>What time does your baby usually start the day?</span>
+              <small className={styles.helpText}>
+                Pick the time you most often treat as the morning wake-up.
+              </small>
+              <input
+                value={typicalWakeTime}
+                onChange={(event) => setTypicalWakeTime(event.target.value)}
+                type="time"
+              />
+            </label>
+
+            <label className={styles.field}>
+              <span>Which best matches most days right now?</span>
+              <select
+                value={dayStructure}
+                onChange={(event) => setDayStructure(event.target.value)}
+              >
+                <option value="">Select one</option>
+                {dayStructureOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className={styles.field}>
+              <span>What does the nap pattern usually look like?</span>
+              <select
+                value={napPattern}
+                onChange={(event) => setNapPattern(event.target.value)}
+              >
+                <option value="">Select one</option>
+                {napPatternOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className={styles.field}>
+              <span>Are night feeds still part of most nights?</span>
+              <small className={styles.helpText}>
+                This helps us keep the first plan realistic. It does not force night weaning.
+              </small>
+              <select
+                value={nightFeeds}
+                onChange={(event) => setNightFeeds(event.target.value)}
+              >
+                <option value="">Select one</option>
+                {nightFeedOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className={styles.field}>
+              <span>How would you like the plan to feel?</span>
+              <select
+                value={schedulePreference}
+                onChange={(event) => setSchedulePreference(event.target.value)}
+              >
+                <option value="">Select one</option>
+                {schedulePreferenceOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
 
           <div className={styles.actions}>
@@ -233,6 +324,11 @@ export function OnboardingForm() {
       <input type="hidden" name="biggestIssue" value={biggestIssue} />
       <input type="hidden" name="feedingType" value={feedingType} />
       <input type="hidden" name="bedtimeRange" value={bedtimeRange} />
+      <input type="hidden" name="typicalWakeTime" value={typicalWakeTime} />
+      <input type="hidden" name="dayStructure" value={dayStructure} />
+      <input type="hidden" name="napPattern" value={napPattern} />
+      <input type="hidden" name="nightFeeds" value={nightFeeds} />
+      <input type="hidden" name="schedulePreference" value={schedulePreference} />
       <input type="hidden" name="question1" value={questionScores[0]} />
       <input type="hidden" name="question2" value={questionScores[1]} />
       <input type="hidden" name="question3" value={questionScores[2]} />

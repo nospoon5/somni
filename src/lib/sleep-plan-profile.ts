@@ -14,6 +14,8 @@ export const SLEEP_PLAN_CHANGE_KINDS = [
 ] as const
 export const SLEEP_PLAN_EVIDENCE_CONFIDENCE_VALUES = ['low', 'medium', 'high'] as const
 export const SLEEP_PLAN_LEARNING_STATES = ['starting', 'learning', 'stable'] as const
+export const SLEEP_PLAN_ASSERTIVENESS_VALUES = ['gentle', 'balanced', 'assertive'] as const
+export const SLEEP_PLAN_ADAPTATION_PACES = ['slow', 'steady', 'responsive'] as const
 
 export type SleepPlanChangeScope = (typeof SLEEP_PLAN_CHANGE_SCOPES)[number]
 export type SleepPlanChangeSource = (typeof SLEEP_PLAN_CHANGE_SOURCES)[number]
@@ -21,6 +23,8 @@ export type SleepPlanChangeKind = (typeof SLEEP_PLAN_CHANGE_KINDS)[number]
 export type SleepPlanEvidenceConfidence =
   (typeof SLEEP_PLAN_EVIDENCE_CONFIDENCE_VALUES)[number]
 export type SleepPlanLearningState = (typeof SLEEP_PLAN_LEARNING_STATES)[number]
+export type SleepPlanAssertiveness = (typeof SLEEP_PLAN_ASSERTIVENESS_VALUES)[number]
+export type SleepPlanAdaptationPace = (typeof SLEEP_PLAN_ADAPTATION_PACES)[number]
 
 export type SleepPlanWakeWindow = {
   label: string
@@ -31,6 +35,8 @@ export type SleepPlanWakeWindow = {
 export type SleepPlanWakeWindowProfile = {
   windows: SleepPlanWakeWindow[]
   flexibilityMinutes: number | null
+  assertiveness: SleepPlanAssertiveness | null
+  adaptationPace: SleepPlanAdaptationPace | null
 }
 
 export type SleepPlanFeedAnchor = {
@@ -42,6 +48,7 @@ export type SleepPlanFeedAnchor = {
 export type SleepPlanFeedAnchorProfile = {
   anchors: SleepPlanFeedAnchor[]
   notes: string | null
+  nightFeedsExpected: boolean | null
 }
 
 export type SleepPlanProfileRecord = {
@@ -161,6 +168,10 @@ function pickNonNegativeInteger(value: unknown) {
   return null
 }
 
+function pickOptionalBoolean(value: unknown) {
+  return typeof value === 'boolean' ? value : null
+}
+
 function normalizeEnum<T extends string>(
   value: unknown,
   allowedValues: readonly T[],
@@ -225,6 +236,16 @@ function normalizeWakeWindowProfile(value: unknown): SleepPlanWakeWindowProfile 
     flexibilityMinutes: pickNonNegativeInteger(
       record?.flexibilityMinutes ?? record?.flexibility_minutes
     ),
+    assertiveness: normalizeEnum(
+      record?.assertiveness,
+      SLEEP_PLAN_ASSERTIVENESS_VALUES,
+      'balanced'
+    ),
+    adaptationPace: normalizeEnum(
+      record?.adaptationPace ?? record?.adaptation_pace,
+      SLEEP_PLAN_ADAPTATION_PACES,
+      'steady'
+    ),
   }
 }
 
@@ -254,6 +275,9 @@ function normalizeFeedAnchorProfile(value: unknown): SleepPlanFeedAnchorProfile 
       .map((anchor) => normalizeFeedAnchor(anchor))
       .filter((anchor): anchor is SleepPlanFeedAnchor => anchor !== null),
     notes: pickOptionalString(record?.notes),
+    nightFeedsExpected: pickOptionalBoolean(
+      record?.nightFeedsExpected ?? record?.night_feeds_expected
+    ),
   }
 }
 
@@ -376,10 +400,13 @@ export function buildSleepPlanProfileSnapshot(
     wakeWindowProfile: {
       windows: profile.wakeWindowProfile.windows.map((window) => ({ ...window })),
       flexibilityMinutes: profile.wakeWindowProfile.flexibilityMinutes,
+      assertiveness: profile.wakeWindowProfile.assertiveness,
+      adaptationPace: profile.wakeWindowProfile.adaptationPace,
     },
     feedAnchorProfile: {
       anchors: profile.feedAnchorProfile.anchors.map((anchor) => ({ ...anchor })),
       notes: profile.feedAnchorProfile.notes,
+      nightFeedsExpected: profile.feedAnchorProfile.nightFeedsExpected,
     },
     schedulePreference: profile.schedulePreference,
     dayStructure: profile.dayStructure,

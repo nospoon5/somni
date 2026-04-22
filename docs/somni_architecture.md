@@ -96,8 +96,10 @@ Current note:
 
 1. User signs up or signs in.
 2. User creates a baby profile.
-3. User completes the five-question sleep style questionnaire.
-4. App stores onboarding preferences and marks onboarding complete.
+3. User answers the sleep style questionnaire plus practical planning questions such as
+   wake time, day shape, naps, night feeds, and preferred schedule feel.
+4. App stores the onboarding preferences, creates one recommended starting
+   `sleep_plan_profile`, and marks onboarding complete.
 
 ### Sleep Logging Flow
 
@@ -171,6 +173,8 @@ Core tables:
 Important data notes:
 
 - `babies.ai_memory` stores a rolling AI memory summary for that baby.
+- `onboarding_preferences` stores both the five sleep-style scores and the practical
+  starting-plan inputs used for the first durable profile.
 - `daily_plans` stores one practical plan per baby per day.
 - `sleep_plan_profiles` stores one durable learned baseline plan per baby.
 - `sleep_plan_change_events` stores append-only explainability history for profile and
@@ -197,9 +201,10 @@ Somni now distinguishes between two kinds of plan state:
 
 Current implementation note:
 
-- Stage 1 adds the adaptive-plan schema and helper layer only.
-- Dashboard and onboarding behavior still use the existing daily-plan and baseline-plan
-  flow until later stages wire the new profile model in.
+- Stage 2 now creates one starting `sleep_plan_profile` during onboarding and safely
+  bootstraps one for older accounts if it is missing.
+- The dashboard still renders `daily_plans` first and otherwise falls back to the
+  age-only baseline plan until Stage 3 swaps the UI over to profile-driven derivation.
 
 ## Retrieval and AI
 
