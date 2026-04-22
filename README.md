@@ -118,7 +118,7 @@ Start here when orienting yourself:
 - `docs/README.md`
 - `docs/somni_context.md`
 - `docs/somni_architecture.md`
-- `docs/somni_implementation_plan_v5.md`
+- `docs/somni_implementation_plan_v7.md`
 - `docs/somni_ai_quality_hardening.md`
 
 Historical planning and handoff files have been moved to `archive/`.

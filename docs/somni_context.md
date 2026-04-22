@@ -2,7 +2,7 @@
 
 ## Current Delivery Status (2026-04-12)
 
-- Active next-step plan: `docs/somni_implementation_plan_v5.md`
+- Active next-step plan: `docs/somni_implementation_plan_v7.md`
 - Recently completed work: Stages 11 to 14 from `docs/somni_implementation_plan_v4.md`
 - Current branch target: `main` is the working branch
 - Product state: usable first cut across auth, onboarding, dashboard, sleep logging, chat,
@@ -85,10 +85,12 @@ Core promise:
 
 The next execution order is:
 
-1. Foundation cleanup
-2. Sleep score v2
-3. AI quality hardening
-4. Real-world constraint coaching
-5. Beta readiness
+1. Adaptive plan data model and guardrails
+2. Onboarding expansion and initial recommended plan
+3. Daily plan derivation from the learned profile
+4. Chat-driven explicit plan updates
+5. Log-driven adaptation with sparse-data safety
+6. Parent-facing trust and explanation UX
+7. Verification and rollout safety
 
-Those sections are detailed in `docs/somni_implementation_plan_v5.md`.
+Those sections are detailed in `docs/somni_implementation_plan_v7.md`.

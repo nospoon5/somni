@@ -11,7 +11,7 @@ and one-off prompt files have been moved to `archive/`.
 - `somni_architecture.md`
   Technical source of truth for routes, data model, integrations, and system behavior.
 
-- `somni_implementation_plan_v5.md`
+- `somni_implementation_plan_v7.md`
   The current next-step execution plan. Each section is designed to be worked in a separate
   Codex chat.
 
@@ -25,6 +25,9 @@ and one-off prompt files have been moved to `archive/`.
 
 - `somni_ai_persona.md`
   Tone and coaching style for the assistant.
+
+- `somni_implementation_plan_v6.md`
+  Recent UX and dashboard planning work, including the current baseline-plan implementation.
 
 - `somni_corpus_plan.md`
   Rules for the curated sleep corpus and retrieval quality expectations.
@@ -46,7 +49,7 @@ and one-off prompt files have been moved to `archive/`.
 If two current docs disagree:
 
 1. `somni_architecture.md`
-2. `somni_implementation_plan_v5.md`
+2. `somni_implementation_plan_v7.md`
 3. `somni_context.md`
 
 If a change in the code makes a current doc wrong, update the doc in the same work stream.
