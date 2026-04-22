@@ -570,6 +570,7 @@ async function saveDailyPlanForToday(args: {
       feedTargets: savedPlan.feedTargets,
       notes: savedPlan.notes,
       updatedAt: savedPlan.updatedAt,
+      metadata: savedPlan.metadata,
     },
   }
 }

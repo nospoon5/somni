@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { DailyPlanPanel } from '@/components/dashboard/DailyPlanPanel'
 import { SleepScorePanel } from '@/components/dashboard/SleepScorePanel'
-import { getBaselinePlan } from '@/lib/baseline-plans'
+import { selectDailyPlanForDashboard } from '@/lib/daily-plan-derivation'
 import { getDateStringForTimezone, normalizeDailyPlanRow } from '@/lib/daily-plan'
 import {
   normalizeDayStructure,
@@ -12,7 +12,10 @@ import {
   parseNightFeeds,
 } from '@/lib/onboarding-preferences'
 import { ensureSleepPlanProfile } from '@/lib/sleep-plan-profile-init'
-import { normalizeSleepPlanClockTime } from '@/lib/sleep-plan-profile'
+import {
+  normalizeSleepPlanClockTime,
+  type SleepPlanProfileRecord,
+} from '@/lib/sleep-plan-profile'
 import { createClient } from '@/lib/supabase/server'
 import { sanitizeTimezone } from '@/lib/billing/usage'
 import {
@@ -87,9 +90,11 @@ export default async function DashboardPage() {
         .maybeSingle()
     : { data: null }
 
+  let sleepPlanProfile: SleepPlanProfileRecord | null = null
+
   if (baby) {
     try {
-      await ensureSleepPlanProfile({
+      const ensureResult = await ensureSleepPlanProfile({
         supabase,
         source: 'system',
         id: baby.id,
@@ -108,6 +113,7 @@ export default async function DashboardPage() {
         ),
         schedulePreference: normalizeSchedulePreference(preferencesRow?.schedule_preference),
       })
+      sleepPlanProfile = ensureResult.profile
     } catch (profileBootstrapError) {
       console.error('[dashboard] failed to bootstrap sleep plan profile', profileBootstrapError)
     }
@@ -130,9 +136,16 @@ export default async function DashboardPage() {
 
   const dailyPlan = normalizeDailyPlanRow(dailyPlanRow)
   const ageInWeeks = baby ? getAgeInWeeks(baby.date_of_birth, todayPlanDate) : null
-  const baselinePlan =
-    !dailyPlan && baby && ageInWeeks !== null ? getBaselinePlan(ageInWeeks, baby.name) : null
-  const initialPlan = dailyPlan ?? baselinePlan
+  const initialPlan = baby
+    ? selectDailyPlanForDashboard({
+        savedPlan: dailyPlan,
+        profile: sleepPlanProfile,
+        ageInWeeks,
+        babyId: baby.id,
+        babyName: baby.name,
+        planDate: todayPlanDate,
+      }).plan
+    : null
   const lookbackStart = getSleepScoreLookbackStart()
 
   const { data: activeLog } = baby

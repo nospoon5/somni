@@ -47,5 +47,6 @@ export function getBaselinePlan(ageInWeeks: number, babyName: string): DailyPlan
     feedTargets: cloneFeedTargets(template.feedTargets),
     notes: template.notes?.replaceAll('{{babyName}}', safeBabyName) ?? null,
     updatedAt: template.updatedAt,
+    metadata: null,
   }
 }

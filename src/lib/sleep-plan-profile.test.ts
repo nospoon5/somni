@@ -234,6 +234,7 @@ describe('sleep plan profile helpers', () => {
       ],
       notes: 'Rescue plan only for today.',
       updatedAt: '2026-04-22T11:15:00Z',
+      metadata: null,
     })
 
     expect(dailyPlanSnapshot).not.toBeNull()

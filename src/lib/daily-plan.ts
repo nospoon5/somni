@@ -1,5 +1,22 @@
 export const DAILY_PLAN_STORAGE_KEY = 'somni:daily-plan'
 
+export const DAILY_PLAN_ORIGINS = [
+  'saved_daily_plan',
+  'profile_derived',
+  'age_baseline_fallback',
+  'live_stream',
+] as const
+export const DAILY_PLAN_CONFIDENCE_VALUES = ['low', 'medium', 'high'] as const
+
+export type DailyPlanOrigin = (typeof DAILY_PLAN_ORIGINS)[number]
+export type DailyPlanConfidence = (typeof DAILY_PLAN_CONFIDENCE_VALUES)[number]
+
+export type DailyPlanMetadata = {
+  origin: DailyPlanOrigin
+  confidence: DailyPlanConfidence | null
+  reasonSummary: string | null
+}
+
 export type DailyPlanSleepTarget = {
   label: string
   targetTime: string | null
@@ -21,6 +38,7 @@ export type DailyPlanRecord = {
   feedTargets: DailyPlanFeedTarget[]
   notes: string | null
   updatedAt: string | null
+  metadata: DailyPlanMetadata | null
 }
 
 export type DailyPlanUpdateInput = {
@@ -35,6 +53,7 @@ export type DailyPlanStreamPayload = {
   feedTargets: DailyPlanFeedTarget[]
   notes: string | null
   updatedAt: string | null
+  metadata?: DailyPlanMetadata | null
 }
 
 type DailyPlanRow = {
@@ -58,6 +77,32 @@ function pickOptionalString(value: unknown) {
 
   const trimmed = value.trim()
   return trimmed ? trimmed : null
+}
+
+function normalizeEnum<T extends string>(value: unknown, allowedValues: readonly T[]) {
+  if (typeof value !== 'string') {
+    return null
+  }
+
+  const normalized = value.trim().toLowerCase()
+  return allowedValues.includes(normalized as T) ? (normalized as T) : null
+}
+
+function normalizeDailyPlanMetadata(value: unknown): DailyPlanMetadata | null {
+  if (!isRecord(value)) {
+    return null
+  }
+
+  const origin = normalizeEnum(value.origin, DAILY_PLAN_ORIGINS)
+  if (!origin) {
+    return null
+  }
+
+  return {
+    origin,
+    confidence: normalizeEnum(value.confidence, DAILY_PLAN_CONFIDENCE_VALUES),
+    reasonSummary: pickOptionalString(value.reasonSummary ?? value.reason_summary),
+  }
 }
 
 function normalizeLabel(value: unknown) {
@@ -173,6 +218,11 @@ export function normalizeDailyPlanRow(row: DailyPlanRow | null | undefined): Dai
     feedTargets: normalizeFeedTargets(row.feed_targets),
     notes: pickOptionalString(row.notes),
     updatedAt: pickOptionalString(row.updated_at ?? null),
+    metadata: {
+      origin: 'saved_daily_plan',
+      confidence: 'high',
+      reasonSummary: 'Using your saved plan for today.',
+    },
   }
 }
 
@@ -257,6 +307,13 @@ export function mergeDailyPlan(
         ? updates.notes
         : existing?.notes ?? null,
     updatedAt: options.updatedAt ?? existing?.updatedAt ?? null,
+    metadata:
+      existing?.metadata ??
+      normalizeDailyPlanMetadata({
+        origin: 'saved_daily_plan',
+        confidence: 'high',
+        reasonSummary: 'Using your saved plan for today.',
+      }),
   }
 }
 

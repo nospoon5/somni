@@ -17,15 +17,28 @@ type DailyPlanPanelProps = {
   todayPlanDate: string
 }
 
-function isBaselinePlan(plan: DailyPlanRecord | null) {
-  return plan?.id.startsWith('baseline-') ?? false
+function isEphemeralPlan(plan: DailyPlanRecord | null) {
+  if (!plan) {
+    return true
+  }
+
+  const origin = plan.metadata?.origin
+  if (origin && origin !== 'saved_daily_plan') {
+    return true
+  }
+
+  return (
+    plan.id.startsWith('baseline-') ||
+    plan.id.startsWith('derived-') ||
+    plan.id.startsWith('live-')
+  )
 }
 
 function hydratePlanFromPayload(
   currentPlan: DailyPlanRecord | null,
   payload: DailyPlanStreamPayload
 ): DailyPlanRecord {
-  const preservedPlan = currentPlan && !isBaselinePlan(currentPlan) ? currentPlan : null
+  const preservedPlan = currentPlan && !isEphemeralPlan(currentPlan) ? currentPlan : null
 
   return {
     id: preservedPlan?.id ?? `live-${payload.planDate}`,
@@ -35,6 +48,12 @@ function hydratePlanFromPayload(
     feedTargets: payload.feedTargets,
     notes: payload.notes,
     updatedAt: payload.updatedAt,
+    metadata:
+      payload.metadata ?? {
+        origin: 'live_stream',
+        confidence: null,
+        reasonSummary: null,
+      },
   }
 }
 

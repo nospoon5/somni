@@ -203,8 +203,10 @@ Current implementation note:
 
 - Stage 2 now creates one starting `sleep_plan_profile` during onboarding and safely
   bootstraps one for older accounts if it is missing.
-- The dashboard still renders `daily_plans` first and otherwise falls back to the
-  age-only baseline plan until Stage 3 swaps the UI over to profile-driven derivation.
+- Stage 3 now renders daily plans in this order:
+  1. saved `daily_plans` row for today (highest priority)
+  2. deterministic profile-derived daily plan from `sleep_plan_profiles`
+  3. age-only baseline fallback only when both are missing
 
 ## Retrieval and AI
 
