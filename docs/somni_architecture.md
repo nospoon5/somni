@@ -19,6 +19,7 @@ Current live product areas:
 - Sleep score
 - AI chat with retrieval
 - Daily plans
+- Adaptive plan foundation
 - Billing
 - Support
 - AI memory backfill
@@ -164,14 +165,41 @@ Core tables:
 - `usage_counters`
 - `corpus_chunks`
 - `daily_plans`
+- `sleep_plan_profiles`
+- `sleep_plan_change_events`
 
 Important data notes:
 
 - `babies.ai_memory` stores a rolling AI memory summary for that baby.
-- `daily_plans` stores one plan per baby per day.
+- `daily_plans` stores one practical plan per baby per day.
+- `sleep_plan_profiles` stores one durable learned baseline plan per baby.
+- `sleep_plan_change_events` stores append-only explainability history for profile and
+  daily-plan changes.
 - `sleep_logs` has a unique partial index so each baby can only have one active session.
 - `usage_counters` resets by the user's timezone, defaulting to `Australia/Sydney`.
 - `corpus_chunks` stores retrieval text, metadata, and embeddings.
+
+## Adaptive Plan Model
+
+Somni now distinguishes between two kinds of plan state:
+
+- `sleep_plan_profiles`
+  - the durable learned baseline for that baby
+  - stores current best guesses such as usual wake time, target bedtime, nap count,
+    wake-window pattern, day structure, schedule preference, and adaptation confidence
+- `daily_plans`
+  - today's editable snapshot only
+  - can reflect same-day rescue changes without rewriting the durable baseline
+- `sleep_plan_change_events`
+  - append-only audit history
+  - stores whether a change affected the durable profile or only today's plan, plus the
+    source, confidence, rationale, and before/after snapshots
+
+Current implementation note:
+
+- Stage 1 adds the adaptive-plan schema and helper layer only.
+- Dashboard and onboarding behavior still use the existing daily-plan and baseline-plan
+  flow until later stages wire the new profile model in.
 
 ## Retrieval and AI
 
@@ -227,4 +255,4 @@ Main runtime variables:
 - `docs/somni_context.md` for product intent
 - `docs/somni_corpus_plan.md` for corpus rules
 - `docs/somni_implementation_plan_v4.md` for completed AI and RAG work
-- `docs/somni_implementation_plan_v5.md` for the next execution plan
+- `docs/somni_implementation_plan_v7.md` for the next adaptive-plan execution plan
