@@ -316,7 +316,7 @@ export function inferChatPlanUpdateSignal(message: string): ChatPlanUpdateSignal
 }
 
 export function shouldApplyDurableProfileUpdate(signal: ChatPlanUpdateSignal) {
-  return signal.explicitStablePattern || !signal.sparseLoggingHint
+  return signal.explicitStablePattern
 }
 
 export function resolveChatEvidenceConfidence(args: {

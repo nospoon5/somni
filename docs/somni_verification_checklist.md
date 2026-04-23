@@ -7,6 +7,7 @@ Use this after normal product changes. Keep it lightweight and consistent.
 Run from project root:
 
 ```bash
+node scripts/verify-stage7-adaptive-plans.mjs
 npm run lint
 npm test -- --run
 npm run build
@@ -15,7 +16,12 @@ node scripts/verify-stage4-retrieval.mjs
 
 Expected result:
 
-- All four commands pass with no errors.
+- All five commands pass with no errors.
+- Stage 7 adaptive verification covers:
+  - onboarding/profile bootstrap anchors and confidence behavior
+  - dashboard source selection (saved vs profile-derived vs age fallback)
+  - chat daily rescue vs durable baseline signals
+  - log-driven hold vs baseline-shift decisions (including rough-patch holds)
 
 AI-focused follow-up when retrieval or prompt logic changed:
 
@@ -32,6 +38,8 @@ Expected result:
 - Explicit ongoing parent statements can update the learned baseline without pretending sparse logs are proof.
 
 ## 2) Fast product sanity check
+
+Use the pre-created account in `docs/TEST_ACCOUNTS.md` (do not create a new user).
 
 1. Open one core signed-in page (for example `/dashboard`) and then go to `/support`.
 2. Confirm the support form field **Where this happened** shows the original page, not `/support`.

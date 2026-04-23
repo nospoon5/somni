@@ -142,6 +142,60 @@ describe('daily plan derivation', () => {
     expect(selection.plan?.notes).toBe('Saved daily rescue plan.')
   })
 
+  it('uses profile-derived plans when no saved plan exists but a durable profile does', () => {
+    const selection = selectDailyPlanForDashboard({
+      savedPlan: null,
+      profile: createProfile({ dayStructure: 'work_constrained' }),
+      ageInWeeks: 24,
+      babyId: 'baby-1',
+      babyName: 'Arlo',
+      planDate: '2026-04-23',
+    })
+
+    expect(selection.source).toBe('profile_derived')
+    expect(selection.plan?.metadata?.origin).toBe('profile_derived')
+    expect(selection.plan?.sleepTargets[0].notes).toContain('work')
+  })
+
+  it('falls back to age baseline only when both saved and profile plans are missing', () => {
+    const selection = selectDailyPlanForDashboard({
+      savedPlan: null,
+      profile: null,
+      ageInWeeks: 24,
+      babyId: 'baby-1',
+      babyName: 'Arlo',
+      planDate: '2026-04-23',
+    })
+
+    expect(selection.source).toBe('age_baseline_fallback')
+    expect(selection.plan?.metadata?.origin).toBe('age_baseline_fallback')
+  })
+
+  it('keeps durable daycare constraints across multiple derived days', () => {
+    const profile = createProfile({
+      dayStructure: 'daycare',
+      wakeWindowProfile: {
+        ...createProfile().wakeWindowProfile,
+        firstNapNotBefore: '09:30',
+      },
+    })
+    const dayOne = buildDailyPlanFromProfile({
+      profile,
+      babyId: 'baby-1',
+      planDate: '2026-04-23',
+    })
+    const dayTwo = buildDailyPlanFromProfile({
+      profile,
+      babyId: 'baby-1',
+      planDate: '2026-04-24',
+    })
+
+    expect(dayOne.sleepTargets[0].targetTime).toBe('09:30')
+    expect(dayTwo.sleepTargets[0].targetTime).toBe('09:30')
+    expect(dayOne.sleepTargets[0].notes).toContain('daycare')
+    expect(dayTwo.sleepTargets[0].notes).toContain('daycare')
+  })
+
   it('is deterministic for the same profile input and date', () => {
     const profile = createProfile()
 

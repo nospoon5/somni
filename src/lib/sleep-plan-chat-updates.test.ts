@@ -153,6 +153,29 @@ describe('sleep plan chat update helpers', () => {
     expect(shouldApplyDurableProfileUpdate(signal)).toBe(false)
   })
 
+  it('keeps same-day rescue-only messages from applying durable baseline edits', () => {
+    const signal = inferChatPlanUpdateSignal(
+      "today's naps were awful, move bedtime earlier for today"
+    )
+
+    expect(signal).toEqual({
+      explicitStablePattern: false,
+      sameDayRescue: true,
+      sparseLoggingHint: false,
+    })
+    expect(shouldApplyDurableProfileUpdate(signal)).toBe(false)
+  })
+
+  it('allows mixed daily and durable updates when a message includes both signals', () => {
+    const signal = inferChatPlanUpdateSignal(
+      'he always wakes at 6 and todays naps were awful so move bedtime earlier'
+    )
+
+    expect(signal.explicitStablePattern).toBe(true)
+    expect(signal.sameDayRescue).toBe(true)
+    expect(shouldApplyDurableProfileUpdate(signal)).toBe(true)
+  })
+
   it('builds confirmation copy that distinguishes daily and durable changes', () => {
     const beforeProfile = createProfile()
     const afterProfile = mergeSleepPlanProfile(beforeProfile, { usualWakeTime: '06:00' })

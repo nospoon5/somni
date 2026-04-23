@@ -117,4 +117,24 @@ describe('createInitialSleepPlanProfile', () => {
     expect(profile.feed_anchor_profile.nightFeedsExpected).toBeNull()
     expect(profile.last_evidence_summary).toContain('missing')
   })
+
+  it('keeps any known onboarding anchors during bootstrap instead of resetting to defaults', () => {
+    const profile = createInitialSleepPlanProfile({
+      id: 'baby-1',
+      name: 'Nora',
+      dateOfBirth: '2025-11-12',
+      sleepStyleLabel: null,
+      typicalWakeTime: '06:15',
+      dayStructure: 'work_constrained',
+      napPattern: null,
+      nightFeeds: null,
+      schedulePreference: null,
+      referenceDate: REFERENCE_DATE,
+    })
+
+    expect(profile.usual_wake_time).toBe('06:15')
+    expect(profile.day_structure).toBe('work_constrained')
+    expect(profile.adaptation_confidence).toBe('low')
+    expect(profile.last_evidence_summary).toContain('missing')
+  })
 })

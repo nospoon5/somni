@@ -231,4 +231,64 @@ describe('sleep plan log adaptation', () => {
     expect(evaluation.blockedAdjustments[0]).toContain('too early')
     expect(evaluation.nextProfile).toBeNull()
   })
+
+  it('holds steady during rough-patch logs even when timing looks repeatable', () => {
+    const evaluation = evaluateSleepPlanAdaptation({
+      profile: createProfile(),
+      currentPlan: null,
+      dateOfBirth: '2025-11-15',
+      timezone: 'UTC',
+      logs: [
+        createLog('2026-04-18T19:30:00.000Z', '2026-04-19T06:00:00.000Z', true, {
+          notes: 'teething week',
+        }),
+        createLog('2026-04-19T08:45:00.000Z', '2026-04-19T09:45:00.000Z', false),
+        createLog('2026-04-19T12:35:00.000Z', '2026-04-19T13:20:00.000Z', false),
+        createLog('2026-04-19T19:30:00.000Z', '2026-04-20T06:00:00.000Z', true),
+        createLog('2026-04-20T08:50:00.000Z', '2026-04-20T09:50:00.000Z', false),
+        createLog('2026-04-20T12:35:00.000Z', '2026-04-20T13:20:00.000Z', false),
+      ],
+      now,
+    })
+
+    expect(evaluation.decision).toBe('hold_steady')
+    expect(evaluation.summary).toContain('rough patch')
+    expect(evaluation.rationale).toContain('does not auto-apply baseline changes')
+  })
+
+  it('applies a durable first-nap constraint after repeated later first naps on covered days', () => {
+    const profile = createProfile({
+      usualWakeTime: '06:30',
+      wakeWindowProfile: {
+        ...createProfile().wakeWindowProfile,
+        firstNapNotBefore: null,
+      },
+    })
+
+    const evaluation = evaluateSleepPlanAdaptation({
+      profile,
+      currentPlan: null,
+      dateOfBirth: '2025-09-20',
+      timezone: 'UTC',
+      logs: [
+        createLog('2026-04-18T19:20:00.000Z', '2026-04-19T06:30:00.000Z', true),
+        createLog('2026-04-19T09:50:00.000Z', '2026-04-19T10:35:00.000Z', false),
+        createLog('2026-04-19T13:00:00.000Z', '2026-04-19T13:45:00.000Z', false),
+        createLog('2026-04-19T19:20:00.000Z', '2026-04-20T06:30:00.000Z', true),
+        createLog('2026-04-20T09:55:00.000Z', '2026-04-20T10:35:00.000Z', false),
+        createLog('2026-04-20T13:05:00.000Z', '2026-04-20T13:50:00.000Z', false),
+        createLog('2026-04-20T19:20:00.000Z', '2026-04-21T06:30:00.000Z', true),
+        createLog('2026-04-21T09:45:00.000Z', '2026-04-21T10:30:00.000Z', false),
+        createLog('2026-04-21T13:00:00.000Z', '2026-04-21T13:40:00.000Z', false),
+        createLog('2026-04-21T19:20:00.000Z', '2026-04-22T06:30:00.000Z', true),
+        createLog('2026-04-22T09:50:00.000Z', '2026-04-22T10:35:00.000Z', false),
+        createLog('2026-04-22T13:00:00.000Z', '2026-04-22T13:45:00.000Z', false),
+      ],
+      now,
+    })
+
+    expect(evaluation.decision).toBe('apply_baseline_shift')
+    expect(evaluation.nextProfile?.wakeWindowProfile.firstNapNotBefore).toBe('09:15')
+    expect(evaluation.summary).toContain('later first naps')
+  })
 })
