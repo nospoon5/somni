@@ -37,6 +37,7 @@ export type SleepPlanWakeWindowProfile = {
   flexibilityMinutes: number | null
   assertiveness: SleepPlanAssertiveness | null
   adaptationPace: SleepPlanAdaptationPace | null
+  firstNapNotBefore: string | null
 }
 
 export type SleepPlanFeedAnchor = {
@@ -246,6 +247,9 @@ function normalizeWakeWindowProfile(value: unknown): SleepPlanWakeWindowProfile 
       SLEEP_PLAN_ADAPTATION_PACES,
       'steady'
     ),
+    firstNapNotBefore: normalizeSleepPlanClockTime(
+      record?.firstNapNotBefore ?? record?.first_nap_not_before
+    ),
   }
 }
 
@@ -402,6 +406,7 @@ export function buildSleepPlanProfileSnapshot(
       flexibilityMinutes: profile.wakeWindowProfile.flexibilityMinutes,
       assertiveness: profile.wakeWindowProfile.assertiveness,
       adaptationPace: profile.wakeWindowProfile.adaptationPace,
+      firstNapNotBefore: profile.wakeWindowProfile.firstNapNotBefore,
     },
     feedAnchorProfile: {
       anchors: profile.feedAnchorProfile.anchors.map((anchor) => ({ ...anchor })),

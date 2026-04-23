@@ -70,7 +70,7 @@ These are the current App Router Route Handlers under `src/app/api/**/route.ts`.
 
 | Endpoint | Method | Purpose |
 | --- | --- | --- |
-| `/api/chat` | POST | Enforce quota, retrieve corpus, generate reply, persist messages |
+| `/api/chat` | POST | Enforce quota, retrieve corpus, generate reply, persist messages, and apply bounded daily-plan or durable-profile updates |
 | `/api/score` | GET | Return the current sleep score summary |
 | `/api/support` | POST | Validate and log support requests |
 | `/api/billing/checkout` | POST | Create a Stripe Checkout session |
@@ -114,14 +114,17 @@ Current note:
 1. Verify the user session.
 2. Load the current profile and baby.
 3. Enforce free-tier chat quota.
-4. Load recent sleep context and the current daily plan.
+4. Load recent sleep context, the durable learned sleep profile, and the current daily plan.
 5. Calculate the sleep score summary.
 6. Retrieve relevant corpus chunks.
-7. Build the prompt with profile, score, plan, memory, and retrieved context.
+7. Build the prompt with the baby profile, learned baseline, today's plan, score, memory, and retrieved context.
 8. Generate the assistant response.
 9. Persist chat messages and metadata.
-10. Optionally update the daily plan.
-11. Sync or backfill AI memory.
+10. Optionally apply bounded chat tools:
+    - `update_daily_plan` for same-day rescue changes only
+    - `update_sleep_plan_profile` for clear ongoing patterns that should change the durable baseline
+11. Write `sleep_plan_change_events` rows for each applied daily or durable change.
+12. Sync or backfill AI memory.
 
 ### Billing Flow
 
@@ -207,6 +210,11 @@ Current implementation note:
   1. saved `daily_plans` row for today (highest priority)
   2. deterministic profile-derived daily plan from `sleep_plan_profiles`
   3. age-only baseline fallback only when both are missing
+- Stage 4 now lets chat update these layers separately:
+  - same-day rescue changes save to `daily_plans` only
+  - explicit parent-reported ongoing patterns update `sleep_plan_profiles`
+  - each applied change writes an explainable `sleep_plan_change_events` row with scope,
+    source, confidence, rationale, and before/after snapshots
 
 ## Retrieval and AI
 

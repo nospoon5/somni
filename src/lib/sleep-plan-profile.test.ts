@@ -31,6 +31,7 @@ describe('sleep plan profile helpers', () => {
         flexibility_minutes: 20,
         assertiveness: 'balanced',
         adaptation_pace: 'steady',
+        first_nap_not_before: '09:30',
       },
       feed_anchor_profile: {
         anchors: [
@@ -72,6 +73,7 @@ describe('sleep plan profile helpers', () => {
         flexibilityMinutes: 20,
         assertiveness: 'balanced',
         adaptationPace: 'steady',
+        firstNapNotBefore: '09:30',
       },
       feedAnchorProfile: {
         anchors: [
@@ -118,6 +120,7 @@ describe('sleep plan profile helpers', () => {
     expect(profile?.wakeWindowProfile.windows).toEqual([])
     expect(profile?.wakeWindowProfile.assertiveness).toBe('balanced')
     expect(profile?.wakeWindowProfile.adaptationPace).toBe('steady')
+    expect(profile?.wakeWindowProfile.firstNapNotBefore).toBeNull()
     expect(profile?.feedAnchorProfile.anchors).toEqual([])
     expect(profile?.feedAnchorProfile.nightFeedsExpected).toBeNull()
   })
@@ -183,6 +186,7 @@ describe('sleep plan profile helpers', () => {
         ],
         assertiveness: 'assertive',
         adaptation_pace: 'responsive',
+        first_nap_not_before: '09:15',
       },
       feed_anchor_profile: {
         anchors: [
@@ -205,11 +209,13 @@ describe('sleep plan profile helpers', () => {
     const profileSnapshot = buildSleepPlanProfileSnapshot(profile!)
     profileSnapshot.wakeWindowProfile.windows[0].label = 'Changed in snapshot'
     profileSnapshot.wakeWindowProfile.assertiveness = 'gentle'
+    profileSnapshot.wakeWindowProfile.firstNapNotBefore = '10:00'
     profileSnapshot.feedAnchorProfile.anchors[0].label = 'Changed feed label'
     profileSnapshot.feedAnchorProfile.nightFeedsExpected = true
 
     expect(profile?.wakeWindowProfile.windows[0].label).toBe('First window')
     expect(profile?.wakeWindowProfile.assertiveness).toBe('assertive')
+    expect(profile?.wakeWindowProfile.firstNapNotBefore).toBe('09:15')
     expect(profile?.feedAnchorProfile.anchors[0].label).toBe('Bedtime feed')
     expect(profile?.feedAnchorProfile.nightFeedsExpected).toBe(false)
 

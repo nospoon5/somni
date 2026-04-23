@@ -325,6 +325,7 @@ function buildWakeWindowProfile(args: {
         : args.sleepStyleLabel === 'gentle'
           ? 'slow'
           : 'steady',
+    firstNapNotBefore: null,
   }
 }
 

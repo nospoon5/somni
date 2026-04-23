@@ -38,6 +38,20 @@ function toClockTime(totalMinutes: number) {
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
 }
 
+function formatClockTime(clockTime: string) {
+  const match = clockTime.match(/^([01]\d|2[0-3]):([0-5]\d)$/)
+  if (!match) {
+    return clockTime
+  }
+
+  const rawHour = Number(match[1])
+  const minute = match[2]
+  const period = rawHour >= 12 ? 'pm' : 'am'
+  const hour = rawHour % 12 || 12
+
+  return `${hour}:${minute} ${period}`
+}
+
 function roundToNearestFive(minutes: number) {
   return Math.round(minutes / 5) * 5
 }
@@ -81,6 +95,7 @@ function buildNapLabels(targetNapCount: number) {
 function buildSleepTargetsFromProfile(profile: SleepPlanProfileRecord): DailyPlanSleepTarget[] {
   const wakeMinutes = toMinutes(profile.usualWakeTime)
   const bedtimeMinutes = toMinutes(profile.targetBedtime)
+  const firstNapNotBeforeMinutes = toMinutes(profile.wakeWindowProfile.firstNapNotBefore ?? '')
   if (wakeMinutes === null || bedtimeMinutes === null) {
     return [
       {
@@ -104,8 +119,13 @@ function buildSleepTargetsFromProfile(profile: SleepPlanProfileRecord): DailyPla
     150
   )
   const fallbackNapDuration = targetNapCount >= 3 ? 60 : 75
-  const firstNapStart = wakeMinutes + firstWakeWindow
-  const latestLastNapStart = wakeMinutes + dayLengthMinutes - finalWakeWindow - fallbackNapDuration
+  const unconstrainedFirstNapStart = wakeMinutes + firstWakeWindow
+  const firstNapStart =
+    firstNapNotBeforeMinutes !== null
+      ? Math.max(unconstrainedFirstNapStart, firstNapNotBeforeMinutes)
+      : unconstrainedFirstNapStart
+  const latestLastNapStart =
+    wakeMinutes + dayLengthMinutes - finalWakeWindow - fallbackNapDuration
   const safeLastNapStart = Math.max(firstNapStart, latestLastNapStart)
   const span =
     targetNapCount > 1 ? Math.max(0, safeLastNapStart - firstNapStart) : 0
@@ -121,6 +141,14 @@ function buildSleepTargetsFromProfile(profile: SleepPlanProfileRecord): DailyPla
           ? 'Use this as a practical anchor around work and school timing limits.'
           : "Treat this as an anchor, then flex gently with your baby's cues.",
   }))
+
+  if (napTargets.length > 0 && profile.wakeWindowProfile.firstNapNotBefore) {
+    const notePrefix = `Do not aim earlier than ${formatClockTime(profile.wakeWindowProfile.firstNapNotBefore)}.`
+    napTargets[0] = {
+      ...napTargets[0],
+      notes: napTargets[0].notes ? `${notePrefix} ${napTargets[0].notes}` : notePrefix,
+    }
+  }
 
   const bedtimeWindowHours = Math.max(1.5, Math.min(4, finalWakeWindow / 60)).toFixed(1)
   const bedtimeTarget: DailyPlanSleepTarget = {

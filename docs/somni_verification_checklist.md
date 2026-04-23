@@ -28,6 +28,8 @@ Expected result:
 - Normal chat still includes source attribution.
 - Emergency prompts still trigger the safety redirect.
 - Retrieval diagnostics are available in debug mode.
+- Same-day rescue chat changes stay framed as today's plan only.
+- Explicit ongoing parent statements can update the learned baseline without pretending sparse logs are proof.
 
 ## 2) Fast product sanity check
 

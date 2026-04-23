@@ -27,6 +27,7 @@ function createProfile(
       flexibilityMinutes: 20,
       assertiveness: 'balanced',
       adaptationPace: 'steady',
+      firstNapNotBefore: null,
     },
     feedAnchorProfile: {
       anchors: [
@@ -85,6 +86,23 @@ describe('daily plan derivation', () => {
 
     expect(daycarePlan.sleepTargets[0].notes).toContain('daycare')
     expect(homePlan.sleepTargets[0].notes).not.toContain('daycare')
+  })
+
+  it('honours a durable earliest first-nap constraint when the baseline includes one', () => {
+    const constrainedPlan = buildDailyPlanFromProfile({
+      profile: createProfile({
+        usualWakeTime: '06:30',
+        wakeWindowProfile: {
+          ...createProfile().wakeWindowProfile,
+          firstNapNotBefore: '09:30',
+        },
+      }),
+      babyId: 'baby-1',
+      planDate: '2026-04-23',
+    })
+
+    expect(constrainedPlan.sleepTargets[0].targetTime).toBe('09:30')
+    expect(constrainedPlan.sleepTargets[0].notes).toContain('9:30 am')
   })
 
   it('keeps saved plans as the highest-priority source for today', () => {
