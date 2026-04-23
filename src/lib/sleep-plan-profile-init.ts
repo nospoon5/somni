@@ -214,6 +214,10 @@ function pickAgeRule(ageInWeeks: number) {
   return AGE_RULES.find((rule) => ageInWeeks <= rule.maxAgeInWeeks) ?? AGE_RULES[AGE_RULES.length - 1]
 }
 
+export function getSafeNapCountsForAgeInWeeks(ageInWeeks: number) {
+  return [...pickAgeRule(Math.max(0, ageInWeeks)).safeNapCounts]
+}
+
 function toMinutes(time: string) {
   const normalized = normalizeSleepPlanClockTime(time)
   if (!normalized) {
