@@ -408,26 +408,26 @@ export function buildChatPlanUpdateConfirmation(args: {
 
   if (dailyChanged && profileChanged && args.afterPlan && args.beforeProfile && args.afterProfile) {
     return [
-      `I've updated ${args.babyName}'s learned baseline and today's dashboard plan.`,
-      `Learned baseline: ${summarizeProfileChanges(args.beforeProfile, args.afterProfile)}.`,
-      `Today's plan: ${summarizeDailyPlanChanges(args.beforePlan, args.afterPlan)}.`,
-      'So today gets the rescue tweak, and the learned baseline now carries the ongoing pattern forward too.',
+      `I've updated ${args.babyName}'s learned plan and today's rescue plan.`,
+      `Learned plan: ${summarizeProfileChanges(args.beforeProfile, args.afterProfile)}.`,
+      `Today's rescue plan: ${summarizeDailyPlanChanges(args.beforePlan, args.afterPlan)}.`,
+      'Dashboard status will show both: learned plan changes across days, plus today-only rescue changes.',
     ].join('\n\n')
   }
 
   if (profileChanged && args.beforeProfile && args.afterProfile) {
     return [
-      `I've updated ${args.babyName}'s learned baseline.`,
-      `Learned baseline: ${summarizeProfileChanges(args.beforeProfile, args.afterProfile)}.`,
-      "This changes Somni's durable plan across days. Today's plan only changes as well if we update it separately.",
+      `I've updated ${args.babyName}'s learned plan.`,
+      `Learned plan: ${summarizeProfileChanges(args.beforeProfile, args.afterProfile)}.`,
+      "This updates Somni's across-day plan. Today's rescue plan only changes if we update today separately.",
     ].join('\n\n')
   }
 
   if (dailyChanged && args.afterPlan) {
     return [
-      `I've updated today's dashboard plan for ${args.babyName}.`,
-      `Today's change: ${summarizeDailyPlanChanges(args.beforePlan, args.afterPlan)}.`,
-      'This is a same-day rescue change only, so it does not rewrite the learned baseline.',
+      `I've updated today's rescue plan for ${args.babyName}.`,
+      `Today's rescue change: ${summarizeDailyPlanChanges(args.beforePlan, args.afterPlan)}.`,
+      "This is for today only, so it doesn't rewrite the learned plan.",
     ].join('\n\n')
   }
 

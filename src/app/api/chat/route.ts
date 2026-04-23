@@ -743,6 +743,15 @@ async function saveChatPlanUpdates(args: {
     if (dailyEventError) {
       throw dailyEventError
     }
+
+    savedPlan = {
+      ...savedPlan,
+      metadata: {
+        origin: 'saved_daily_plan',
+        confidence: dailyChangeEvent.evidenceConfidence,
+        reasonSummary: dailyChangeEvent.summary,
+      },
+    }
   }
 
   revalidatePath('/dashboard')

@@ -9,11 +9,13 @@ import {
   type DailyPlanSleepTarget,
   type DailyPlanStreamPayload,
 } from '@/lib/daily-plan'
+import type { SleepPlanProfileRecord } from '@/lib/sleep-plan-profile'
 import styles from './DailyPlanPanel.module.css'
 
 type DailyPlanPanelProps = {
   babyName: string
   initialPlan: DailyPlanRecord | null
+  sleepPlanProfile: SleepPlanProfileRecord | null
   todayPlanDate: string
 }
 
@@ -131,6 +133,61 @@ function formatRelativeTime(updatedAt: string): string {
   return updatedDate.toLocaleDateString()
 }
 
+function resolvePlanStateLabel(
+  plan: DailyPlanRecord,
+  profile: SleepPlanProfileRecord | null
+) {
+  const origin = plan.metadata?.origin
+
+  if (origin === 'saved_daily_plan' || origin === 'live_stream') {
+    return "Today's rescue plan"
+  }
+
+  if (origin === 'age_baseline_fallback') {
+    return 'Starting plan'
+  }
+
+  if (origin === 'profile_derived') {
+    return profile?.learningState === 'starting' ? 'Starting plan' : 'Learned plan'
+  }
+
+  return 'Starting plan'
+}
+
+function resolveConfidenceCopy(plan: DailyPlanRecord, profile: SleepPlanProfileRecord | null) {
+  const confidence = plan.metadata?.confidence ?? profile?.adaptationConfidence ?? null
+
+  if (confidence !== 'low') {
+    return null
+  }
+
+  return 'Low confidence: holding steady while Somni learns from fuller logs.'
+}
+
+function resolveReasonCopy(plan: DailyPlanRecord, profile: SleepPlanProfileRecord | null) {
+  const fallbackReason =
+    plan.metadata?.confidence === 'low' && plan.metadata?.origin !== 'saved_daily_plan'
+      ? 'Holding steady while Somni learns from more complete logs.'
+      : null
+
+  return (
+    plan.metadata?.reasonSummary ??
+    profile?.lastEvidenceSummary ??
+    fallbackReason ??
+    'Built from your latest plan settings.'
+  )
+}
+
+function resolveChangedAt(plan: DailyPlanRecord, profile: SleepPlanProfileRecord | null) {
+  const origin = plan.metadata?.origin
+
+  if (origin === 'saved_daily_plan' || origin === 'live_stream') {
+    return plan.updatedAt
+  }
+
+  return profile?.lastAutoAdjustedAt ?? profile?.updatedAt ?? profile?.createdAt ?? plan.updatedAt
+}
+
 function TargetList<T extends DailyPlanSleepTarget | DailyPlanFeedTarget>({
   targets,
   kind,
@@ -168,8 +225,17 @@ function TargetList<T extends DailyPlanSleepTarget | DailyPlanFeedTarget>({
   )
 }
 
-export function DailyPlanPanel({ babyName, initialPlan, todayPlanDate }: DailyPlanPanelProps) {
+export function DailyPlanPanel({
+  babyName,
+  initialPlan,
+  sleepPlanProfile,
+  todayPlanDate,
+}: DailyPlanPanelProps) {
   const [plan, setPlan] = useState(initialPlan)
+  const planStateLabel = plan ? resolvePlanStateLabel(plan, sleepPlanProfile) : null
+  const planReason = plan ? resolveReasonCopy(plan, sleepPlanProfile) : null
+  const planConfidence = plan ? resolveConfidenceCopy(plan, sleepPlanProfile) : null
+  const planChangedAt = plan ? resolveChangedAt(plan, sleepPlanProfile) : null
 
   useEffect(() => {
     function applyPayload(rawValue: string | null) {
@@ -227,9 +293,14 @@ export function DailyPlanPanel({ babyName, initialPlan, todayPlanDate }: DailyPl
 
       {plan ? (
         <>
-          {plan.updatedAt ? (
-            <p className={styles.lastUpdated}>Updated {formatRelativeTime(plan.updatedAt)}</p>
-          ) : null}
+          <section className={styles.statePanel} aria-live="polite">
+            <p className={`${styles.stateLabel} text-label`}>{planStateLabel}</p>
+            <p className={styles.stateReason}>{planReason}</p>
+            {planConfidence ? <p className={styles.stateConfidence}>{planConfidence}</p> : null}
+            {planChangedAt ? (
+              <p className={styles.lastUpdated}>Last change {formatRelativeTime(planChangedAt)}</p>
+            ) : null}
+          </section>
 
           <p className={styles.body}>
             This is the shared plan Somni is keeping in sync for {babyName} today.

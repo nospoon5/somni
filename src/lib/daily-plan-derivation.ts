@@ -190,6 +190,10 @@ function buildFeedTargetsFromProfile(profile: SleepPlanProfileRecord): DailyPlan
 }
 
 function getProfileReasonSummary(profile: SleepPlanProfileRecord) {
+  if (profile.adaptationConfidence === 'low' && profile.learningState !== 'stable') {
+    return 'Holding steady while Somni learns from more complete logs.'
+  }
+
   return (
     profile.lastEvidenceSummary ??
     "Built from your baby's current durable sleep profile."

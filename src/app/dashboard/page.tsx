@@ -13,7 +13,9 @@ import {
 } from '@/lib/onboarding-preferences'
 import { ensureSleepPlanProfile } from '@/lib/sleep-plan-profile-init'
 import {
+  normalizeSleepPlanChangeEventRow,
   normalizeSleepPlanClockTime,
+  type SleepPlanChangeEventRecord,
   type SleepPlanProfileRecord,
 } from '@/lib/sleep-plan-profile'
 import { createClient } from '@/lib/supabase/server'
@@ -135,8 +137,24 @@ export default async function DashboardPage() {
   }
 
   const dailyPlan = normalizeDailyPlanRow(dailyPlanRow)
+  const { data: changeEventRows } = baby
+    ? await supabase
+        .from('sleep_plan_change_events')
+        .select(
+          'id, baby_id, sleep_plan_profile_id, plan_date, change_scope, change_source, change_kind, evidence_confidence, summary, rationale, before_snapshot, after_snapshot, created_at'
+        )
+        .eq('baby_id', baby.id)
+        .order('created_at', { ascending: false })
+        .limit(12)
+    : { data: [] }
+  const normalizedChangeEvents = (changeEventRows ?? [])
+    .map((row) => normalizeSleepPlanChangeEventRow(row))
+    .filter((row): row is SleepPlanChangeEventRecord => row !== null)
+  const latestDailyChangeEvent = normalizedChangeEvents.find(
+    (event) => event.changeScope === 'daily' && event.planDate === todayPlanDate
+  )
   const ageInWeeks = baby ? getAgeInWeeks(baby.date_of_birth, todayPlanDate) : null
-  const initialPlan = baby
+  const selectedPlan = baby
     ? selectDailyPlanForDashboard({
         savedPlan: dailyPlan,
         profile: sleepPlanProfile,
@@ -144,8 +162,22 @@ export default async function DashboardPage() {
         babyId: baby.id,
         babyName: baby.name,
         planDate: todayPlanDate,
-      }).plan
-    : null
+      })
+    : { source: 'none' as const, plan: null }
+  const initialPlan =
+    selectedPlan.plan &&
+    selectedPlan.source === 'saved_daily_plan' &&
+    latestDailyChangeEvent
+      ? {
+          ...selectedPlan.plan,
+          updatedAt: latestDailyChangeEvent.createdAt,
+          metadata: {
+            origin: 'saved_daily_plan' as const,
+            confidence: latestDailyChangeEvent.evidenceConfidence,
+            reasonSummary: latestDailyChangeEvent.summary,
+          },
+        }
+      : selectedPlan.plan
   const lookbackStart = getSleepScoreLookbackStart()
 
   const { data: activeLog } = baby
@@ -220,6 +252,7 @@ export default async function DashboardPage() {
         <DailyPlanPanel
           babyName={baby?.name ?? 'your baby'}
           initialPlan={initialPlan}
+          sleepPlanProfile={sleepPlanProfile}
           todayPlanDate={todayPlanDate}
         />
       </section>

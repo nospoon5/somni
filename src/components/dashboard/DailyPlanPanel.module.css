@@ -26,8 +26,32 @@
   line-height: 1.8;
 }
 
+.statePanel {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-card) 90%, var(--color-surface) 10%);
+}
+
+.stateLabel {
+  margin: 0;
+}
+
+.stateReason {
+  margin: 8px 0 0;
+  color: var(--color-text);
+  line-height: 1.65;
+}
+
+.stateConfidence {
+  margin: 8px 0 0;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
 .lastUpdated {
-  margin: 12px 0 0;
+  margin: 8px 0 0;
   font-size: 0.8rem;
   color: var(--color-text-faint);
   letter-spacing: 0.02em;

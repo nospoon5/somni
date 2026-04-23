@@ -190,9 +190,9 @@ describe('sleep plan chat update helpers', () => {
       afterProfile,
     })
 
-    expect(profileOnly).toContain('learned baseline')
-    expect(profileOnly).toContain('across days')
-    expect(dailyOnly).toContain("same-day rescue change only")
-    expect(both).toContain("learned baseline and today's dashboard plan")
+    expect(profileOnly).toContain('learned plan')
+    expect(profileOnly).toContain('across-day plan')
+    expect(dailyOnly).toContain("today's rescue plan")
+    expect(both).toContain("learned plan and today's rescue plan")
   })
 })
