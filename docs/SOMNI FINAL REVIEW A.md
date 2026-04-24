@@ -225,6 +225,22 @@ npm run build
 
 ---
 
+## Phase 6 Execution Log (24 April 2026)
+
+- [x] 6.1 Added `scripts/verify-onboarding-smoke.mjs`, a live-form smoke script for a running dev server that creates a temporary account through `/signup`, completes `/onboarding`, confirms `/dashboard` loads, verifies the key onboarding rows in Supabase, and deletes the temporary user during cleanup.
+- [x] 6.1 Used a fresh temporary account for this script because the shared test accounts in `docs/TEST_ACCOUNTS.md` are already onboarded and cannot safely verify the signup -> onboarding path.
+- [x] 6.2 Investigated Supabase CLI deployment safety with the linked Somni project. `npx supabase migration list --linked` and `npx supabase db push --linked --dry-run` showed the linked remote migration history is currently out of sync with the local `supabase/migrations` directory, so automatically running `supabase db push` from Vercel or CI would be risky right now.
+- [x] 6.2 Documented the low-risk recommendation instead of forcing an unsafe deployment change: keep Vercel builds immutable, repair migration history first, then add a GitHub Actions or manual release job that runs `supabase db push --linked --include-all` with `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`, and `SUPABASE_PROJECT_ID` configured as secrets.
+
+**Phase 6 quality gate results:**
+
+- [x] `SOMNI_APP_URL=http://127.0.0.1:3050 node scripts/verify-onboarding-smoke.mjs`
+- [x] `npm run lint`
+- [x] `npm run build`
+- [x] Migration-safety recommendation documented with the current blocker and the proposed safe rollout path
+
+---
+
 ## Model Selection Guide
 
 For reference when assigning these tasks in Codex:
