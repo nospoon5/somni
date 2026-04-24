@@ -1,5 +1,4 @@
 import type { DailyPlanRecord } from './daily-plan'
-import { getDateStringForTimezone } from './daily-plan'
 import { buildDailyPlanFromProfile } from './daily-plan-derivation'
 import {
   getAgeInWeeksForDateOfBirth,
@@ -14,6 +13,7 @@ import type {
   SleepPlanEvidenceConfidence,
   SleepPlanProfileRecord,
 } from './sleep-plan-profile'
+import { getDateStringForTimezone, getTimeZoneParts } from './date-utils'
 
 export type SleepPlanAdaptationDecision =
   | 'hold_steady'
@@ -88,32 +88,6 @@ const CAUTION_NOTE_PATTERN =
 const MORNING_FEED_LABEL_PATTERN = /\b(morning|wake)\b/
 const BEDTIME_FEED_LABEL_PATTERN = /\b(bedtime|evening|night)\b/
 const BEDTIME_TARGET_PATTERN = /\bbedtime\b/i
-
-function getTimeZoneParts(timezone: string, date: Date) {
-  const formatter = new Intl.DateTimeFormat('en-CA', {
-    timeZone: timezone,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  })
-
-  const parts = formatter.formatToParts(date)
-  const read = (type: Intl.DateTimeFormatPartTypes) =>
-    parts.find((part) => part.type === type)?.value ?? ''
-
-  return {
-    year: Number(read('year')),
-    month: Number(read('month')),
-    day: Number(read('day')),
-    hour: Number(read('hour')),
-    minute: Number(read('minute')),
-    second: Number(read('second')),
-  }
-}
 
 function toLocalDateString(date: Date, timezone: string) {
   return getDateStringForTimezone(timezone, date)

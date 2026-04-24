@@ -3,7 +3,8 @@ import Link from 'next/link'
 import { DailyPlanPanel } from '@/components/dashboard/DailyPlanPanel'
 import { SleepScorePanel } from '@/components/dashboard/SleepScorePanel'
 import { selectDailyPlanForDashboard } from '@/lib/daily-plan-derivation'
-import { getDateStringForTimezone, normalizeDailyPlanRow } from '@/lib/daily-plan'
+import { normalizeDailyPlanRow } from '@/lib/daily-plan'
+import { getAgeInWeeks, getDateStringForTimezone } from '@/lib/date-utils'
 import {
   normalizeDayStructure,
   normalizeNapPattern,
@@ -26,31 +27,6 @@ import {
   SLEEP_SCORE_FETCH_LIMIT,
 } from '@/lib/scoring/sleep-score'
 import styles from './page.module.css'
-
-const MS_PER_DAY = 24 * 60 * 60 * 1000
-
-function parseDateOnly(value: string | null | undefined) {
-  if (typeof value !== 'string') {
-    return Number.NaN
-  }
-
-  const trimmed = value.trim()
-  const normalized = /^\d{4}-\d{2}-\d{2}$/.test(trimmed) ? `${trimmed}T00:00:00Z` : trimmed
-
-  return new Date(normalized).getTime()
-}
-
-function getAgeInWeeks(dateOfBirth: string | null | undefined, todayDate: string) {
-  const dateOfBirthTime = parseDateOnly(dateOfBirth)
-  const todayTime = parseDateOnly(todayDate)
-
-  if (!Number.isFinite(dateOfBirthTime) || !Number.isFinite(todayTime)) {
-    return null
-  }
-
-  const ageInDays = Math.floor((todayTime - dateOfBirthTime) / MS_PER_DAY)
-  return ageInDays >= 0 ? Math.floor(ageInDays / 7) : null
-}
 
 export default async function DashboardPage() {
   const supabase = await createClient()

@@ -15,6 +15,7 @@ import {
   type SleepPlanFeedAnchorProfile,
   type SleepPlanWakeWindowProfile,
 } from './sleep-plan-profile'
+import { getAgeInWeeks, getUtcDateString } from './date-utils'
 
 type SleepPlanProfileInsert = {
   age_band: string
@@ -180,34 +181,8 @@ const WAKE_WINDOW_PRESETS: Record<
   ],
 }
 
-function parseDateOnly(value: string | null | undefined) {
-  if (typeof value !== 'string') {
-    return Number.NaN
-  }
-
-  const trimmed = value.trim()
-  if (!trimmed) {
-    return Number.NaN
-  }
-
-  const normalized = /^\d{4}-\d{2}-\d{2}$/.test(trimmed) ? `${trimmed}T00:00:00Z` : trimmed
-  return new Date(normalized).getTime()
-}
-
-function getTodayDateString(date: Date) {
-  return date.toISOString().slice(0, 10)
-}
-
 export function getAgeInWeeksForDateOfBirth(dateOfBirth: string, referenceDate = new Date()) {
-  const dateOfBirthTime = parseDateOnly(dateOfBirth)
-  const referenceTime = parseDateOnly(getTodayDateString(referenceDate))
-
-  if (!Number.isFinite(dateOfBirthTime) || !Number.isFinite(referenceTime)) {
-    return null
-  }
-
-  const ageInDays = Math.floor((referenceTime - dateOfBirthTime) / (24 * 60 * 60 * 1000))
-  return ageInDays >= 0 ? Math.floor(ageInDays / 7) : null
+  return getAgeInWeeks(dateOfBirth, getUtcDateString(referenceDate))
 }
 
 function pickAgeRule(ageInWeeks: number) {

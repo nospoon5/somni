@@ -242,6 +242,27 @@ For reference when assigning these tasks in Codex:
 
 ---
 
+## Phase 4 Execution Log (24 April 2026)
+
+- [x] 4.1 Extracted Gemini streaming and tool config into `src/lib/ai/gemini.ts`
+- [x] 4.2 Extracted plan persistence into `src/lib/ai/chat-plan-persistence.ts`
+- [x] 4.3 Extracted source attribution and SSE/retrieval helpers into `src/lib/ai/chat-sources.ts`
+- [x] 4.4 Created `src/components/chat/useChatSession.ts` and reduced `ChatCoach.tsx` to render-focused component
+- [x] 4.5 Added `src/lib/date-utils.ts` and rewired date/time helpers in `dashboard/page.tsx`, `sleep-plan-profile-init.ts`, and `daily-plan-derivation.ts`
+- [x] 4.6 Removed `@tailwindcss/postcss` and `tailwindcss` from `devDependencies` and cleaned `postcss.config.mjs`
+
+**Phase 4 quality gate results:**
+
+- [x] `npm run lint`
+- [x] `npm test -- --run`
+- [x] `npm run build`
+- [x] `node scripts/verify-stage7-adaptive-plans.mjs`
+
+**Line-count targets:**
+
+- [x] `src/app/api/chat/route.ts` is under 400 lines (**382**)
+- [x] `src/components/chat/ChatCoach.tsx` is under 200 lines (**189**)
+
 ## Summary
 
 The three reviews paint a consistent picture:

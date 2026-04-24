@@ -6,6 +6,12 @@ import type {
   DailyPlanSleepTarget,
 } from './daily-plan'
 import type { SleepPlanProfileRecord, SleepPlanWakeWindow } from './sleep-plan-profile'
+import {
+  clockTimeToMinutes,
+  formatClockTime,
+  minutesToClockTime,
+  roundToNearestFive,
+} from './date-utils'
 
 type DailyPlanSelectionInput = {
   savedPlan: DailyPlanRecord | null
@@ -21,40 +27,6 @@ export type DailyPlanSelectionSource =
   | 'profile_derived'
   | 'age_baseline_fallback'
   | 'none'
-
-function toMinutes(clockTime: string) {
-  const match = clockTime.match(/^([01]\d|2[0-3]):([0-5]\d)$/)
-  if (!match) {
-    return null
-  }
-
-  return Number(match[1]) * 60 + Number(match[2])
-}
-
-function toClockTime(totalMinutes: number) {
-  const normalized = ((totalMinutes % (24 * 60)) + 24 * 60) % (24 * 60)
-  const hours = Math.floor(normalized / 60)
-  const minutes = normalized % 60
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
-}
-
-function formatClockTime(clockTime: string) {
-  const match = clockTime.match(/^([01]\d|2[0-3]):([0-5]\d)$/)
-  if (!match) {
-    return clockTime
-  }
-
-  const rawHour = Number(match[1])
-  const minute = match[2]
-  const period = rawHour >= 12 ? 'pm' : 'am'
-  const hour = rawHour % 12 || 12
-
-  return `${hour}:${minute} ${period}`
-}
-
-function roundToNearestFive(minutes: number) {
-  return Math.round(minutes / 5) * 5
-}
 
 function midpointMinutes(window: SleepPlanWakeWindow | undefined, fallbackMinutes: number) {
   if (!window) {
@@ -93,9 +65,9 @@ function buildNapLabels(targetNapCount: number) {
 }
 
 function buildSleepTargetsFromProfile(profile: SleepPlanProfileRecord): DailyPlanSleepTarget[] {
-  const wakeMinutes = toMinutes(profile.usualWakeTime)
-  const bedtimeMinutes = toMinutes(profile.targetBedtime)
-  const firstNapNotBeforeMinutes = toMinutes(profile.wakeWindowProfile.firstNapNotBefore ?? '')
+  const wakeMinutes = clockTimeToMinutes(profile.usualWakeTime)
+  const bedtimeMinutes = clockTimeToMinutes(profile.targetBedtime)
+  const firstNapNotBeforeMinutes = clockTimeToMinutes(profile.wakeWindowProfile.firstNapNotBefore ?? '')
   if (wakeMinutes === null || bedtimeMinutes === null) {
     return [
       {
@@ -132,7 +104,7 @@ function buildSleepTargetsFromProfile(profile: SleepPlanProfileRecord): DailyPla
   const spacing = targetNapCount > 1 ? Math.floor(span / (targetNapCount - 1)) : 0
   const napTargets: DailyPlanSleepTarget[] = napLabels.map((label, index) => ({
     label,
-    targetTime: toClockTime(roundToNearestFive(firstNapStart + spacing * index)),
+    targetTime: minutesToClockTime(roundToNearestFive(firstNapStart + spacing * index)),
     window: formatFlexibilityWindow(profile.wakeWindowProfile.flexibilityMinutes),
     notes:
       profile.dayStructure === 'daycare'

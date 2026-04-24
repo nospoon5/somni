@@ -1,3 +1,5 @@
+import { getDateStringForTimezone as getDateStringForTimezoneFromUtils } from './date-utils'
+
 export const DAILY_PLAN_STORAGE_KEY = 'somni:daily-plan'
 
 export const DAILY_PLAN_ORIGINS = [
@@ -318,18 +320,7 @@ export function mergeDailyPlan(
 }
 
 export function getDateStringForTimezone(timezone: string, date = new Date()) {
-  const formatter = new Intl.DateTimeFormat('en-CA', {
-    timeZone: timezone,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  })
-
-  const parts = formatter.formatToParts(date)
-  const read = (type: Intl.DateTimeFormatPartTypes) =>
-    parts.find((part) => part.type === type)?.value ?? ''
-
-  return `${read('year')}-${read('month')}-${read('day')}`
+  return getDateStringForTimezoneFromUtils(timezone, date)
 }
 
 export function formatDailyPlanTime(value: string | null | undefined) {
