@@ -140,18 +140,20 @@ function resolvePlanStateLabel(
   const origin = plan.metadata?.origin
 
   if (origin === 'saved_daily_plan' || origin === 'live_stream') {
-    return "Today's rescue plan"
+    return "Today's plan"
   }
 
   if (origin === 'age_baseline_fallback') {
-    return 'Starting plan'
+    return 'Gentle starting point'
   }
 
   if (origin === 'profile_derived') {
-    return profile?.learningState === 'starting' ? 'Starting plan' : 'Learned plan'
+    return profile?.learningState === 'starting'
+      ? 'Gentle starting point'
+      : 'Plan shaped around your baby'
   }
 
-  return 'Starting plan'
+  return 'Gentle starting point'
 }
 
 function resolveConfidenceCopy(plan: DailyPlanRecord, profile: SleepPlanProfileRecord | null) {
@@ -161,20 +163,20 @@ function resolveConfidenceCopy(plan: DailyPlanRecord, profile: SleepPlanProfileR
     return null
   }
 
-  return 'Low confidence: holding steady while Somni learns from fuller logs.'
+  return 'We are keeping things steady while Somni learns from a few more full logs.'
 }
 
 function resolveReasonCopy(plan: DailyPlanRecord, profile: SleepPlanProfileRecord | null) {
   const fallbackReason =
     plan.metadata?.confidence === 'low' && plan.metadata?.origin !== 'saved_daily_plan'
-      ? 'Holding steady while Somni learns from more complete logs.'
+      ? 'Keeping things steady while Somni learns from a few more complete logs.'
       : null
 
   return (
     plan.metadata?.reasonSummary ??
     profile?.lastEvidenceSummary ??
     fallbackReason ??
-    'Built from your latest plan settings.'
+    'Based on your latest sleep settings.'
   )
 }
 
@@ -286,7 +288,7 @@ export function DailyPlanPanel({
         <div>
           <p className={`${styles.kicker} text-label`}>Today&apos;s plan</p>
           <h2 className={`${styles.title} text-display`}>
-            {plan ? 'Live targets for today' : 'No live plan yet'}
+            {plan ? "Today's plan" : 'A gentle starting plan'}
           </h2>
         </div>
       </div>
@@ -303,7 +305,7 @@ export function DailyPlanPanel({
           </section>
 
           <p className={styles.body}>
-            This is the shared plan Somni is keeping in sync for {babyName} today.
+            Here&apos;s the plan Somni is keeping up to date for {babyName} today.
           </p>
 
           <div className={styles.sectionGrid}>
@@ -328,9 +330,8 @@ export function DailyPlanPanel({
       ) : (
         <>
           <p className={styles.body}>
-            Here&apos;s Somni&apos;s customised baseline plan to help {babyName} start sleeping
-            better. Somni will adjust it as we learn more and as your baby grows and
-            develops.
+            Here&apos;s a gentle starting plan for {babyName} today. Somni will keep
+            adjusting it as we learn more and as your baby grows.
           </p>
 
           <div className={styles.emptySteps}>
@@ -339,8 +340,8 @@ export function DailyPlanPanel({
               <span>Example: &quot;Let&apos;s push her afternoon nap to 3pm.&quot;</span>
             </div>
             <div className={styles.emptyStep}>
-              <strong>2. Somni saves today&apos;s target</strong>
-              <span>The dashboard updates with the latest plan for the rest of the day.</span>
+              <strong>2. Somni updates today&apos;s plan</strong>
+              <span>The dashboard reflects the latest plan for the rest of the day.</span>
             </div>
           </div>
         </>

@@ -145,3 +145,20 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+@media (max-width: 480px) {
+  .shell {
+    padding: 20px;
+  }
+
+  .title {
+    font-size: clamp(1.45rem, 8.5vw, 1.95rem);
+  }
+
+  .statePanel,
+  .section,
+  .notesBlock,
+  .emptyStep {
+    padding: 14px;
+  }
+}

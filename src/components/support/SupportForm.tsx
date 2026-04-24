@@ -14,10 +14,10 @@ type SubmitState =
   | { status: 'error'; message: string }
 
 const categoryOptions: Array<{ value: SupportCategory; label: string }> = [
-  { value: 'bug', label: 'Bug' },
-  { value: 'feedback', label: 'Feedback' },
+  { value: 'bug', label: "Something isn't working" },
+  { value: 'feedback', label: 'Idea or feedback' },
   { value: 'billing', label: 'Billing' },
-  { value: 'other', label: 'Other' },
+  { value: 'other', label: 'Something else' },
 ]
 
 export function SupportForm() {
@@ -92,7 +92,7 @@ export function SupportForm() {
     <section className={styles.shell} aria-label="Support request form">
       <div className={styles.grid}>
         <label className={styles.field}>
-          <span>Type</span>
+          <span>What do you need help with?</span>
           <select
             value={category}
             onChange={(event) => setCategory(event.target.value as SupportCategory)}
@@ -107,17 +107,17 @@ export function SupportForm() {
         </label>
 
         <label className={styles.field}>
-          <span>Where this happened</span>
+          <span>Which screen were you on?</span>
           <input value={originPage} readOnly />
         </label>
 
         <label className={styles.fieldWide}>
-          <span>What happened?</span>
+          <span>What happened, and what were you hoping to see?</span>
           <textarea
             value={message}
             onChange={(event) => setMessage(event.target.value)}
             rows={6}
-            placeholder="Example: I ended a sleep session, but it still shows as running on the dashboard."
+            placeholder="Example: I ended a sleep, but the dashboard still showed it as running."
             disabled={state.status === 'submitting'}
           />
         </label>
@@ -130,13 +130,13 @@ export function SupportForm() {
           onClick={submit}
           disabled={state.status === 'submitting'}
         >
-          {state.status === 'submitting' ? 'Sending...' : 'Send'}
+          {state.status === 'submitting' ? 'Sending...' : 'Send message'}
         </button>
       </div>
 
       {state.status === 'success' ? (
         <p className={styles.success}>
-          Thanks. Your support request ID is <strong>{state.id}</strong>.
+          Thanks, we&apos;ve got it. Your reference ID is <strong>{state.id}</strong>.
         </p>
       ) : null}
 

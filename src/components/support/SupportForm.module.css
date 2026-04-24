@@ -23,6 +23,7 @@
 .field input,
 .field select,
 .fieldWide textarea {
+  width: 100%;
   min-height: 52px;
   padding: 0.875rem 1rem;
   border: 1px solid var(--color-border-subtle);
@@ -76,5 +77,11 @@
 
   .fieldWide {
     grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 819px) {
+  .actions :global(.btn-primary) {
+    width: 100%;
   }
 }

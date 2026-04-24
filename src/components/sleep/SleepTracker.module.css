@@ -202,6 +202,39 @@
   margin: 12px 0 0;
 }
 
+@media (max-width: 700px) {
+  .card,
+  .historyCard {
+    padding: 22px;
+  }
+
+  .title {
+    font-size: clamp(1.8rem, 10vw, 2.5rem);
+    line-height: 1.08;
+  }
+
+  .historyTitle {
+    font-size: clamp(1.6rem, 8.4vw, 2.05rem);
+    line-height: 1.08;
+  }
+
+  .historyList {
+    gap: 18px;
+  }
+
+  .historyItem {
+    padding: 18px;
+  }
+
+  .historyMeta {
+    align-items: flex-start;
+  }
+
+  .historyArrow {
+    display: none;
+  }
+}
+
 @media (min-width: 980px) {
   .layout {
     grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.8fr);

@@ -203,3 +203,28 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+@media (max-width: 480px) {
+  .card {
+    padding: 22px;
+  }
+
+  .scorePanel {
+    padding: 20px;
+  }
+
+  .scoreTitle {
+    font-size: clamp(2.1rem, 13vw, 3rem);
+  }
+
+  .step {
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 10px;
+    padding: 12px 14px;
+  }
+
+  .stepNumber {
+    width: 30px;
+    height: 30px;
+  }
+}

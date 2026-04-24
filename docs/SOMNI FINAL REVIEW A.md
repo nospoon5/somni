@@ -263,6 +263,19 @@ For reference when assigning these tasks in Codex:
 - [x] `src/app/api/chat/route.ts` is under 400 lines (**382**)
 - [x] `src/components/chat/ChatCoach.tsx` is under 200 lines (**189**)
 
+## Phase 5 Execution Log (24 April 2026)
+
+- [x] 5.1 Rewrote dashboard copy in the daily plan panel to sound warmer and more parent-facing without changing plan logic
+- [x] 5.2 Rewrote support page and support form copy to feel softer and clearer while keeping expectations intact
+- [x] 5.3 Completed a manual 375px viewport check on `/dashboard`, `/chat`, `/sleep`, and `/support`, then tightened mobile spacing and controls where needed
+
+**Phase 5 quality gate results:**
+
+- [x] `npm run lint`
+- [x] `npm run build`
+- [x] Manual 375px viewport check completed for dashboard/chat/sleep/support
+- [x] No overflow, clipped text, or hidden controls remained after fixes
+
 ## Summary
 
 The three reviews paint a consistent picture:

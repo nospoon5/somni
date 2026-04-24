@@ -13,11 +13,11 @@ export default async function SupportPage() {
     <main className={styles.page}>
       <section className={`${styles.card} card`}>
         <p className={`${styles.eyebrow} text-label`}>Support</p>
-        <h1 className={`${styles.title} text-display`}>Report a bug or share feedback.</h1>
+        <h1 className={`${styles.title} text-display`}>Tell us what happened, or share an idea.</h1>
         <p className={`${styles.lede} text-body`}>
-          This beta is still improving. If something feels off, tell us what happened and
-          what you expected to see. It helps to include the screen you were on and any
-          error message.
+          Somni is still in beta, so rough edges can happen. Tell us what you noticed,
+          what you hoped would happen, and which screen you were on. If you saw an error
+          message, include that too.
         </p>
 
         {user ? (
@@ -25,8 +25,8 @@ export default async function SupportPage() {
         ) : (
           <div className={styles.signedOut}>
             <p>
-              To help reduce spam during beta, support requests currently require a signed-in
-              account.
+              To keep spam low during beta, the support form is available once you&apos;re
+              signed in.
             </p>
             <p className={styles.links}>
               <Link href="/login">Sign in</Link>
