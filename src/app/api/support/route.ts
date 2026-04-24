@@ -50,7 +50,7 @@ export async function POST(request: Request) {
   }
 
   // Stage 5 beta-readiness: Store in DB for easy manual querying.
-  const { error } = await supabase.from('support_tickets').insert({
+  const { data, error } = await supabase.from('support_tickets').insert({
     profile_id: user.id,
     email: user.email ?? null,
     category: categoryRaw,
@@ -58,12 +58,12 @@ export async function POST(request: Request) {
     origin_page: originPage || null,
     support_page: supportPage || null,
     user_agent: userAgent || null,
-  })
+  }).select('id').single()
 
-  if (error) {
+  if (error || !data) {
     console.error('Failed to insert support ticket:', error)
     return NextResponse.json({ error: 'Failed to submit support request. Please try again.' }, { status: 500 })
   }
 
-  return NextResponse.json({ success: true })
+  return NextResponse.json({ id: data.id })
 }

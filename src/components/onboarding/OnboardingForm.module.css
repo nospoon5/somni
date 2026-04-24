@@ -145,7 +145,7 @@
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 24px;
-  padding-bottom: 1.5rem;
+  padding-bottom: 100px;
 }
 
 .actions :global(.btn-primary),

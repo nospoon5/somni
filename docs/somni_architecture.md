@@ -219,7 +219,7 @@ Current implementation note:
 ## Retrieval and AI
 
 - Retrieval uses Gemini embeddings.
-- Current retrieval breadth is 7 chunks.
+- Current retrieval breadth is 5 chunks.
 - Current minimum similarity threshold is `0.3`.
 - Age band and methodology are soft relevance hints, not hard filters.
 - A lightweight second-pass re-ranker helps surface stronger matches for:
@@ -245,6 +245,7 @@ Main runtime variables:
 - `GEMINI_EMBEDDING_MODEL`
 - `GEMINI_MEMORY_MODEL`
 - `STRIPE_SECRET_KEY`
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
 - `STRIPE_PRICE_MONTHLY`
 - `STRIPE_PRICE_ANNUAL`
 - `STRIPE_WEBHOOK_SECRET`

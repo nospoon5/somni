@@ -32,6 +32,26 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+async function stopProcessTree(child) {
+  if (!child?.pid) {
+    return;
+  }
+
+  if (process.platform === "win32") {
+    await new Promise((resolve) => {
+      const killer = spawn("taskkill", ["/PID", String(child.pid), "/T", "/F"], {
+        stdio: "ignore",
+        shell: true,
+      });
+      killer.on("close", () => resolve());
+      killer.on("error", () => resolve());
+    });
+    return;
+  }
+
+  child.kill("SIGTERM");
+}
+
 async function fetchWithTimeout(url, init = {}, timeoutMs = 30000) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -317,7 +337,7 @@ async function main() {
   } finally {
     console.log("Final step: Cleaning up Stripe verification resources...");
     if (serverProcess) {
-      serverProcess.kill("SIGTERM");
+      await stopProcessTree(serverProcess);
     }
 
     if (stripeCustomerId) {

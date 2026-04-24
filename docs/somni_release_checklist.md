@@ -8,6 +8,7 @@ If any step fails, do not deploy.
 - [ ] `vercel.json` matches intended behavior (e.g., cron jobs are correctly scheduled).
 - [ ] Stripe API keys and Webhook secrets are correctly populated in production environment variables.
 - [ ] Supabase environment variables are connected.
+- [ ] Apply any new SQL migration files to production Supabase.
 
 ## 2. Fast Build & Lint Check
 Run the core static checks locally:

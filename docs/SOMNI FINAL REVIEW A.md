@@ -72,7 +72,7 @@ Every issue from all three reviews, deduplicated and ranked:
 | 1 | Onboarding blocked — v7 migration files not applied to Supabase | Gemini, Opus | 🔴 Critical |
 | 2 | Support flow broken — `support_tickets` table missing from live DB | GPT | 🔴 Critical |
 | 3 | Support form contract mismatch — API returns `{success}` but UI expects `{id}` | GPT | 🟠 High |
-| 4 | Test account (`agent-test@somni.app`) has no baby profile / onboarding incomplete | GPT, Opus | 🟡 Medium |
+| 4 | Test accounts (`gentletester@test.com`, etc) added and verified | User, Opus | ✅ Completed |
 | 5 | Support docs disagree (log-based vs. table-based) | GPT, Opus | 🟡 Medium |
 | 6 | Retrieval limit mismatch — docs say 7 chunks, chat route uses 5 | GPT | 🟡 Medium |
 | 7 | Stage 5 verification scripts hang on Windows (SIGTERM cleanup) | GPT | 🟡 Medium |
@@ -101,6 +101,7 @@ Every issue from all three reviews, deduplicated and ranked:
 | 0.5 | Verify all three new tables exist: `sleep_plan_profiles`, `sleep_plan_change_events`, `support_tickets` | Check Tables tab in Supabase |
 
 **Quality gate:** Sign up as a fresh user → complete onboarding → reach dashboard. Submit a support ticket → no error.
+✅ **COMPLETED BY USER**
 
 ---
 
@@ -110,10 +111,10 @@ Every issue from all three reviews, deduplicated and ranked:
 
 | Step | Task | Details | Model Recommendation |
 |------|------|---------|---------------------|
-| 1.1 | Complete onboarding for the test account | Log in as `agent-test@somni.app`, fill onboarding, create baby profile, add 2–3 sample sleep logs | **5.4 Mini — Medium** (simple form interactions, no complex logic) |
-| 1.2 | Fix onboarding button overlap | Add `padding-bottom: 100px` to the `.actions` class in `OnboardingForm.module.css` | **5.4 Mini — Low** (single CSS property change) |
-| 1.3 | Fix Stage 5 scripts for Windows | Refactor `verify-stage5-smoke.mjs`, `verify-stage5-usage-limit.mjs`, `verify-stage5-stripe.mjs` to use `taskkill /PID /T /F` instead of `SIGTERM` for process cleanup | **5.3 Codex — Medium** (script refactoring, Windows-specific process handling) |
-| 1.4 | Update `TEST_ACCOUNTS.md` | Document the expected state of the test account (onboarding done, baby name, expected data) | **5.4 Mini — Low** (docs update only) |
+| 1.1 | Complete onboarding for the test accounts | ✅ **COMPLETED BY USER:** 3 new archetype accounts created (Gentle, Balanced, Fast Track) | — |
+| 1.2 | Fix onboarding button overlap | ✅ **COMPLETED BY AI:** Added `padding-bottom: 100px` to `.actions` in `OnboardingForm.module.css` | — |
+| 1.3 | Fix Stage 5 scripts for Windows | ✅ **COMPLETED BY AI:** Extracted `stopProcessTree` and used `taskkill` for all stage 5 scripts | — |
+| 1.4 | Update `TEST_ACCOUNTS.md` | ✅ **COMPLETED BY AI:** Documented the 3 new archetype accounts | — |
 
 **Quality gates:**
 ```
@@ -132,9 +133,9 @@ npm run build
 
 | Step | Task | Details | Model Recommendation |
 |------|------|---------|---------------------|
-| 2.1 | Fix support API response contract | Update `/api/support` to return `{ id: ticket.id }` instead of `{ success: true }` | **5.3 Codex — Medium** (small API change + form handling update) |
-| 2.2 | Fix support form success handling | Update the support form component to use the returned `id` for its success state | **5.3 Codex — Medium** (same task scope as 2.1, can be combined) |
-| 2.3 | Align support documentation | Update `somni_architecture.md` and `somni_release_checklist.md` to agree that support uses the `support_tickets` table | **5.4 Mini — Low** (docs only) |
+| 2.1 | Fix support API response contract | ✅ **COMPLETED BY AI:** API now selects and returns `{ id: data.id }` | — |
+| 2.2 | Fix support form success handling | ✅ **COMPLETED BY AI:** Confirmed `SupportForm.tsx` already uses `payload.id` | — |
+| 2.3 | Align support documentation | ✅ **COMPLETED BY AI:** Updated `somni_architecture.md` (checklist was already fine) | — |
 
 **Quality gates:**
 ```
@@ -154,10 +155,10 @@ node scripts/verify-stage5-smoke.mjs
 
 | Step | Task | Details | Model Recommendation |
 |------|------|---------|---------------------|
-| 3.1 | Fix retrieval limit docs | Architecture doc says 7 chunks, but `route.ts` line 978 uses `limit: 5`. Decide which is correct and align both. | **5.4 Mini — Low** (one-line code or docs change) |
-| 3.2 | Add migration step to release checklist | Add a checklist item: "Apply any new SQL migration files to production Supabase" | **5.4 Mini — Low** (docs edit) |
-| 3.3 | Verify env var docs match code | Check that all documented environment variables match actual usage in `.env.local` | **5.4 Mini — Medium** (cross-reference check) |
-| 3.4 | Confirm archive/current doc separation | Ensure only superseded plans are in `archive/`, current plans stay in `docs/` | **5.4 Mini — Low** (file organisation) |
+| 3.1 | Fix retrieval limit docs | ✅ **COMPLETED BY AI:** Architecture doc updated to 5 chunks to match code | — |
+| 3.2 | Add migration step to release checklist | ✅ **COMPLETED BY AI:** Added to release checklist | — |
+| 3.3 | Verify env var docs match code | ✅ **COMPLETED BY AI:** Documented `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` in architecture doc | — |
+| 3.4 | Confirm archive/current doc separation | ✅ **COMPLETED BY AI:** Confirmed `archive/` is separated | — |
 
 **Quality gate:**
 - No contradictions between any current doc and the running code
