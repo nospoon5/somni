@@ -1,0 +1,326 @@
+run_id,test_date,question_id,target_persona,question_text,app_version,model_name,model_provider,prompt_version,corpus_version,rag_version,response_latency_seconds,request_status,error_message,somni_response
+full_110_2026_04_25,2026-04-25T12:18:37+00:00,Q001,gentle,My 4-week-old has his days and nights completely confused. He sleeps all day and is wide awake from 1am to 5am.,local-dev,,,,,,4.389,success,,"Oh, GT, it sounds like he's got his days and nights mixed up, which is super common for a 4-week-old as his internal clock is still developing.
+
+What to try tonight:
+1.  During the day, keep things bright and active. Open curtains, talk to GT, and don't worry about keeping the house silent for naps.
+2.  From about 7 pm, start dimming the lights and keeping interactions quiet and calm, even during feeds. This helps signal that night-time is for sleep.
+3.  When GT wakes between 1 am and 5 am, keep the room dark, speak softly, and focus on feeding and settling him back to sleep with minimal fuss.
+
+What compromise is okay: It's completely fine to hold him for naps during the day if that helps him get some sleep.
+
+Let's check in again after a couple of days to see how these gentle shifts are helping GT find his rhythm."
+full_110_2026_04_25,2026-04-25T12:19:41+00:00,Q002,gentle,"We just brought her home. She will only sleep if she is being held on my chest. Whenever we put her in the bassinet, she screams instantly.",local-dev,,,,,,4.887,success,,"Oh, it sounds like GT is finding the transition to the bassinet a bit tricky, which is so common for newborns who love the warmth and closeness of being held! It's likely he's still adjusting to the big wide world and feels safest right next to you.
+
+What to try tonight:
+1.  **Warm the bassinet first:** Before placing GT down, try warming the bassinet sheet with a heat pack (remove it before putting him in, of course!). The sudden change in temperature can be startling.
+2.  **Gentle transfer:** Once GT is deeply asleep on your chest (wait about 10-15 minutes after he's drifted off), gently lower him into the bassinet, bottom first, keeping him close to your body for as long as possible before releasing.
+3.  **""Shush-pat"" in the bassinet:** If he starts to stir or grizzle, try a gentle ""shush-pat"" with a hand on his chest or tummy while he's in the bassinet. Your presence and rhythmic comfort can help him settle.
+
+What compromise is okay:
+It's absolutely fine to take shifts with your partner if you have one, so you both get some rest, even if it means holding GT for some of his sleep.
+
+Let's check in tomorrow to see how these little adjustments felt for you both."
+full_110_2026_04_25,2026-04-25T12:20:48+00:00,Q003,balanced,Is it okay if my 2-month-old sleeps in his bouncer sometimes during the day? It's the only way I get anything done.,local-dev,,,,,,6.109,success,,"It's completely understandable that you're looking for ways to get things done, and it sounds like BT is finding some comfort in the bouncer. However, for all sleep, including naps, it's safest for BT to be on his back on a firm, flat surface in a cot or bassinet. Bouncers aren't designed for safe sleep, as they can put babies in a position where their airway might be compromised.
+
+What to try tonight:
+1. For naps, try to settle BT in his cot or bassinet. You can use gentle rocking, patting, or shushing to help him drift off.
+2. If BT is struggling to settle, try wrapping him snugly in a lightweight cotton or muslin wrap to help with his startle reflex.
+3. Keep the room dim and quiet for naps to help him associate the space with sleep.
+
+What compromise is okay:
+If you need a moment to yourself, placing BT in his cot awake and safe, even if he's grizzling, is always a better option than an unsafe sleep space.
+
+Let's check in again tomorrow to see how these changes are going."
+full_110_2026_04_25,2026-04-25T12:21:53+00:00,Q004,gentle,He wakes up crying every 45 minutes all night. We are exclusively breastfeeding. Is he just hungry?,local-dev,,,,,,5.782,success,,"Oh, GT is waking every 45 minutes all night, and you're wondering if he's hungry – that sounds incredibly tough, and it's very likely he is! At 4 weeks old, GT's tummy is tiny, and frequent feeds are completely normal and necessary for his rapid growth. He's also still learning the difference between day and night, so his sleep cycles are short, and he'll wake often for comfort and nourishment.
+
+What to try tonight:
+1. **Offer a feed at each wake-up:** Respond to his cues by offering the breast. He might be genuinely hungry, or he might just need the comfort and closeness of feeding to help him drift back to sleep.
+2. **Keep night feeds calm and dim:** Use very low light and quiet tones during night feeds. This helps GT understand that night-time is for sleeping and feeding, not for play or bright stimulation.
+3. **Consider a 'top-up' feed:** If GT wakes soon after a feed, a quick top-up might help him fall into a deeper sleep. Sometimes they just need a little extra to feel settled.
+
+What compromise is okay:
+It's absolutely fine to feed GT to sleep at this age if that's what helps him settle back down quickly.
+
+We can review how this goes in the morning."
+full_110_2026_04_25,2026-04-25T12:22:59+00:00,Q005,balanced,My 8-week-old fights every single nap. By 5pm they are completely inconsolable and just scream for an hour. What do I do?,local-dev,,,,,,5.315,success,,"Oh, BT is likely getting overtired by the end of the day, which is so common at 8 weeks old and can make settling really tough. Their little bodies release stress hormones when they're overtired, making it harder to calm down.
+
+What to try tonight:
+1.  **Watch the clock and cues:** At 8 weeks, BT's wake windows are quite short, often only 60-90 minutes. Start looking for tired signs (like yawning or jerky movements) around the 45-minute mark after they wake up.
+2.  **Prioritise the last nap:** Aim to get BT down for their last nap of the day by 4:30 pm at the absolute latest, even if it's a short one. This can help prevent that inconsolable screaming around 5 pm.
+3.  **Gentle settling:** As soon as you see those early tired signs, move BT to their sleep space. Try a snug swaddle and gentle rocking or patting to help them drift off before they become fully awake and frustrated.
+
+We can review how this goes tomorrow."
+full_110_2026_04_25,2026-04-25T12:24:06+00:00,Q006,fast-track,How long should my 3-month-old be awake between naps? I keep missing her tired signs.,local-dev,,,,,,6.887,success,,"FT is likely getting overtired before naps, which makes it harder for her to settle. At 3 months, her wake windows are around 1.5 to 2 hours.
+
+What to try tonight:
+1. Start looking for tired signs and begin your settling routine around 75-90 minutes after she last woke up.
+2. Create a calm, dim environment for naps and use a consistent settling technique like gentle rocking or patting.
+3. If she fusses, offer comfort immediately. Pick her up to calm her if needed, then try settling her back down drowsy but awake.
+
+What compromise is okay: If she's really struggling to settle, it's always fine to offer extra cuddles and comfort to help her drift off.
+
+Let's check in again after a few naps to see how she's going."
+full_110_2026_04_25,2026-04-25T12:25:12+00:00,Q007,balanced,"She has started heavily rubbing her eyes after only 45 minutes of being awake, but if I try to put her down she just stares at me for 20 minutes.",local-dev,,,,,,6.041,success,,"It sounds like BT is showing those early tired signs, which is fantastic that you're spotting them! The challenge is that even when they're tired, little ones like BT often need a bit of help to actually switch off and settle into sleep. It's common for newborns to fight sleep even when they desperately need it, especially if they're still learning how to transition.
+
+What to try tonight:
+1.  When you see BT rubbing her eyes, immediately start your wind-down routine. This might be a quiet cuddle, a quick nappy change, and into her swaddle in her dim sleep space.
+2.  Instead of putting her down straight away, try holding her for a few minutes until she's deeply drowsy or even lightly asleep in your arms.
+3.  Gently place her down, and if she stirs, try a hand on her chest, gentle shushing, or a rhythmic pat to help her settle without picking her up again immediately.
+
+What compromise is okay: If she's really struggling, it's always okay to hold her for the entire nap if that's what she needs to get some rest.
+
+We can review how this goes after her next nap."
+full_110_2026_04_25,2026-04-25T12:26:18+00:00,Q008,gentle,Can I introduce a pacifier to my breastfed 6-week-old to help him settle? The hospital said no but I'm desperate.,local-dev,,,,,,6.201,success,,"Oh, it sounds like you're having a really tough time with GT's settling, and it's completely understandable to be looking for anything that might help right now. For a 6-week-old, introducing a dummy (pacifier) can absolutely be a helpful tool for settling, especially for breastfed babies once breastfeeding is well established.
+
+What to try tonight:
+1.  Offer the dummy after a feed, once GT has had a good burp and seems content but still a little unsettled.
+2.  Gently hold the dummy in place for a moment or two until GT starts to suckle consistently. If he spits it out, don't force it, but you can try again a little later.
+3.  Remember that the dummy is a settling aid, so if he becomes distressed, pick him up for a cuddle and comfort first, then try offering it again once he's calm.
+
+What compromise is okay: If GT isn't keen on the dummy, don't worry – gentle patting, shushing, or rocking are wonderful ways to help him settle too.
+
+We can review how this goes for GT tomorrow."
+full_110_2026_04_25,2026-04-25T12:27:23+00:00,Q009,balanced,"My baby is 10 weeks old. Sometimes when he sleeps he makes these intense grunting and thrashing noises, but his eyes are closed. Should I wake him up?",local-dev,,,,,,4.821,success,,"Hi there! It sounds like BT is experiencing active sleep, which is completely normal for a 10-week-old. During active sleep, babies often grunt, twitch, and move around a lot, even with their eyes closed, because their brains are busy developing. There's no need to wake him up if he's still settled and his eyes are closed.
+
+What to try tonight:
+1. Observe BT for a minute or two if he starts grunting or thrashing with his eyes closed. Often, he'll settle back into a deeper sleep on his own.
+2. Ensure he's snugly swaddled for all sleeps, as this can help minimise the startle reflex that might cause some of the thrashing.
+3. Keep his sleep environment dim and quiet, using a consistent low-level white noise if that helps him settle.
+
+We can check in again tomorrow to see how he's going with this."
+full_110_2026_04_25,2026-04-25T12:28:30+00:00,Q010,balanced,"We want to swaddle our 3-month-old for naps, but he recently started rolling from his back to his tummy during playtime. Is it still safe?",local-dev,,,,,,7.309,success,,"It's completely understandable to want to swaddle BT for naps, especially when it helps them settle. However, since BT is already showing signs of rolling from back to tummy during playtime, it's no longer safe to swaddle them for sleep. Once babies start to roll, they need their arms free to push up and reposition themselves if they roll onto their tummy in the cot.
+
+What to try tonight:
+1.  Transition BT out of the swaddle immediately for all sleep, including naps and overnight.
+2.  Instead of a swaddle, dress BT in a safe infant sleeping bag with fitted neck and armholes and no hood.
+3.  Continue to dress BT in layers underneath the sleeping bag, similar to how you'd dress yourself to be comfortably warm, ensuring their head remains uncovered.
+
+What compromise is okay: If BT is struggling with the transition, you can try a sleeping bag that allows for arm movement but still provides a snug feeling around the torso.
+
+We can review how BT is adjusting to the sleeping bag in a few days."
+full_110_2026_04_25,2026-04-25T12:29:35+00:00,Q011,balanced,He hit 4.5 months and suddenly he's waking up every hour overnight. It's been three weeks and it's worse than when he was a newborn!,local-dev,,,,,,5.230,success,,"Oh, BT is likely going through the 4-month sleep transition, which can definitely feel tougher than the newborn stage with all those frequent night wakes! His sleep cycles are maturing, becoming more like an adult's, and he's learning to connect those cycles.
+
+What to try tonight:
+1.  **Observe the initial settling:** When you put BT down for the night, aim for him to be drowsy but still a little awake. This helps him learn to fall asleep in his cot independently.
+2.  **The Pause:** If BT fusses or cries out overnight, try waiting for about a minute before going in. Sometimes babies cry out briefly mid-cycle but aren't fully awake and can resettle themselves with a little space.
+3.  **Comfort in the cot:** If you do need to go in, try to comfort BT while he's still in his cot with gentle patting or shushing, rather than immediately picking him up.
+
+We can review how this goes in a few days."
+full_110_2026_04_25,2026-04-25T12:30:41+00:00,Q012,fast-track,We are dropping the swaddle because she's heavily rolling now. The transitioning sleeping bag is not working. She wakes herself up with her arms constantly.,local-dev,,,,,,5.823,success,,"It sounds like FT is having trouble with the transition out of the swaddle, which is really common when they start rolling and their startle reflex is still strong.
+
+What to try tonight:
+1.  Use a sleeping bag that allows her arms to be free but still feels snug around her torso, like a transition swaddle that zips off the arms. This can help her feel secure without restricting her ability to roll safely.
+2.  Give her some extra tummy time during the day to practice her rolling and arm movements, which can help her gain more control and confidence.
+3.  When she wakes herself with her arms, try to gently place your hand on her chest for a moment to help her resettle without immediately picking her up.
+
+What compromise is okay: If she's really struggling, a brief cuddle to calm her before placing her back down is fine.
+
+Let's review how she goes with this plan in a couple of days."
+full_110_2026_04_25,2026-04-25T12:31:47+00:00,Q013,balanced,My 5-month-old only takes 30-minute micro-naps during the day. He's taking 5 or 6 of them. How do we lengthen them?,local-dev,,,,,,5.734,success,,"It sounds like BT is caught in a cycle of short naps, which is really common around 4-6 months as their sleep cycles mature. Those 30-minute naps mean he's likely waking between sleep cycles and struggling to connect them, which can lead to overtiredness and more frequent waking overnight.
+
+What to try tonight:
+1. **Focus on wake windows:** For a 4.5-month-old, aim for wake windows of about 1.5 to 2.5 hours between sleeps. If BT is taking 5-6 naps, it suggests he might be going down too early or too late, leading to those short snoozes.
+2. **""Drowsy but awake"" at bedtime:** Place BT in his cot when he's drowsy but still awake. This helps him practice falling asleep independently, which is key for connecting sleep cycles during naps and overnight.
+3. **Respond consistently to short naps:** If BT wakes after 30 minutes, try to resettle him in the cot for 10-15 minutes with gentle patting or shushing. This helps him learn to extend the nap. If he doesn't resettle, treat it as a wake-up and try for the next nap after a slightly longer wake window.
+
+What compromise is okay:
+It's perfectly fine to offer extra comfort and support during this transition, especially for the first nap of the day, which can be the hardest to lengthen.
+
+We can review how this goes in a few days."
+full_110_2026_04_25,2026-04-25T12:32:52+00:00,Q014,gentle,We just started solids this week (purees) and suddenly his night sleep went from 8 hours to waking 3 times a night crying. Is it a tummy ache?,local-dev,,,,,,5.599,success,,"Oh, GT, it sounds like his little tummy might be having a bit of a protest with the new purees, which is super common when starting solids! It's likely a temporary adjustment rather than a sign that solids have broken his sleep for good.
+
+What to try tonight:
+1.  **Keep milk first:** Offer his usual milk feed before any solids, especially in the evening. Milk is still his main nutrition source.
+2.  **Simplify dinner:** If you offered solids close to bedtime today, just go back to his usual milk-and-bed routine tonight.
+3.  **Observe for discomfort:** Watch for signs like firmer stools, obvious wind, or fussiness after a new food. If you notice these, it's a good cue to simplify tomorrow's solids.
+
+What compromise is okay:
+It's perfectly fine to prioritise comfort and milk feeds tonight to help GT settle.
+
+Let's see how he goes tonight with a focus on milk and comfort, and we can adjust from there."
+full_110_2026_04_25,2026-04-25T12:33:57+00:00,Q015,balanced,I have a 6-month-old. Should we be on 3 naps or 2 naps right now? Some days he refuses the late afternoon nap entirely.,local-dev,,,,,,4.818,success,,"BT is likely ready to start transitioning from three naps to two, which is why he's resisting that late afternoon nap. This is a really common developmental shift around 6 months as their wake windows naturally get a bit longer.
+
+What to try tonight:
+1.  Focus on two solid naps during the day, aiming for them to end by late afternoon.
+2.  If BT resists a third nap, try to stretch his final wake window a little longer before bedtime, perhaps by 15-30 minutes, to ensure he's tired enough for a good night's sleep.
+3.  Keep his bedtime routine consistent and calming to help signal that it's time for sleep.
+
+What compromise is okay: If he's really struggling, a very short ""catnap"" in the pram or carrier might be okay to get him through to bedtime without becoming overtired, but try to keep it brief.
+
+We can review how this is going in a few days."
+full_110_2026_04_25,2026-04-25T12:35:03+00:00,Q016,fast-track,She keeps waking up at 5:00 AM bright and ready to start the day. Bedtime is 7:00 PM. How do I shift her to a 6:30 AM wake up?,local-dev,,,,,,6.008,success,,"FT is waking early because her room likely isn't dark enough, or she's learned that 5:00 AM is the start of the day.
+
+What to try tonight:
+1. Ensure FT's room is completely dark using blackout blinds or curtains, blocking out all morning light.
+2. Keep the room quiet and dim until your target wake-up time of 6:30 AM, even if she's awake and grizzling.
+3. If FT wakes before 6:30 AM, give her a few minutes to see if she can resettle herself before you go in.
+
+Review this plan again after 3-5 consistent mornings to see if FT starts to shift her wake time."
+full_110_2026_04_25,2026-04-25T12:39:14+00:00,Q019,fast-track,He is formula fed and 24 weeks old. Can we drop the midnight feed cold-turkey?,local-dev,,,,,,4.791,success,,"For FT, dropping the midnight feed cold turkey might be a bit much all at once, especially as he's still quite young. It's more effective to gradually reduce the amount of milk offered at that feed.
+
+What to try tonight:
+1. When FT wakes for his midnight feed, offer him a slightly smaller bottle than usual. For example, if he normally takes 150ml, try offering 120ml.
+2. If he finishes the smaller amount and still seems unsettled, wait a few minutes before offering more. Sometimes, a baby just needs a moment to realise they're full.
+3. Keep the environment dark and quiet during this feed to reinforce that it's still night-time.
+
+What compromise is okay: If he's genuinely distressed after the reduced feed, offer a little more, but try to keep it less than his usual full feed.
+
+We can review how this goes in a few days."
+full_110_2026_04_25,2026-04-25T12:40:20+00:00,Q020,gentle,My 5-month-old was doing great but then got a cold. We brought her into our bed for 4 nights to elevate her head. Now she refuses the cot. How do I undo this?,local-dev,,,,,,6.392,success,,"Oh, it sounds like GT has had a rough trot with that cold, and now she's decided your bed is the best place to be! It's completely understandable that she's resisting the cot after four nights of cosy cuddles and comfort. This is a very common temporary sleep association that's popped up because she learned a new way to fall asleep during her illness.
+
+What to try tonight:
+1.  **Reintroduce the cot gently:** Aim to put GT down in her cot for bedtime tonight. You can still offer plenty of cuddles and comfort, but try to have her settle to sleep in her own space.
+2.  **Stay close for reassurance:** If she protests, stay by her cot, offering a hand on her chest, gentle shushing, or soft words. Your presence is key to helping her feel safe and secure in her cot again.
+3.  **Short, consistent responses:** If she wakes overnight, respond quickly with your comforting presence in the cot, rather than immediately bringing her back into your bed.
+
+What compromise is okay:
+It's perfectly fine to offer extra comfort and reassurance as she adjusts back to her cot.
+
+We can review how tonight goes tomorrow morning."
+full_110_2026_04_25,2026-04-25T12:43:00+00:00,Q022,gentle,"He used to go down so peacefully, but at 9 months he clings to me and hysterically cries the second I walk into the dark bedroom. Is this separation anxiety?",local-dev,,,,,,6.116,success,,"Oh, GT, it sounds like he's going through a classic phase of separation anxiety, which is super common around 9 months! It's not that he's forgotten how to settle; he's just really noticing when you're not right there with him, and that can feel a bit scary for little ones.
+
+What to try tonight:
+1.  **Make your goodbye clear and calm:** Instead of sneaking out, tell GT, ""Mummy's just going to sit over here now, it's time for sleep."" Keep it brief and consistent.
+2.  **Try ""camping out"":** Sit on the floor or a chair next to his cot, staying visible. Offer comfort with your voice or a gentle touch if he's really distressed, then gradually reduce your interaction as he calms.
+3.  **Keep the routine steady:** A predictable bedtime routine helps a lot with anxiety. Stick to the same sequence of bath, pyjamas, stories, and quiet cuddles each night.
+
+We can check in again in a few days to see how this is feeling for both of you."
+full_110_2026_04_25,2026-04-25T12:44:05+00:00,Q023,balanced,"We are transitioning from 2 naps to 1 nap for my 11-month-old, but by 11 AM she is so overtired it takes me an hour to settle her. How do we bridge the gap?",local-dev,,,,,,5.607,success,,"Oh, BT is definitely in that tricky ""messy middle"" of nap transitions, and it sounds like she's getting overtired by late morning, which makes settling so much harder. It's really common for babies her age to flirt with one nap but not quite be ready for it every day.
+
+What to try tonight:
+1.  Tonight, bring BT's bedtime earlier by 30-60 minutes to help catch up on any overtiredness from today.
+2.  Tomorrow, instead of pushing for one nap, try a short morning ""bridge"" nap. This could be a 10-15 minute doze in the pram, car, or even a contact nap, just to take the edge off her tiredness.
+3.  After that short bridge, aim for her main, restorative nap around midday, protecting it as much as possible.
+
+What compromise is okay:
+It's perfectly fine to alternate between two-nap days and one-nap days during this transition, depending on how she's coping.
+
+We can review how this feels in about 3-4 days."
+full_110_2026_04_25,2026-04-25T12:45:10+00:00,Q024,balanced,My 10-month-old is waking up screaming as if he's terrified from a nightmare. It takes 30 minutes to calm him down. Do babies this young have night terrors?,local-dev,,,,,,4.617,success,,"Oh, BT is having a really rough time with those night wakings, and it sounds incredibly unsettling for you. At 11 months, true night terrors are quite uncommon, so it's more likely that BT is experiencing an incomplete arousal from deep sleep, possibly due to being overtired.
+
+What to try tonight:
+1.  Focus on an earlier bedtime for the next few nights to help reduce overtiredness. Aim for 6:30 PM if possible.
+2.  When BT wakes, stay calm and quiet. Avoid turning on bright lights or engaging in too much interaction. Your presence is for safety and gentle reassurance, not to fully wake them.
+3.  If BT is standing, gently help them lie back down, saying something simple like ""time to lie down, BT."" Keep it boring and consistent.
+
+We'll review how this goes over the next few nights."
+full_110_2026_04_25,2026-04-25T12:46:15+00:00,Q025,gentle,She is 7 months old and breastfed. She nurses to sleep for every nap and at bedtime. I want my partner to start doing bedtime. How do we break the nurse-to-sleep association without tears?,local-dev,,,,,,5.421,success,,"Oh, it sounds like GT is relying on nursing to drift off to sleep, which is super common and lovely for connection, but can make it tricky for your partner to step in at bedtime.
+
+What to try tonight:
+1.  **Shift the last feed slightly earlier:** Try to finish GT's last breastfeed 5-10 minutes before you usually put her down. This creates a tiny bit of space between feeding and falling asleep.
+2.  **Introduce a new settling step:** After the feed, have your partner take over for one calming step like a gentle cuddle, a quiet song, or some soft patting in the cot. The goal is for GT to be drowsy but still a little bit awake when she goes into the cot.
+3.  **Respond with comfort first:** If GT protests, your partner can offer comfort with their voice or a gentle hand on her chest. If she's still very upset after a few minutes, then you can offer another short feed to help her settle, but try the non-feeding comfort first.
+
+What compromise is okay:
+It's perfectly fine if naps still involve nursing to sleep for now; focus on bedtime first where sleep pressure is highest.
+
+Let's see how this gentle shift goes for a few nights, and we can adjust from there."
+full_110_2026_04_25,2026-04-25T12:47:23+00:00,Q017,balanced,"My 5-month-old keeps waking up in the middle of the night, not crying, just cooing and playing in the dark for almost two hours. What causes this split night?",local-dev,,,,,,5.586,success,,"BT is likely experiencing a split night, which usually happens when a baby's daytime sleep schedule isn't quite aligned with their nighttime sleep needs. It's a sign that their body isn't building up enough ""sleep debt"" to stay asleep all night.
+
+What to try tonight:
+1.  Aim for BT's last nap to finish no later than 4:30 pm today, to create a longer wake window before bedtime.
+2.  Ensure BT's room is completely dark during the split night. Even a little ambient light can make it harder for her to settle back to sleep.
+3.  If BT is content and cooing in her cot, try not to engage with her. Going in and interacting can accidentally reinforce that this is an awake time.
+
+We can check in on how this goes in a couple of days."
+full_110_2026_04_25,2026-04-25T12:48:27+00:00,Q018,balanced,"If I give him a 10-minute wait when he wakes up crying from a nap, does that count as cry-it-out?",local-dev,,,,,,4.443,success,,"No, giving BT a 10-minute wait when he wakes up crying from a nap isn't the same as ""cry-it-out."" It's actually a really helpful way to give him a chance to practise settling himself and learn to link his sleep cycles.
+
+What to try tonight:
+1.  When BT wakes crying from a nap, pause for a few minutes to observe his cry. If it's a grizzle or it softens, he might be trying to resettle.
+2.  If the crying escalates or sounds genuinely distressed, go in and offer calm reassurance and help him settle back down.
+3.  The goal is to give him a little space to see if he can bridge that sleep cycle on his own, not to leave him upset.
+
+We can review how this goes after a few naps."
+full_110_2026_04_25,2026-04-25T12:49:32+00:00,Q021,balanced,"My 8-month-old learned to pull to a stand yesterday. Now, every time I put her down for a sleep, she immediately stands up and cries. If I lay her down, she pops right back up.",local-dev,,,,,,4.812,success,,"Oh, BT is just discovering her new skill of pulling to stand, which is super exciting for her but can definitely make settling for sleep a bit tricky! She's likely practising this new movement in her cot because it's easy to grab the rails, and she's getting a bit stuck when she's tired.
+
+What to try tonight:
+1.  When you put her down, if she stands, calmly and gently help her lie back down. Keep your interaction boring and minimal – just lower her, say something simple like ""time for sleep,"" and step away.
+2.  If she keeps pulling up, repeat the lowering process. The goal is to make the ""down"" part of the skill just as familiar as the ""up"" part.
+3.  Consider an earlier bedtime for the next few nights. New skills can be quite stimulating and lead to overtiredness, even if the main issue is developmental.
+
+Review this plan again in about three nights to see how she's adapting."
+full_110_2026_04_25,2026-04-25T12:50:37+00:00,Q026,fast-track,"My 12-month-old throws his toy out of the cot, cries for me to pick it up, and the moment I give it back, he throws it again. Bedtime is taking two hours.",local-dev,,,,,,5.360,success,,"FT is learning that throwing toys out of the cot gets your attention, and it's a fun game for him right now.
+
+What to try tonight:
+1. Before bedtime, remove all toys from the cot. This removes the ""game"" entirely.
+2. If he cries, go in, gently lower him if he's standing, say ""sleep time,"" and leave. Keep your interactions brief and boring.
+3. If he continues to cry, use a consistent settling method like parental presence, where you sit by the cot and offer verbal reassurance without picking him up.
+
+When to review the plan again: Let's check in tomorrow morning after you've had a chance to try this tonight."
+full_110_2026_04_25,2026-04-25T12:51:42+00:00,Q027,balanced,"Every time we travel or stay at my parents' house, my 9-month-old's sleep completely falls apart for a week. How do we handle sleep in a port-a-cot?",local-dev,,,,,,4.973,success,,"It sounds like BT is having a tough time adjusting to new sleep environments, which is completely normal for a 9-month-old as they're so sensitive to changes in their surroundings.
+
+What to try tonight:
+1. Replicate BT's usual sleep environment as much as possible by bringing her sleep sack, white noise machine, and any familiar comforter (if she's over 12 months).
+2. Set up the port-a-cot in the darkest space you can find, using a portable blackout blind or travel solution if needed.
+3. Stick to your usual bedtime routine in the same order you would at home – the routine itself is a powerful cue for sleep.
+
+What compromise is okay:
+Expect one to three rough nights when you arrive or return home; a shifted schedule by no more than 30 minutes per day is also fine.
+
+You can review the plan again after 5-7 days back home to see if her sleep has recovered."
+full_110_2026_04_25,2026-04-25T12:52:48+00:00,Q028,balanced,Can my 8-month-old sleep with a stuffed animal yet?,local-dev,,,,,,5.354,success,,"Hi there! It's completely understandable to wonder about comfort items for BT at 8 months old. While it's tempting to offer a soft toy, it's safest to keep BT's cot clear of anything that could pose a suffocation risk.
+
+What to try tonight:
+1. Ensure BT's cot is completely clear of all soft items, including stuffed animals, blankets, and bumpers.
+2. If BT is looking for comfort, offer a gentle pat or a soothing voice from outside the cot.
+3. You can introduce a comfort item during supervised awake time, like during playtime or in the pram, so BT can still enjoy it safely.
+
+What compromise is okay: You can place a comfort item near the cot, out of reach, so BT can see it without it being in the sleep space.
+
+We can review this again in a few months when BT is a bit older."
+full_110_2026_04_25,2026-04-25T12:53:53+00:00,Q029,balanced,He's 10 months old and skipped his morning nap completely. He's finally falling asleep at 1 PM. When should I wake him up to protect bedtime?,local-dev,,,,,,5.510,success,,"It sounds like BT is having a bit of a tricky day with his naps, which is really common when they're flirting with a nap transition. He's likely overtired from skipping that morning nap, making it harder for him to settle.
+
+What to try tonight:
+1.  Let BT sleep for about 1.5 to 2 hours for this nap, aiming to wake him by 2:30 PM at the latest. This should give him a good restorative sleep without pushing bedtime too late.
+2.  Bring bedtime forward tonight by 30-60 minutes to compensate for the missed morning nap and the later start to his afternoon nap. An earlier bedtime helps prevent him from becoming overtired again.
+3.  Tomorrow, if he seems tired mid-morning but isn't ready for a full nap, try a short 10-15 minute ""bridge"" nap in the pram or car to tide him over until a proper midday nap.
+
+What compromise is okay: It's perfectly fine for some days to look different, especially during transitions.
+
+Review the plan again after a few days to see if the earlier bedtime and bridge nap are helping to reduce overtiredness."
+full_110_2026_04_25,2026-04-25T12:54:59+00:00,Q030,gentle,"Teething has completely derailed us. My 7-month-old has two bottom teeth erupting and has woken up 6 times tonight. Can I use Panadol, or should I just try to resettle instead?",local-dev,,,,,,5.407,success,,"Oh, your poor little GT! It sounds like those erupting teeth are really making things tough for everyone, and it's completely understandable that sleep has gone out the window with all those wakes.
+
+What to try tonight:
+1.  **Offer pain relief:** Yes, you can absolutely use Panadol (paracetamol) if GT seems to be in pain. Follow the dosage instructions for their age and weight, and give it about 30-45 minutes before you try to resettle to give it time to work.
+2.  **Extra comfort:** When GT wakes, offer lots of gentle comfort like cuddles, soft singing, or a quiet pat. Your presence is so reassuring when they're not feeling their best.
+3.  **Keep it low-key:** Try to keep interactions calm and quiet, with dim lights, so GT doesn't get too stimulated.
+
+What compromise is okay:
+It's perfectly fine to offer extra comfort and flexibility with your usual routine during this temporary teething phase.
+
+You can review the plan again once GT's teeth have fully erupted and the discomfort has eased, which is usually within 3-5 days."
+full_110_2026_04_25,2026-04-25T12:56:03+00:00,Q031,balanced,"My 18-month-old climbed out of his cot today for the first time. Do we need to move to a toddler bed immediately, or can we try to stop him?",local-dev,,,,,,4.748,success,,"Oh, BT has discovered a new skill! It's completely normal for toddlers around 18 months to start testing boundaries and exploring their physical capabilities, and sometimes that includes cot climbing. It's definitely a safety issue to take seriously, but it doesn't necessarily mean you need to rush into a toddler bed just yet.
+
+What to try tonight:
+1.  **Lower the mattress:** Make sure BT's cot mattress is at its absolute lowest possible setting.
+2.  **Remove climbing aids:** Take out any large soft toys, bumpers, or anything else BT might be using as a step to get leverage.
+3.  **Use a sleeping bag:** If BT is still in a sleeping bag, it can make climbing much harder because their legs can't separate to act like ladder rungs.
+
+You can review how this goes over the next few nights."
+full_110_2026_04_25,2026-04-25T12:57:08+00:00,Q032,gentle,"She's 2-years-old and suddenly terrified of the dark. She demands the door be open and a nightlight on, but then the light keeps her awake.",local-dev,,,,,,4.944,success,,"Oh, it sounds like GT is going through a really common developmental stage where her imagination is starting to blossom, and with that often comes a new fear of the dark. It's completely normal for toddlers around two or three to start feeling this way, and it's tough when it impacts sleep.
+
+What to try tonight:
+1.  **Introduce a dim, warm-toned nightlight:** Place a red or amber nightlight low to the ground, out of her direct line of sight from the cot. This provides enough comfort without suppressing melatonin, which blue or white lights can do.
+2.  **Keep the door closed (or mostly):** Hallway light can be more stimulating than a consistent, dim room. Reassure her that the nightlight is there to help her feel safe.
+3.  **Name the fear and normalise it:** You can say something like, ""I know the dark feels a bit scary sometimes, lots of kids feel that way. That's why we have our special nightlight.""
+
+We can check in again tomorrow to see how she's settling with these changes."
+full_110_2026_04_25,2026-04-25T12:58:13+00:00,Q033,fast-track,My 15-month-old screams and violently kicks when I try to put him in his sleeping bag. The bedtime routine has become a physical battle.,local-dev,,,,,,4.491,success,,"FT is likely associating the sleeping bag with bedtime resistance, not the bag itself.
+
+What to try tonight:
+1. Do not force the sleeping bag if it's causing a meltdown. Use safe alternative sleepwear like warm pyjamas tonight so you can protect the rest of the bedtime routine.
+2. Keep the rest of bedtime boring and predictable: bath, pyjamas, book, cuddle, then into bed. Avoid adding extra negotiation time.
+3. If FT tolerates choice, offer a controlled option like, ""Blue pyjamas or the sleeping bag?"" rather than asking if they want bedtime at all.
+
+Review the plan again in 3-5 nights."
+full_110_2026_04_25,2026-04-25T12:59:17+00:00,Q034,balanced,"He takes a massive 3-hour nap at daycare from 12pm to 3pm, but then at home he refuses to go to sleep until 9:30 PM. I get no evening.",local-dev,,,,,,3.959,success,,"Oh, BT is having a classic daycare nap clash, where a long nap there means she's just not tired enough for an earlier bedtime at home. It's a common challenge because daycare often runs on a different rhythm.
+
+What to try tonight:
+1.  **Shift bedtime later:** If BT's nap ends at 3 PM, a 7 PM bedtime is simply too early. Aim for a bedtime closer to 7:30-8:00 PM on daycare days. This aligns with her natural sleep pressure.
+2.  **Protect the evening wake window:** No car-seat naps on the way home, even if she seems tired. Even a short doze can push bedtime back significantly.
+3.  **Keep the bedtime routine consistent:** Even with a later bedtime, stick to your usual calming routine to signal that sleep is coming.
+
+What compromise is okay:
+It's perfectly fine to have a slightly later bedtime on daycare days and aim for an earlier one on non-daycare days.
+
+Review this plan after a few daycare cycles to see if the later bedtime helps resolve the evening battles."

@@ -1,0 +1,50 @@
+run_id,test_date,question_id,target_persona,question_text,app_version,model_name,model_provider,prompt_version,corpus_version,rag_version,response_latency_seconds,request_status,error_message,somni_response
+smoke_5q_2026_04_25,2026-04-25T12:17:51+00:00,Q001,gentle,My 4-week-old has his days and nights completely confused. He sleeps all day and is wide awake from 1am to 5am.,local-dev,,,,,,8.959,success,,"Oh, GT, it sounds like he's got his days and nights mixed up, which is super common for a 4-week-old as his internal clock is still developing. It can be really tough when they're wide awake in the wee hours!
+
+What to try tonight:
+1.  During the day, keep things bright and engage in gentle play. When he's awake for feeds, talk to him, sing a little, and keep the lights on.
+2.  At night, keep interactions quiet and lights dim, even during feeds. Focus on feeding and settling him back to sleep with minimal fuss.
+3.  When he's awake from 1 am to 5 am, try to keep the environment calm and dark. Offer comfort and feeds as needed, but avoid stimulating play.
+
+We can check in again tomorrow to see how these little shifts are helping GT find his rhythm."
+smoke_5q_2026_04_25,2026-04-25T12:18:00+00:00,Q002,gentle,"We just brought her home. She will only sleep if she is being held on my chest. Whenever we put her in the bassinet, she screams instantly.",local-dev,,,,,,4.350,success,,"Oh, it sounds like GT is finding the transition to the bassinet a bit tricky, which is so common for newborns who are used to the warmth and closeness of being held. It's likely he's experiencing his startle reflex or just missing your comforting presence.
+
+What to try tonight:
+1.  **Warm the bassinet first:** Before placing GT down, try warming the bassinet sheet with a heat pack (remove it before putting him in, of course!). The sudden change in temperature can be unsettling.
+2.  **Swaddle snugly:** A secure swaddle can really help by mimicking the feeling of being held and reducing that startle reflex that often wakes them up.
+3.  **Gentle transition:** Hold GT close until he's deeply asleep (limp arms, no fluttering eyelids), then gently lower him into the bassinet, bottom first, keeping your hand on his chest for a moment as you slowly withdraw.
+
+What compromise is okay:
+If he's really struggling, it's absolutely fine to hold him for a little longer to ensure he gets some rest.
+
+Let's check in tomorrow to see how these gentle adjustments are working for you both."
+smoke_5q_2026_04_25,2026-04-25T12:18:09+00:00,Q003,balanced,Is it okay if my 2-month-old sleeps in his bouncer sometimes during the day? It's the only way I get anything done.,local-dev,,,,,,4.455,success,,"It sounds like you're doing an amazing job finding ways to get things done, and it's completely understandable to use what works for BT! For safety, it's best for BT to sleep on a firm, flat surface like a cot or bassinet, especially for longer stretches. Bouncers aren't designed for safe sleep because they don't keep a baby's airway in the optimal position.
+
+What to try tonight:
+1. For any naps, aim to place BT in his cot or bassinet on his back.
+2. If you need to put BT down for a short period while awake to get something done, the bouncer is fine for supervised awake time.
+3. When BT shows tired signs, try to move him to his safe sleep space for a nap.
+
+What compromise is okay: If you absolutely need a few minutes to yourself and BT falls asleep in the bouncer, ensure he is closely supervised and move him to his cot as soon as you can.
+
+We can review how this goes for BT's naps."
+smoke_5q_2026_04_25,2026-04-25T12:18:18+00:00,Q004,gentle,He wakes up crying every 45 minutes all night. We are exclusively breastfeeding. Is he just hungry?,local-dev,,,,,,4.059,success,,"Oh, GT is waking every 45 minutes all night, and you're wondering if he's hungry. It sounds like he's likely experiencing a very common newborn sleep pattern where he's cycling through active sleep and waking for comfort or a top-up feed, which is completely normal at 4 weeks old. His tiny tummy needs frequent refills, and he's still learning to link those sleep cycles.
+
+What to try tonight:
+1.  When GT wakes, offer him a feed first. He might just need a quick top-up to help him drift back into a deeper sleep.
+2.  Keep night feeds calm and quiet with dim lights and minimal interaction to help him understand that night-time is for sleep.
+3.  After his feed, try some gentle settling like a snug wrap or some quiet shushing and patting to help him feel secure and settle back down.
+
+What compromise is okay: If he falls asleep while feeding, that's perfectly fine; it's a natural way for newborns to drift off.
+
+We can check in again tomorrow morning to see how the night went."
+smoke_5q_2026_04_25,2026-04-25T12:18:28+00:00,Q005,balanced,My 8-week-old fights every single nap. By 5pm they are completely inconsolable and just scream for an hour. What do I do?,local-dev,,,,,,4.272,success,,"Oh, BT, it sounds like your little one is getting overtired by the end of the day, which is so common at 8 weeks old. When babies fight naps and become inconsolable, it's often because they've pushed past their natural sleepy window, and their bodies are flooded with stress hormones that make it really hard to settle.
+
+What to try tonight:
+1.  **Watch the clock and cues:** For an 8-week-old, wake windows are usually quite short, around 1 to 2 hours. Start looking for tired signs like yawning, frowning, or jerky movements even sooner than you think, and begin your settling routine as soon as you spot them.
+2.  **Prioritise the last nap:** Aim to get BT down for their final nap of the day well before 5 pm. If they're awake for an hour or more before bedtime, they'll likely be overtired. A short ""power nap"" in the carrier or pram can sometimes help bridge the gap if needed.
+3.  **Create a calming wind-down:** As soon as you see those tired signs, move to a quiet, dimly lit space. A secure swaddle can be really helpful for this age to minimise the startle reflex and help them feel snug and safe.
+
+What compromise is okay: If BT is really struggling, a contact nap or pram nap is absolutely fine to ensure they get that crucial rest.
+
+Let's see how these adjustments help BT's evening fussiness over the next few days."

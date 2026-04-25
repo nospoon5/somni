@@ -32,15 +32,15 @@ type Option<Value extends string> = {
 export const dayStructureOptions: Option<OnboardingDayStructure>[] = [
   {
     value: 'mostly_home_flexible',
-    label: 'Mostly at home, so the day can stay flexible',
+    label: 'Mostly at home, flexible',
   },
   {
     value: 'daycare',
-    label: 'Daycare shapes a lot of the day',
+    label: 'Daycare shapes the day',
   },
   {
     value: 'work_constrained',
-    label: 'Work or school timings limit the day',
+    label: 'Work or school limits the day',
   },
 ]
 
@@ -85,11 +85,11 @@ export const schedulePreferenceOptions: Option<OnboardingSchedulePreference>[] =
 export const nightFeedOptions: Option<OnboardingNightFeedResponse>[] = [
   {
     value: 'yes',
-    label: 'Yes, night feeds are still part of things',
+    label: 'Yes, still feeding at night',
   },
   {
     value: 'no',
-    label: 'No, not usually',
+    label: 'No',
   },
 ]
 

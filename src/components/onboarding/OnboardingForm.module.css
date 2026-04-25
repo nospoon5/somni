@@ -1,5 +1,6 @@
 .form {
-  width: min(100%, 760px);
+  width: min(100%, 540px);
+  margin: 0 auto;
   padding: 28px;
 }
 
@@ -68,12 +69,22 @@
 
 .field input,
 .field select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 1rem;
   min-height: 56px;
   padding: 1.125rem 1rem;
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-md);
   background: var(--color-surface);
   color: var(--color-text);
+}
+
+.field input[type="date"],
+.field input[type="time"] {
+  color-scheme: dark;
 }
 
 .field select option {
@@ -113,12 +124,26 @@
   line-height: 1.6;
 }
 
+.sliderLabels {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.sliderLabelRight {
+  text-align: right;
+}
+
 .sliderRow {
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 12px;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
   align-items: center;
-  color: var(--color-text-muted);
 }
 
 .sliderRow input {
@@ -160,9 +185,5 @@
 @media (min-width: 720px) {
   .form {
     padding: 36px;
-  }
-
-  .fieldGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

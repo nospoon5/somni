@@ -1,0 +1,49 @@
+{
+  "paths": {
+    "questions_csv": "../docs/somni_questions_master_110.csv",
+    "schema_template_csv": "../docs/run_results_template.csv",
+    "output_results_dir": "./output/results",
+    "output_logs_dir": "./output/logs",
+    "output_state_dir": "./output/state"
+  },
+  "run": {
+    "run_id": "",
+    "run_label": "v1",
+    "delay_seconds": 60,
+    "request_timeout_seconds": 180,
+    "max_retries": 2,
+    "retry_backoff_seconds": 15,
+    "max_questions": 0,
+    "dry_run": false
+  },
+  "metadata": {
+    "app_version": "local-dev",
+    "model_name": "",
+    "model_provider": "",
+    "prompt_version": "",
+    "corpus_version": "",
+    "rag_version": ""
+  },
+  "transport": {
+    "type": "somni_api",
+    "base_url": "http://127.0.0.1:3000",
+    "supabase_url": "",
+    "supabase_anon_key": "",
+    "supabase_service_role_key": "",
+    "send_eval_mode_header": true,
+    "persona_accounts": {
+      "gentle": {
+        "email": "gentletester@test.com",
+        "password": "gentletester123"
+      },
+      "balanced": {
+        "email": "balancedtester@test.com",
+        "password": "balancedtester123"
+      },
+      "fast-track": {
+        "email": "fasttester@test.com",
+        "password": "fasttester123"
+      }
+    }
+  }
+}

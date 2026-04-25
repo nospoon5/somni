@@ -35,11 +35,31 @@ const bedtimeRangeOptions = [
 ]
 
 const questionPrompts = [
-  'I want a very gentle approach, even if progress takes longer.',
-  'I feel comfortable using a steady routine to shape sleep habits.',
-  'I want the coaching to balance responsiveness with structure.',
-  'I prefer gradual change over a sharp reset.',
-  'I am ready for a faster approach if it feels reasonable and safe.',
+  {
+    title: 'Approach to progress',
+    leftLabel: 'Very gentle, even if progress takes longer',
+    rightLabel: 'Fastest progress, comfortable with a stricter approach',
+  },
+  {
+    title: 'Routine preference',
+    leftLabel: "Prefer flexible days and following baby's cues",
+    rightLabel: 'Prefer a steady, predictable daily routine',
+  },
+  {
+    title: 'Responsiveness vs. Structure',
+    leftLabel: 'Prioritize high responsiveness and soothing',
+    rightLabel: 'Prioritize structure and independent sleep',
+  },
+  {
+    title: 'Pacing of changes',
+    leftLabel: 'Small, gradual changes over time',
+    rightLabel: 'A quick, comprehensive reset',
+  },
+  {
+    title: 'Comfort with faster methods',
+    leftLabel: 'Cautious, prefer to avoid fast methods',
+    rightLabel: 'Ready to try faster methods if safe',
+  },
 ]
 
 function getLabelForScore(score: number) {
@@ -240,6 +260,9 @@ export function OnboardingForm() {
 
             <label className={styles.field}>
               <span>How would you like the plan to feel?</span>
+              <small className={styles.helpText}>
+                This helps us adjust the pacing of the recommendations.
+              </small>
               <select
                 value={schedulePreference}
                 onChange={(event) => setSchedulePreference(event.target.value)}
@@ -269,8 +292,9 @@ export function OnboardingForm() {
         <section className={styles.stepSection}>
           <h1 className={`${styles.title} text-display`}>Now shape the coaching style.</h1>
           <p className={`${styles.subtitle} text-body`}>
-            Move the sliders toward what feels right for your family. There is no
-            perfect answer here.
+            Somni will adapt to you as it gets to know you better. This is just a
+            starting point to determine which coaching style suits your family best:
+            gentle, balanced, or fast track. There is no right or wrong answer here.
           </p>
 
           <div className={styles.stylePreview}>
@@ -281,11 +305,14 @@ export function OnboardingForm() {
           </div>
 
           <div className={styles.questionList}>
-            {questionPrompts.map((prompt, index) => (
-              <label className={`${styles.questionCard} card`} key={prompt}>
-                <span className={styles.questionText}>{prompt}</span>
+            {questionPrompts.map((question, index) => (
+              <label className={`${styles.questionCard} card`} key={question.title}>
+                <span className={styles.questionText}><strong>{question.title}</strong></span>
+                <div className={styles.sliderLabels}>
+                  <span>{question.leftLabel}</span>
+                  <span className={styles.sliderLabelRight}>{question.rightLabel}</span>
+                </div>
                 <div className={styles.sliderRow}>
-                  <span>1</span>
                   <input
                     type="range"
                     min="1"
@@ -299,9 +326,8 @@ export function OnboardingForm() {
                       )
                     }
                   />
-                  <span>10</span>
+                  <span className={styles.sliderValue}>{questionScores[index]}</span>
                 </div>
-                <span className={styles.sliderValue}>{questionScores[index]}</span>
               </label>
             ))}
           </div>

@@ -29,11 +29,10 @@ export default async function OnboardingPage() {
         <div className={styles.copy}>
           <p className={`${styles.eyebrow} text-label`}>Onboarding</p>
           <h1 className={`${styles.heading} text-display`}>
-            A few simple details now make the guidance feel much more useful later.
+            A few simple details to help Somni tailor your baby&apos;s plan.
           </h1>
           <p className={`${styles.body} text-body`}>
-            We&apos;ll shape Somni around your baby&apos;s age, your biggest sleep
-            challenge, and the style of support that feels right for your family.
+            We ask these questions to tailor Somni to your baby&apos;s details and your parenting style.
           </p>
         </div>
 

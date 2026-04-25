@@ -1,0 +1,94 @@
+2026-04-25 22:18:32,628 | INFO | Run started | run_id=full_110_2026_04_25 | questions=110 | resume=False
+2026-04-25 22:18:32,629 | INFO | Results file: C:\AI Projects\01_Apps\Somni\somni_eval\output\results\run_results_full_110_2026_04_25.csv
+2026-04-25 22:18:32,629 | INFO | Run log: C:\AI Projects\01_Apps\Somni\somni_eval\output\logs\full_110_2026_04_25.log
+2026-04-25 22:18:32,629 | INFO | Error log: C:\AI Projects\01_Apps\Somni\somni_eval\output\logs\full_110_2026_04_25.errors.log
+2026-04-25 22:18:32,629 | INFO | [1/110] Sending Q001 using persona 'gentle'.
+2026-04-25 22:18:37,020 | INFO | [1/110] Wrote result for Q001 with status=success.
+2026-04-25 22:18:37,021 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:19:37,022 | INFO | [2/110] Sending Q002 using persona 'gentle'.
+2026-04-25 22:19:41,912 | INFO | [2/110] Wrote result for Q002 with status=success.
+2026-04-25 22:19:41,912 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:20:41,913 | INFO | [3/110] Sending Q003 using persona 'balanced'.
+2026-04-25 22:20:48,026 | INFO | [3/110] Wrote result for Q003 with status=success.
+2026-04-25 22:20:48,026 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:21:48,027 | INFO | [4/110] Sending Q004 using persona 'gentle'.
+2026-04-25 22:21:53,812 | INFO | [4/110] Wrote result for Q004 with status=success.
+2026-04-25 22:21:53,813 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:22:53,813 | INFO | [5/110] Sending Q005 using persona 'balanced'.
+2026-04-25 22:22:59,130 | INFO | [5/110] Wrote result for Q005 with status=success.
+2026-04-25 22:22:59,130 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:23:59,130 | INFO | [6/110] Sending Q006 using persona 'fast-track'.
+2026-04-25 22:24:06,019 | INFO | [6/110] Wrote result for Q006 with status=success.
+2026-04-25 22:24:06,019 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:25:06,019 | INFO | [7/110] Sending Q007 using persona 'balanced'.
+2026-04-25 22:25:12,063 | INFO | [7/110] Wrote result for Q007 with status=success.
+2026-04-25 22:25:12,064 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:26:12,064 | INFO | [8/110] Sending Q008 using persona 'gentle'.
+2026-04-25 22:26:18,268 | INFO | [8/110] Wrote result for Q008 with status=success.
+2026-04-25 22:26:18,269 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:27:18,270 | INFO | [9/110] Sending Q009 using persona 'balanced'.
+2026-04-25 22:27:23,093 | INFO | [9/110] Wrote result for Q009 with status=success.
+2026-04-25 22:27:23,094 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:28:23,094 | INFO | [10/110] Sending Q010 using persona 'balanced'.
+2026-04-25 22:28:30,404 | INFO | [10/110] Wrote result for Q010 with status=success.
+2026-04-25 22:28:30,404 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:29:30,405 | INFO | [11/110] Sending Q011 using persona 'balanced'.
+2026-04-25 22:29:35,638 | INFO | [11/110] Wrote result for Q011 with status=success.
+2026-04-25 22:29:35,639 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:30:35,639 | INFO | [12/110] Sending Q012 using persona 'fast-track'.
+2026-04-25 22:30:41,465 | INFO | [12/110] Wrote result for Q012 with status=success.
+2026-04-25 22:30:41,465 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:31:41,466 | INFO | [13/110] Sending Q013 using persona 'balanced'.
+2026-04-25 22:31:47,202 | INFO | [13/110] Wrote result for Q013 with status=success.
+2026-04-25 22:31:47,203 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:32:47,204 | INFO | [14/110] Sending Q014 using persona 'gentle'.
+2026-04-25 22:32:52,807 | INFO | [14/110] Wrote result for Q014 with status=success.
+2026-04-25 22:32:52,807 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:33:52,808 | INFO | [15/110] Sending Q015 using persona 'balanced'.
+2026-04-25 22:33:57,630 | INFO | [15/110] Wrote result for Q015 with status=success.
+2026-04-25 22:33:57,631 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:34:57,631 | INFO | [16/110] Sending Q016 using persona 'fast-track'.
+2026-04-25 22:35:03,643 | INFO | [16/110] Wrote result for Q016 with status=success.
+2026-04-25 22:35:03,644 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:36:03,644 | INFO | [17/110] Sending Q017 using persona 'balanced'.
+2026-04-25 22:36:05,489 | WARNING | Retryable failure for Q017 on attempt 1/3: /api/chat temporary failure: HTTP 429 {"error":"You have reached today's free Somni chat limit.","code":"DAILY_CHAT_LIMIT_REACHED","message":"You have used 10 of 10 free chats today. Your limit resets at midnight in your selected timezone
+2026-04-25 22:36:05,489 | INFO | Waiting 15 seconds before retrying Q017.
+2026-04-25 22:36:20,995 | WARNING | Retryable failure for Q017 on attempt 2/3: /api/chat temporary failure: HTTP 429 {"error":"You have reached today's free Somni chat limit.","code":"DAILY_CHAT_LIMIT_REACHED","message":"You have used 10 of 10 free chats today. Your limit resets at midnight in your selected timezone
+2026-04-25 22:36:20,995 | INFO | Waiting 15 seconds before retrying Q017.
+2026-04-25 22:36:36,295 | WARNING | Retryable failure for Q017 on attempt 3/3: /api/chat temporary failure: HTTP 429 {"error":"You have reached today's free Somni chat limit.","code":"DAILY_CHAT_LIMIT_REACHED","message":"You have used 10 of 10 free chats today. Your limit resets at midnight in your selected timezone
+2026-04-25 22:36:36,297 | INFO | [17/110] Wrote result for Q017 with status=rate_limited.
+2026-04-25 22:36:36,297 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:37:36,298 | INFO | [18/110] Sending Q018 using persona 'balanced'.
+2026-04-25 22:37:37,808 | WARNING | Retryable failure for Q018 on attempt 1/3: /api/chat temporary failure: HTTP 429 {"error":"You have reached today's free Somni chat limit.","code":"DAILY_CHAT_LIMIT_REACHED","message":"You have used 10 of 10 free chats today. Your limit resets at midnight in your selected timezone
+2026-04-25 22:37:37,808 | INFO | Waiting 15 seconds before retrying Q018.
+2026-04-25 22:37:53,656 | WARNING | Retryable failure for Q018 on attempt 2/3: /api/chat temporary failure: HTTP 429 {"error":"You have reached today's free Somni chat limit.","code":"DAILY_CHAT_LIMIT_REACHED","message":"You have used 10 of 10 free chats today. Your limit resets at midnight in your selected timezone
+2026-04-25 22:37:53,656 | INFO | Waiting 15 seconds before retrying Q018.
+2026-04-25 22:38:09,246 | WARNING | Retryable failure for Q018 on attempt 3/3: /api/chat temporary failure: HTTP 429 {"error":"You have reached today's free Somni chat limit.","code":"DAILY_CHAT_LIMIT_REACHED","message":"You have used 10 of 10 free chats today. Your limit resets at midnight in your selected timezone
+2026-04-25 22:38:09,247 | INFO | [18/110] Wrote result for Q018 with status=rate_limited.
+2026-04-25 22:38:09,247 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:39:09,247 | INFO | [19/110] Sending Q019 using persona 'fast-track'.
+2026-04-25 22:39:14,042 | INFO | [19/110] Wrote result for Q019 with status=success.
+2026-04-25 22:39:14,043 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:40:14,044 | INFO | [20/110] Sending Q020 using persona 'gentle'.
+2026-04-25 22:40:20,439 | INFO | [20/110] Wrote result for Q020 with status=success.
+2026-04-25 22:40:20,440 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:41:20,440 | INFO | [21/110] Sending Q021 using persona 'balanced'.
+2026-04-25 22:41:22,843 | WARNING | Retryable failure for Q021 on attempt 1/3: /api/chat temporary failure: HTTP 429 {"error":"You have reached today's free Somni chat limit.","code":"DAILY_CHAT_LIMIT_REACHED","message":"You have used 10 of 10 free chats today. Your limit resets at midnight in your selected timezone
+2026-04-25 22:41:22,843 | INFO | Waiting 15 seconds before retrying Q021.
+2026-04-25 22:41:38,519 | WARNING | Retryable failure for Q021 on attempt 2/3: /api/chat temporary failure: HTTP 429 {"error":"You have reached today's free Somni chat limit.","code":"DAILY_CHAT_LIMIT_REACHED","message":"You have used 10 of 10 free chats today. Your limit resets at midnight in your selected timezone
+2026-04-25 22:41:38,519 | INFO | Waiting 15 seconds before retrying Q021.
+2026-04-25 22:41:53,981 | WARNING | Retryable failure for Q021 on attempt 3/3: /api/chat temporary failure: HTTP 429 {"error":"You have reached today's free Somni chat limit.","code":"DAILY_CHAT_LIMIT_REACHED","message":"You have used 10 of 10 free chats today. Your limit resets at midnight in your selected timezone
+2026-04-25 22:41:53,984 | INFO | [21/110] Wrote result for Q021 with status=rate_limited.
+2026-04-25 22:41:53,984 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:42:53,986 | INFO | [22/110] Sending Q022 using persona 'gentle'.
+2026-04-25 22:43:00,103 | INFO | [22/110] Wrote result for Q022 with status=success.
+2026-04-25 22:43:00,103 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:44:00,103 | INFO | [23/110] Sending Q023 using persona 'balanced'.
+2026-04-25 22:44:05,711 | INFO | [23/110] Wrote result for Q023 with status=success.
+2026-04-25 22:44:05,712 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:45:05,712 | INFO | [24/110] Sending Q024 using persona 'balanced'.
+2026-04-25 22:45:10,332 | INFO | [24/110] Wrote result for Q024 with status=success.
+2026-04-25 22:45:10,332 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-25 22:46:10,333 | INFO | [25/110] Sending Q025 using persona 'gentle'.
+2026-04-25 22:46:15,756 | INFO | [25/110] Wrote result for Q025 with status=success.
+2026-04-25 22:46:15,756 | INFO | Sleeping for 60 seconds before the next question.
