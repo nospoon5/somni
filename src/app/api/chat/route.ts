@@ -12,6 +12,7 @@ import { ensureSleepPlanProfile } from '@/lib/sleep-plan-profile-init'
 import { parseNightFeeds } from '@/lib/onboarding-preferences'
 import { CHAT_MODEL, clampChatMessage, streamGeminiResponse } from '@/lib/ai/gemini'
 import { persistAiMemoryAfterChat, saveChatPlanUpdates } from '@/lib/ai/chat-plan-persistence'
+import { filterResponse } from '@/lib/ai/response-filter'
 import {
   buildRetrievalLogPayload,
   createSseEvent,
@@ -294,7 +295,7 @@ export async function POST(request: Request) {
             }
           )
 
-          let assistantMessage = geminiResult.text
+          let assistantMessage = filterResponse(geminiResult.text)
           let replaceMessage = false
 
           const savedPlanUpdates = await saveChatPlanUpdates({
@@ -309,7 +310,7 @@ export async function POST(request: Request) {
           })
 
           if (savedPlanUpdates.assistantMessage) {
-            assistantMessage = savedPlanUpdates.assistantMessage
+            assistantMessage = filterResponse(savedPlanUpdates.assistantMessage)
             replaceMessage = true
           }
 

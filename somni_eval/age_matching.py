@@ -27,6 +27,10 @@ AGE_PATTERNS = (
 )
 
 
+MALE_PRONOUN_TOKENS = {"he", "him", "his"}
+FEMALE_PRONOUN_TOKENS = {"she", "her", "hers"}
+
+
 def parse_age_from_question(question_text: str) -> ParsedAge | None:
     text = question_text.strip()
     if not text:
@@ -45,6 +49,22 @@ def parse_age_from_question(question_text: str) -> ParsedAge | None:
         unit = match.group("unit").lower()
         return ParsedAge(quantity=quantity, unit=unit)
 
+    return None
+
+
+def extract_implied_gender_from_question(question_text: str) -> str | None:
+    text = question_text.strip().lower()
+    if not text:
+        return None
+
+    tokens = set(re.findall(r"\b[a-z']+\b", text))
+    has_male = bool(tokens.intersection(MALE_PRONOUN_TOKENS))
+    has_female = bool(tokens.intersection(FEMALE_PRONOUN_TOKENS))
+
+    if has_male and not has_female:
+        return "male"
+    if has_female and not has_male:
+        return "female"
     return None
 
 

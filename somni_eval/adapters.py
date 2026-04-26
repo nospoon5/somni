@@ -3,13 +3,14 @@ from __future__ import annotations
 import base64
 import json
 import socket
+import time
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Any, Protocol
 from urllib.parse import urlparse
 
 import requests
 
-from age_matching import derive_date_of_birth_from_question
+from age_matching import derive_date_of_birth_from_question, extract_implied_gender_from_question
 from configuration import EvalConfig, PersonaAccount
 
 
@@ -31,6 +32,10 @@ class FatalAdapterError(AdapterError):
 @dataclass(frozen=True)
 class AdapterResult:
     response_text: str
+    retrieval: dict[str, object] | None = None
+    sources: list[object] | None = None
+    confidence: str = ""
+    ttft_seconds: float | None = None
 
 
 class SomniAdapter(Protocol):
@@ -152,7 +157,14 @@ class SomniApiAdapter:
 
     def _apply_age_match(self, persona_session: PersonaSession, question_text: str) -> None:
         derived_dob = derive_date_of_birth_from_question(question_text)
-        if not derived_dob:
+        implied_gender = extract_implied_gender_from_question(question_text)
+        gender_to_name = {
+            "male": "Ari",
+            "female": "Aria",
+        }
+        desired_name = gender_to_name.get(implied_gender) if implied_gender else None
+
+        if not derived_dob and not implied_gender:
             return
 
         rest_headers = {
@@ -166,7 +178,7 @@ class SomniApiAdapter:
                 f"{self._rest_url}/babies",
                 headers={**rest_headers, "Accept-Profile": "public"},
                 params={
-                    "select": "id,date_of_birth",
+                    "select": "*",
                     "profile_id": f"eq.{persona_session.user_id}",
                     "order": "created_at.asc",
                     "limit": "1",
@@ -195,33 +207,81 @@ class SomniApiAdapter:
         if not baby_id:
             raise FatalAdapterError("Age matching found a baby row without an id.")
 
+        update_payload: dict[str, Any] = {}
         current_dob = str(babies[0].get("date_of_birth", "")).strip()
-        if current_dob == derived_dob:
+        if derived_dob and current_dob != derived_dob:
+            update_payload["date_of_birth"] = derived_dob
+
+        if implied_gender:
+            current_name = str(babies[0].get("name", "")).strip()
+            if desired_name and current_name != desired_name:
+                update_payload["name"] = desired_name
+
+            current_gender = babies[0].get("gender")
+            if not isinstance(current_gender, str) or current_gender.strip().lower() != implied_gender:
+                update_payload["gender"] = implied_gender
+
+        if not update_payload:
             return
+
+        self._patch_baby_for_age_match(rest_headers, baby_id, update_payload)
+
+    def _patch_baby_for_age_match(
+        self,
+        rest_headers: dict[str, str],
+        baby_id: str,
+        update_payload: dict[str, Any],
+    ) -> None:
+        patch_headers = {
+            **rest_headers,
+            "Accept-Profile": "public",
+            "Content-Type": "application/json",
+            "Prefer": "return=minimal",
+        }
 
         try:
             update_response = self._http.patch(
                 f"{self._rest_url}/babies",
-                headers={
-                    **rest_headers,
-                    "Accept-Profile": "public",
-                    "Content-Type": "application/json",
-                    "Prefer": "return=minimal",
-                },
+                headers=patch_headers,
                 params={"id": f"eq.{baby_id}"},
-                json={"date_of_birth": derived_dob},
+                json=update_payload,
                 timeout=30,
             )
         except requests.RequestException as exc:
-            raise RetryableAdapterError(f"Failed to update baby DOB for age matching: {exc}") from exc
+            raise RetryableAdapterError(f"Failed to update baby profile for age matching: {exc}") from exc
+
+        if (
+            update_response.status_code >= 400
+            and "gender" in update_payload
+            and _is_missing_gender_column_error(update_response)
+        ):
+            fallback_payload = dict(update_payload)
+            fallback_payload.pop("gender", None)
+            if not fallback_payload:
+                return
+
+            try:
+                update_response = self._http.patch(
+                    f"{self._rest_url}/babies",
+                    headers=patch_headers,
+                    params={"id": f"eq.{baby_id}"},
+                    json=fallback_payload,
+                    timeout=30,
+                )
+            except requests.RequestException as exc:
+                raise RetryableAdapterError(
+                    f"Failed to update baby profile for age matching fallback: {exc}"
+                ) from exc
 
         if update_response.status_code in (429, 500, 502, 503, 504):
             raise RetryableAdapterError(
-                f"Temporary failure updating baby DOB for age matching: HTTP {update_response.status_code} {update_response.text[:200]}"
+                "Temporary failure updating baby profile for age matching: "
+                f"HTTP {update_response.status_code} {update_response.text[:200]}"
             )
         if update_response.status_code >= 400:
             raise FatalAdapterError(
-                f"Could not update baby DOB for age matching: HTTP {update_response.status_code} {update_response.text[:200]}"
+                "Could not update baby profile for age matching: "
+                f"HTTP {update_response.status_code} {update_response.text[:200]}"
             )
 
     def _post_chat(self, cookie_header: str, question_text: str, timeout_seconds: int) -> AdapterResult:
@@ -233,6 +293,7 @@ class SomniApiAdapter:
         if self._config.transport.send_eval_mode_header:
             headers["x-eval-mode"] = "true"
 
+        request_started_at = time.perf_counter()
         try:
             response = self._http.post(
                 self._chat_url,
@@ -259,10 +320,10 @@ class SomniApiAdapter:
                 f"/api/chat permanent failure: HTTP {response.status_code} {response.text[:200]}"
             )
 
-        response_text = _read_sse_response_text(response)
-        if not response_text.strip():
+        result = _read_sse_response_text(response, request_started_at)
+        if not result.response_text.strip():
             raise RetryableAdapterError("Chat stream returned an empty assistant response.")
-        return AdapterResult(response_text=response_text)
+        return result
 
 
 def create_adapter(config: EvalConfig) -> SomniAdapter:
@@ -276,11 +337,44 @@ def create_adapter(config: EvalConfig) -> SomniAdapter:
     )
 
 
-def _read_sse_response_text(response: requests.Response) -> str:
+def _read_sse_response_text(response: requests.Response, request_started_at: float) -> AdapterResult:
     event_lines: list[str] = []
     streamed_text = ""
     done_message = ""
+    done_retrieval: dict[str, object] | None = None
+    done_sources: list[object] | None = None
+    done_confidence = ""
     error_message = ""
+    first_token_at: float | None = None
+
+    def apply_event(event_name: str, payload: dict[str, object]) -> None:
+        nonlocal streamed_text, done_message, done_retrieval, done_sources, done_confidence
+        nonlocal error_message, first_token_at
+
+        if event_name == "token" and isinstance(payload.get("text"), str):
+            if first_token_at is None:
+                first_token_at = time.perf_counter()
+            streamed_text += payload["text"]
+            return
+
+        if event_name == "done":
+            if isinstance(payload.get("message"), str):
+                done_message = payload["message"]
+            retrieval = payload.get("retrieval")
+            if isinstance(retrieval, dict):
+                done_retrieval = retrieval
+            sources = payload.get("sources")
+            if isinstance(sources, list):
+                done_sources = sources
+            confidence = payload.get("confidence")
+            if isinstance(confidence, str):
+                done_confidence = confidence
+            return
+
+        if event_name == "error":
+            human_message = str(payload.get("error", "Unknown chat error"))
+            detail = str(payload.get("detail", "")).strip()
+            error_message = f"{human_message} {detail}".strip()
 
     for raw_line in response.iter_lines(decode_unicode=True):
         if raw_line is None:
@@ -290,31 +384,16 @@ def _read_sse_response_text(response: requests.Response) -> str:
         if line == "":
             event_name, payload = _parse_sse_event(event_lines)
             event_lines.clear()
-            if not event_name:
-                continue
-
-            if event_name == "token" and isinstance(payload.get("text"), str):
-                streamed_text += payload["text"]
-            elif event_name == "done" and isinstance(payload.get("message"), str):
-                done_message = payload["message"]
-            elif event_name == "error":
-                human_message = str(payload.get("error", "Unknown chat error"))
-                detail = str(payload.get("detail", "")).strip()
-                error_message = f"{human_message} {detail}".strip()
+            if event_name:
+                apply_event(event_name, payload)
             continue
 
         event_lines.append(line)
 
     if event_lines:
         event_name, payload = _parse_sse_event(event_lines)
-        if event_name == "token" and isinstance(payload.get("text"), str):
-            streamed_text += payload["text"]
-        elif event_name == "done" and isinstance(payload.get("message"), str):
-            done_message = payload["message"]
-        elif event_name == "error":
-            human_message = str(payload.get("error", "Unknown chat error"))
-            detail = str(payload.get("detail", "")).strip()
-            error_message = f"{human_message} {detail}".strip()
+        if event_name:
+            apply_event(event_name, payload)
 
     if error_message:
         raise RetryableAdapterError(f"Chat stream error: {error_message}")
@@ -322,7 +401,18 @@ def _read_sse_response_text(response: requests.Response) -> str:
     final_message = streamed_text.strip() or done_message.strip()
     if not final_message:
         raise RetryableAdapterError("Chat stream finished without a usable response message.")
-    return final_message
+
+    ttft_seconds = None
+    if first_token_at is not None:
+        ttft_seconds = max(0.0, first_token_at - request_started_at)
+
+    return AdapterResult(
+        response_text=final_message,
+        retrieval=done_retrieval,
+        sources=done_sources,
+        confidence=done_confidence,
+        ttft_seconds=ttft_seconds,
+    )
 
 
 def _parse_sse_event(lines: list[str]) -> tuple[str, dict[str, object]]:
@@ -357,3 +447,11 @@ def _project_ref_from_supabase_url(supabase_url: str) -> str:
 def _base64url_json(payload: dict[str, object]) -> str:
     raw_bytes = json.dumps(payload, separators=(",", ":"), ensure_ascii=True).encode("utf-8")
     return base64.urlsafe_b64encode(raw_bytes).decode("ascii").rstrip("=")
+
+
+def _is_missing_gender_column_error(response: requests.Response) -> bool:
+    text = response.text.lower()
+    return "gender" in text and (
+        "column" in text
+        and ("does not exist" in text or "unknown" in text or "not found" in text)
+    )

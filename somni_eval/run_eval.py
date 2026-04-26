@@ -188,6 +188,10 @@ def _process_question(question, config, adapter, logger) -> dict[str, str]:
                 error_message="",
                 response_text=result.response_text,
                 latency_seconds=latency_seconds,
+                retrieval=result.retrieval,
+                sources=result.sources,
+                confidence=result.confidence,
+                ttft_seconds=result.ttft_seconds,
             )
         except RetryableAdapterError as exc:
             latency_seconds = time.perf_counter() - started_at
@@ -215,6 +219,10 @@ def _process_question(question, config, adapter, logger) -> dict[str, str]:
                 error_message=last_error,
                 response_text="",
                 latency_seconds=latency_seconds,
+                retrieval=None,
+                sources=None,
+                confidence="",
+                ttft_seconds=None,
             )
         except FatalAdapterError as exc:
             latency_seconds = time.perf_counter() - started_at
@@ -227,6 +235,10 @@ def _process_question(question, config, adapter, logger) -> dict[str, str]:
                 error_message=last_error,
                 response_text="",
                 latency_seconds=latency_seconds,
+                retrieval=None,
+                sources=None,
+                confidence="",
+                ttft_seconds=None,
             )
 
     return _build_output_row(
@@ -236,6 +248,10 @@ def _process_question(question, config, adapter, logger) -> dict[str, str]:
         error_message=last_error or "Unexpected runner failure.",
         response_text="",
         latency_seconds=0.0,
+        retrieval=None,
+        sources=None,
+        confidence="",
+        ttft_seconds=None,
     )
 
 
@@ -247,6 +263,10 @@ def _build_output_row(
     error_message: str,
     response_text: str,
     latency_seconds: float,
+    retrieval: dict[str, object] | None,
+    sources: list[object] | None,
+    confidence: str,
+    ttft_seconds: float | None,
 ) -> dict[str, str]:
     return {
         "run_id": config.run.run_id,
@@ -264,6 +284,10 @@ def _build_output_row(
         "request_status": request_status,
         "error_message": error_message,
         "somni_response": response_text,
+        "retrieval": json.dumps(retrieval, ensure_ascii=True) if retrieval is not None else "",
+        "sources": json.dumps(sources, ensure_ascii=True) if sources is not None else "",
+        "confidence": confidence,
+        "ttft_seconds": f"{ttft_seconds:.3f}" if ttft_seconds is not None else "",
     }
 
 

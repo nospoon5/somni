@@ -1,1 +1,1 @@
-run_id,test_date,question_id,target_persona,question_text,app_version,model_name,model_provider,prompt_version,corpus_version,rag_version,response_latency_seconds,request_status,error_message,somni_response
+run_id,test_date,question_id,target_persona,question_text,app_version,model_name,model_provider,prompt_version,corpus_version,rag_version,response_latency_seconds,request_status,error_message,somni_response,retrieval,sources,confidence,ttft_seconds

@@ -8,6 +8,12 @@ from configuration import DEFAULT_ALLOWED_PERSONAS, ConfigError
 
 
 REQUIRED_INPUT_COLUMNS = ("question_id", "target_persona", "question_text")
+ADDITIONAL_OUTPUT_COLUMNS = (
+    "retrieval",
+    "sources",
+    "confidence",
+    "ttft_seconds",
+)
 
 
 @dataclass(frozen=True)
@@ -30,6 +36,10 @@ def load_expected_output_headers(template_path: Path) -> list[str]:
         raise ConfigError(f"Output schema template is empty: {template_path}")
 
     cleaned_headers = [header.strip() for header in headers]
+    for extra_header in ADDITIONAL_OUTPUT_COLUMNS:
+        if extra_header not in cleaned_headers:
+            cleaned_headers.append(extra_header)
+
     if len(cleaned_headers) != len(set(cleaned_headers)):
         raise ConfigError(f"Output schema template contains duplicate columns: {template_path}")
     return cleaned_headers
