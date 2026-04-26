@@ -1,0 +1,18 @@
+[chat] ai_memory persistence failed Error: Gemini memory extraction failed (503): {
+  "error": {
+    "code": 503,
+    "message": "This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.",
+    "status": "UNAVAILABLE"
+  }
+}
+
+    at extractUpdatedAiMemory (src\lib\ai\memory.ts:137:11)
+    at async persistAiMemoryAfterChat (src\lib\ai\chat-plan-persistence.ts:299:27)
+    at async (src\app\api\chat\route.ts:332:15)
+  135 |   if (!response.ok) {
+  136 |     const errorText = await response.text()
+> 137 |     throw new Error(`Gemini memory extraction failed (${response.status}): ${errorText}`)
+      |           ^
+  138 |   }
+  139 |
+  140 |   const payload = (await response.json()) as unknown
