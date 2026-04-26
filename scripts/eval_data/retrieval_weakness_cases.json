@@ -43,5 +43,23 @@
     "methodology": "balanced",
     "maxRank": 1,
     "expectTopIds": ["6-12m-independent-settling-common-mistakes", "12m-plus-independent-settling-common-mistakes"]
+  },
+  {
+    "id": "reverse-cycling-breastfed",
+    "label": "Reverse cycling for a breastfed baby",
+    "query": "My 5-month-old barely feeds during the day but then breastfeeds all night and is still gaining weight well. Is this reverse cycling and what should I do?",
+    "ageBand": "4-6 months",
+    "methodology": "gentle",
+    "maxRank": 1,
+    "expectTopIds": ["reverse-cycling-breastfed"]
+  },
+  {
+    "id": "vaccination-sleep-disruption",
+    "label": "Temporary sleep disruption after vaccination",
+    "query": "My baby had vaccines yesterday and sleep is a mess tonight. Should I try sleep training now or just focus on comfort for a couple of days?",
+    "ageBand": "4-6 months",
+    "methodology": "balanced",
+    "maxRank": 1,
+    "expectTopIds": ["vaccination-sleep-disruption"]
   }
 ]

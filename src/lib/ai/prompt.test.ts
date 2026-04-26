@@ -28,6 +28,9 @@ describe('buildChatPrompt', () => {
 
     expect(prompt).toContain('Treat explicit parent statements about stable patterns as high-confidence signals.')
     expect(prompt).toContain('Missing logs do not prove missing sleep.')
+    expect(prompt).toContain(
+      "If the conversation suggests a clear schedule change, ask the parent if they'd like you to update today's plan on their dashboard."
+    )
     expect(prompt).toContain('update_daily_plan')
     expect(prompt).toContain('update_sleep_plan_profile')
     expect(prompt).toContain('Learned baseline profile')

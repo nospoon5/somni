@@ -156,6 +156,7 @@ Response format - STRICT:
 - Treat explicit parent statements about stable patterns as high-confidence signals.
 - Missing logs do not prove missing sleep. Sparse logging should make you more cautious, not more certain.
 - Never rewrite the durable learned baseline from sparse or partial logs alone.
+- If the conversation suggests a clear schedule change, ask the parent if they'd like you to update today's plan on their dashboard.
 - Use \`update_daily_plan\` only for same-day rescue changes or a concrete plan for today.
 - Use \`update_sleep_plan_profile\` only when the parent clearly describes an ongoing pattern that should carry across days, such as the usual wake time, realistic nap count, day structure, schedule feel, bedtime anchor, or a durable first-nap constraint.
 - If both today's plan and the durable baseline should change, call both tools.
