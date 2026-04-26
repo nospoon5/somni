@@ -4,6 +4,7 @@ import json
 import statistics
 import sys
 import time
+import uuid
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
@@ -84,6 +85,8 @@ def main() -> int:
         progress_state = _build_state_payload(config.run.run_id, questions, all_rows, started=True)
         _write_state_file(state_path, progress_state)
 
+    sequence_to_conversation_id: dict[str, str] = {}
+
     for index, question in enumerate(questions, start=1):
         if question.question_id in completed_question_ids:
             logger.info(
@@ -102,7 +105,13 @@ def main() -> int:
             question.target_persona,
         )
 
-        row = _process_question(question, config, adapter, logger)
+        conversation_id = ""
+        if question.sequence_id:
+            if question.sequence_id not in sequence_to_conversation_id:
+                sequence_to_conversation_id[question.sequence_id] = str(uuid.uuid4())
+            conversation_id = sequence_to_conversation_id[question.sequence_id]
+
+        row = _process_question(question, config, adapter, logger, conversation_id)
         append_result_row(results_path, expected_headers, row)
         all_rows.append(row)
         completed_question_ids.add(question.question_id)
@@ -168,7 +177,7 @@ def _prepare_run_files(
     return []
 
 
-def _process_question(question, config, adapter, logger) -> dict[str, str]:
+def _process_question(question, config, adapter, logger, conversation_id: str = "") -> dict[str, str]:
     attempts_allowed = config.run.max_retries + 1
     last_error = ""
 
@@ -179,6 +188,7 @@ def _process_question(question, config, adapter, logger) -> dict[str, str]:
                 persona=question.target_persona,
                 question_text=question.question_text,
                 timeout_seconds=config.run.request_timeout_seconds,
+                conversation_id=conversation_id,
             )
             latency_seconds = time.perf_counter() - started_at
             return _build_output_row(

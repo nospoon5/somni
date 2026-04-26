@@ -1,0 +1,1 @@
+2026-04-27 00:25:02,833 | ERROR | Fatal failure for Q001: Could not update baby profile for age matching: HTTP 400 {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'gender' column of 'babies' in the schema cache"}

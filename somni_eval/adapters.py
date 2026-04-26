@@ -42,7 +42,7 @@ class SomniAdapter(Protocol):
     def validate_environment(self) -> None:
         ...
 
-    def send_question(self, persona: str, question_text: str, timeout_seconds: int) -> AdapterResult:
+    def send_question(self, persona: str, question_text: str, timeout_seconds: int, conversation_id: str = "") -> AdapterResult:
         ...
 
 
@@ -53,7 +53,7 @@ class DryRunAdapter:
     def validate_environment(self) -> None:
         return None
 
-    def send_question(self, persona: str, question_text: str, timeout_seconds: int) -> AdapterResult:
+    def send_question(self, persona: str, question_text: str, timeout_seconds: int, conversation_id: str = "") -> AdapterResult:
         derived_dob = derive_date_of_birth_from_question(question_text)
         response = (
             "[DRY RUN] Somni adapter was not called. "
@@ -94,7 +94,7 @@ class SomniApiAdapter:
                 f"Somni is reachable but unhealthy at {self._base_url} (HTTP {response.status_code})."
             )
 
-    def send_question(self, persona: str, question_text: str, timeout_seconds: int) -> AdapterResult:
+    def send_question(self, persona: str, question_text: str, timeout_seconds: int, conversation_id: str = "") -> AdapterResult:
         persona_session = self._session_cache.get(persona)
         if not persona_session:
             persona_session = self._login(persona, self._config.transport.persona_accounts[persona])
@@ -103,7 +103,7 @@ class SomniApiAdapter:
         self._apply_age_match(persona_session, question_text)
 
         try:
-            return self._post_chat(persona_session.cookie_header, question_text, timeout_seconds)
+            return self._post_chat(persona_session.cookie_header, question_text, timeout_seconds, conversation_id)
         except RetryableAdapterError as exc:
             message = str(exc).lower()
             if "401" in message or "unauthorized" in message:
@@ -284,7 +284,7 @@ class SomniApiAdapter:
                 f"HTTP {update_response.status_code} {update_response.text[:200]}"
             )
 
-    def _post_chat(self, cookie_header: str, question_text: str, timeout_seconds: int) -> AdapterResult:
+    def _post_chat(self, cookie_header: str, question_text: str, timeout_seconds: int, conversation_id: str = "") -> AdapterResult:
         headers = {
             "Content-Type": "application/json",
             "Accept": "text/event-stream",
@@ -295,10 +295,14 @@ class SomniApiAdapter:
 
         request_started_at = time.perf_counter()
         try:
+            payload = {"message": question_text}
+            if conversation_id:
+                payload["conversationId"] = conversation_id
+
             response = self._http.post(
                 self._chat_url,
                 headers=headers,
-                json={"message": question_text},
+                json=payload,
                 stream=True,
                 timeout=(15, timeout_seconds),
             )
@@ -453,5 +457,5 @@ def _is_missing_gender_column_error(response: requests.Response) -> bool:
     text = response.text.lower()
     return "gender" in text and (
         "column" in text
-        and ("does not exist" in text or "unknown" in text or "not found" in text)
+        and ("does not exist" in text or "unknown" in text or "not found" in text or "not find" in text)
     )

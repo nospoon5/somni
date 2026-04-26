@@ -22,6 +22,7 @@ class QuestionRow:
     target_persona: str
     question_text: str
     row_number: int
+    sequence_id: str = ""
 
 
 def load_expected_output_headers(template_path: Path) -> list[str]:
@@ -61,6 +62,7 @@ def load_questions(question_path: Path, max_questions: int | None = None) -> lis
             question_id = (raw_row.get("question_id") or "").strip()
             target_persona = (raw_row.get("target_persona") or "").strip()
             question_text = (raw_row.get("question_text") or "").strip()
+            sequence_id = (raw_row.get("sequence_id") or "").strip()
 
             if not question_id:
                 raise ConfigError(f"Missing question_id at row {row_number} in {question_path}")
@@ -85,6 +87,7 @@ def load_questions(question_path: Path, max_questions: int | None = None) -> lis
                     target_persona=target_persona,
                     question_text=question_text,
                     row_number=row_number,
+                    sequence_id=sequence_id,
                 )
             )
 

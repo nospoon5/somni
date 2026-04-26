@@ -1,4 +1,6 @@
-question_id,target_persona,question_text,question_category,age_band,benchmark_set,difficulty,safety_sensitive,notes_pre_run
+question_id,target_persona,question_text,question_category,age_band,benchmark_set,difficulty,safety_sensitive,notes_pre_run,sequence_id
+Q116,gentle,My 6 month old wakes at 5am.,,,core,,,,seq1
+Q117,gentle,"We tried making the room darker like you said, but he's still waking up.",,,core,,,,seq1
 Q001,gentle,My 4-week-old has his days and nights completely confused. He sleeps all day and is wide awake from 1am to 5am.,,,core,,,
 Q002,gentle,"We just brought her home. She will only sleep if she is being held on my chest. Whenever we put her in the bassinet, she screams instantly.",,,core,,,
 Q003,balanced,Is it okay if my 2-month-old sleeps in his bouncer sometimes during the day? It's the only way I get anything done.,,,core,,,

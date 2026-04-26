@@ -1,0 +1,8 @@
+2026-04-27 00:25:00,220 | INFO | Run started | run_id=2026_04_27_002459_v1 | questions=3 | resume=False
+2026-04-27 00:25:00,220 | INFO | Results file: C:\AI Projects\01_Apps\Somni\somni_eval\output\results\run_results_2026_04_27_002459_v1.csv
+2026-04-27 00:25:00,220 | INFO | Run log: C:\AI Projects\01_Apps\Somni\somni_eval\output\logs\2026_04_27_002459_v1.log
+2026-04-27 00:25:00,221 | INFO | Error log: C:\AI Projects\01_Apps\Somni\somni_eval\output\logs\2026_04_27_002459_v1.errors.log
+2026-04-27 00:25:00,221 | INFO | [1/3] Sending Q001 using persona 'gentle'.
+2026-04-27 00:25:02,833 | ERROR | Fatal failure for Q001: Could not update baby profile for age matching: HTTP 400 {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'gender' column of 'babies' in the schema cache"}
+2026-04-27 00:25:02,837 | INFO | [1/3] Wrote result for Q001 with status=failed.
+2026-04-27 00:25:02,837 | INFO | Sleeping for 60 seconds before the next question.

@@ -1,0 +1,1 @@
+2026-04-27 00:24:45,771 | ERROR | Environment validation failed: Could not reach Somni at http://127.0.0.1:3000. Make sure the app is running before starting the eval.
