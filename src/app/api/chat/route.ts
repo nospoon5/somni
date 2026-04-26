@@ -54,11 +54,23 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('id, email, full_name, onboarding_completed, timezone')
-    .eq('id', user.id)
-    .maybeSingle()
+  const [profileResult, babyResult] = await Promise.all([
+    supabase
+      .from('profiles')
+      .select('id, email, full_name, onboarding_completed, timezone')
+      .eq('id', user.id)
+      .maybeSingle(),
+    supabase
+      .from('babies')
+      .select('id, name, date_of_birth, ai_memory, biggest_issue, feeding_type, bedtime_range')
+      .eq('profile_id', user.id)
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .maybeSingle(),
+  ])
+
+  const { data: profile, error: profileError } = profileResult
+  const { data: baby, error: babyError } = babyResult
 
   if (profileError) {
     return Response.json({ error: profileError.message }, { status: 500 })
@@ -67,14 +79,6 @@ export async function POST(request: Request) {
   if (!profile?.onboarding_completed) {
     return Response.json({ error: 'Onboarding incomplete' }, { status: 409 })
   }
-
-  const { data: baby, error: babyError } = await supabase
-    .from('babies')
-    .select('id, name, date_of_birth, ai_memory, biggest_issue, feeding_type, bedtime_range')
-    .eq('profile_id', user.id)
-    .order('created_at', { ascending: true })
-    .limit(1)
-    .maybeSingle()
 
   if (babyError) {
     return Response.json({ error: babyError.message }, { status: 500 })
@@ -86,10 +90,51 @@ export async function POST(request: Request) {
 
   const timezone = sanitizeTimezone(profile.timezone)
   const localToday = getDateStringForTimezone(timezone)
-  const subscription = await ensureSubscriptionRecord({
-    profileId: user.id,
-    email: profile.email ?? user.email ?? null,
-  })
+  const [
+    subscription,
+    preferencesResult,
+    currentDailyPlanResult,
+    recentSleepLogsResult,
+    recentMessagesResult,
+  ] = await Promise.all([
+    ensureSubscriptionRecord({
+      profileId: user.id,
+      email: profile.email ?? user.email ?? null,
+    }),
+    supabase
+      .from('onboarding_preferences')
+      .select(
+        'sleep_style_label, typical_wake_time, day_structure, nap_pattern, night_feeds, schedule_preference'
+      )
+      .eq('baby_id', baby.id)
+      .maybeSingle(),
+    supabase
+      .from('daily_plans')
+      .select('id, baby_id, plan_date, sleep_targets, feed_targets, notes, updated_at')
+      .eq('baby_id', baby.id)
+      .eq('plan_date', localToday)
+      .maybeSingle(),
+    supabase
+      .from('sleep_logs')
+      .select('started_at, ended_at, is_night, tags')
+      .eq('baby_id', baby.id)
+      .gte('started_at', getSleepScoreLookbackStart().toISOString())
+      .order('started_at', { ascending: false })
+      .limit(SLEEP_SCORE_FETCH_LIMIT),
+    supabase
+      .from('messages')
+      .select('role, content')
+      .eq('profile_id', user.id)
+      .eq('baby_id', baby.id)
+      .eq('conversation_id', conversationId)
+      .order('created_at', { ascending: true })
+      .limit(8),
+  ])
+
+  const { data: preferences } = preferencesResult
+  const { data: currentDailyPlanRow } = currentDailyPlanResult
+  const { data: recentSleepLogs } = recentSleepLogsResult
+  const { data: recentMessages } = recentMessagesResult
 
   let quotaConsumed = false
   if (!hasPremiumAccess(subscription)) {
@@ -99,14 +144,6 @@ export async function POST(request: Request) {
     }
     quotaConsumed = true
   }
-
-  const { data: preferences } = await supabase
-    .from('onboarding_preferences')
-    .select(
-      'sleep_style_label, typical_wake_time, day_structure, nap_pattern, night_feeds, schedule_preference'
-    )
-    .eq('baby_id', baby.id)
-    .maybeSingle()
 
   const { profile: currentSleepPlanProfile } = await ensureSleepPlanProfile({
     supabase,
@@ -123,31 +160,7 @@ export async function POST(request: Request) {
     schedulePreference: preferences?.schedule_preference ?? null,
   })
 
-  const { data: currentDailyPlanRow } = await supabase
-    .from('daily_plans')
-    .select('id, baby_id, plan_date, sleep_targets, feed_targets, notes, updated_at')
-    .eq('baby_id', baby.id)
-    .eq('plan_date', localToday)
-    .maybeSingle()
-
   const currentDailyPlan = normalizeDailyPlanRow(currentDailyPlanRow)
-
-  const { data: recentSleepLogs } = await supabase
-    .from('sleep_logs')
-    .select('started_at, ended_at, is_night, tags')
-    .eq('baby_id', baby.id)
-    .gte('started_at', getSleepScoreLookbackStart().toISOString())
-    .order('started_at', { ascending: false })
-    .limit(SLEEP_SCORE_FETCH_LIMIT)
-
-  const { data: recentMessages } = await supabase
-    .from('messages')
-    .select('role, content')
-    .eq('profile_id', user.id)
-    .eq('baby_id', baby.id)
-    .eq('conversation_id', conversationId)
-    .order('created_at', { ascending: true })
-    .limit(8)
 
   const userInsert = await supabase.from('messages').insert({
     profile_id: user.id,
@@ -208,10 +221,12 @@ export async function POST(request: Request) {
           }
 
           const ageBand = getAgeBand(baby.date_of_birth)
+          const sleepStyleLabel =
+            (preferences?.sleep_style_label as SleepMethodology | null) ?? 'all'
           const retrievalResult = await retrieveRelevantChunksWithDiagnostics({
             query: message,
             ageBand,
-            methodology: (preferences?.sleep_style_label as SleepMethodology | null) ?? 'all',
+            methodology: sleepStyleLabel,
             limit: 5,
           })
           const retrievedChunks = retrievalResult.chunks
@@ -242,8 +257,7 @@ export async function POST(request: Request) {
           const prompt = buildChatPrompt({
             babyName: baby.name,
             ageBand,
-            sleepStyleLabel:
-              (preferences?.sleep_style_label as SleepMethodology | null) ?? 'all',
+            sleepStyleLabel,
             timezone,
             localToday,
             aiMemory: baby.ai_memory ?? null,
@@ -264,9 +278,17 @@ export async function POST(request: Request) {
             latestUserMessage: message,
           })
 
+          const estimatedPromptTokens = Math.ceil(prompt.length / 4)
+          console.log('[chat] prompt token estimate', {
+            conversationId,
+            promptChars: prompt.length,
+            estimatedPromptTokens,
+          })
+
           const geminiResult = await streamGeminiResponse(
             [{ role: 'user', parts: [{ text: prompt }] }],
             isEvalMode,
+            sleepStyleLabel,
             (token: string) => {
               controller.enqueue(encoder.encode(createSseEvent('token', { text: token })))
             }

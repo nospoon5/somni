@@ -22,6 +22,12 @@ export type PromptContext = {
 }
 
 function formatChunk(chunk: RetrievedCorpusChunk) {
+  const maxChunkLength = 500
+  const content =
+    chunk.content.length > maxChunkLength
+      ? `${chunk.content.slice(0, maxChunkLength)}...`
+      : chunk.content
+
   return [
     `Chunk ID: ${chunk.chunkId}`,
     `Topic: ${chunk.topic}`,
@@ -29,7 +35,7 @@ function formatChunk(chunk: RetrievedCorpusChunk) {
     `Methodology: ${chunk.methodology}`,
     `Confidence: ${chunk.confidence}`,
     `Content:`,
-    chunk.content,
+    content,
   ].join('\n')
 }
 

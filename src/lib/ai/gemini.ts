@@ -136,8 +136,26 @@ type GeminiContentsItem = {
   parts: Array<Record<string, unknown>>
 }
 
+export type ChatPersona = 'fast-track' | 'balanced' | 'gentle' | 'all'
+
 export function clampChatMessage(value: string) {
   return value.trim().slice(0, 4000)
+}
+
+function getMaxOutputTokens(persona: ChatPersona, isEvalMode: boolean) {
+  if (isEvalMode) {
+    return 800
+  }
+
+  if (persona === 'fast-track') {
+    return 400
+  }
+
+  if (persona === 'gentle') {
+    return 700
+  }
+
+  return 600
 }
 
 function extractGeminiText(payload: unknown) {
@@ -209,6 +227,7 @@ function extractGeminiFunctionCalls(payload: unknown) {
 export async function streamGeminiResponse(
   contents: GeminiContentsItem[],
   isEvalMode: boolean,
+  persona: ChatPersona,
   onToken: (token: string) => void
 ) {
   const apiKey = process.env.GEMINI_API_KEY
@@ -229,7 +248,7 @@ export async function streamGeminiResponse(
         toolConfig: isEvalMode ? undefined : UPDATE_DAILY_PLAN_TOOL_CONFIG,
         generationConfig: {
           temperature: 0.2,
-          maxOutputTokens: 800,
+          maxOutputTokens: getMaxOutputTokens(persona, isEvalMode),
           // This chat flow needs a complete parent-facing answer more than hidden
           // reasoning tokens. Gemini 2.5 Flash can spend output budget on thinking,
           // which was truncating replies mid-sentence in production.
