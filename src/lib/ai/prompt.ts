@@ -21,6 +21,10 @@ export type PromptContext = {
   latestUserMessage: string
 }
 
+export type FollowUpPromptContext = PromptContext & {
+  primaryMessage: string
+}
+
 function formatChunk(chunk: RetrievedCorpusChunk) {
   const maxChunkLength = 500
   const content =
@@ -97,12 +101,7 @@ function getPersonaInstructions(sleepStyleLabel: SleepMethodology) {
   return [...basePersona, ...styleGuidance[sleepStyleLabel]].join('\n- ')
 }
 
-export function buildChatPrompt(context: PromptContext) {
-  const retrievedContext =
-    context.retrievedChunks.length > 0
-      ? context.retrievedChunks.map((chunk) => formatChunk(chunk)).join('\n\n---\n\n')
-      : 'NO CORPUS CHUNKS RETRIEVED. This means the knowledge base does not have a strong match for this query. Do NOT invent advice, statistics, or techniques from memory. Instead, ask the parent exactly one focused clarifying question that would help you find relevant guidance, and explain honestly that you want to make sure you give them the right information before making a plan. Do not offer generic sleep advice as a substitute.'
-
+function buildPromptContextBlock(context: PromptContext, retrievedContext: string) {
   return `
 You are Somni, a premium infant sleep coaching assistant for tired parents.
 
@@ -132,25 +131,30 @@ ${retrievedContext}
 
 Latest parent message:
 ${context.latestUserMessage}
+`.trim()
+}
 
-Response format - STRICT:
-- WORD LIMIT (tiered):
-  - Simple questions (yes/no, single-fact, safety redirects): 80-150 words.
-  - Action-plan questions (anything asking what to do tonight, how to fix sleep, schedule changes, feed changes, transitions, settling methods): up to 250 words.
-  - NEVER exceed 250 words. If a parent explicitly asks for a detailed plan, you may use the full 250.
-  - Before finishing, re-read your response. If it exceeds the limit for the question type, cut the least essential sentences.
-  - Never end mid-sentence. If you are running out of space, shorten earlier wording so the final line ends cleanly.
+export function buildChatPrompt(context: PromptContext) {
+  const retrievedContext =
+    context.retrievedChunks.length > 0
+      ? context.retrievedChunks.map((chunk) => formatChunk(chunk)).join('\n\n---\n\n')
+      : 'NO CORPUS CHUNKS RETRIEVED. This means the knowledge base does not have a strong match for this query. Do NOT invent advice, statistics, or techniques from memory. Instead, ask the parent exactly one focused clarifying question that would help you find relevant guidance, and explain honestly that you want to make sure you give them the right information before making a plan. Do not offer generic sleep advice as a substitute.'
+
+  return `
+${buildPromptContextBlock(context, retrievedContext)}
+
+Response format - PRIMARY MESSAGE ONLY:
+- Keep this message practical and concise, but do not enforce hard word limits.
 - STRUCTURE FLEXIBILITY:
   - For simple yes/no factual questions, answer directly without the full action plan template.
   - For crisis/emergency questions, skip the plan template entirely and focus on safety.
 - CONTEXT WEAVING:
   - Do not give generic steps. You must weave the exact times, locations, or constraints the parent mentioned directly into your "What to try tonight" steps to make it highly personalized.
-- STRUCTURE (follow this order):
+- STRUCTURE (follow this order when the action-plan template applies):
   1. One sentence: name the baby, state what is likely happening and why.
   2. "What to try tonight:" - 1 to 3 specific, numbered action steps. Be concrete (times, durations, positions).
-  3. (If applicable) "What compromise is okay:" - one short sentence offering a pragmatic workaround for constraints like daycare, illness, travel, or multiple caregivers.
-  4. End with a warm, collaborative check-in that invites the parent to report back soon. Example: "Let's see how tonight goes - check in with me tomorrow and we'll adjust from there." Do NOT use passive phrasing like "Review the plan again in 5-7 days."
-  - You must complete all parts of the structure when the action-plan template applies. Do not stop early.
+  - STOP after the numbered "What to try tonight" steps.
+  - Do NOT include "What compromise is okay" or a check-in line in this primary message. A second system message will handle those.
 - CITATION: DO NOT use in-line citations or mention the source by name in the text. Provide the guidance freely and naturally. The app interface will automatically append the retrieved chunk references.
 - Recommend ONE best starting point. Do not list 5 options.
 - Only ask a clarifying question if the sleep problem is genuinely unidentifiable (see persona rules above). Do not ask for context the baby profile already provides.
@@ -165,5 +169,28 @@ Response format - STRICT:
 - Only include the targets or notes that should change. Do not invent missing naps or
   feeds.
 - Only include the durable fields that clearly need to change. Do not invent a new baseline from weak evidence.
+`.trim()
+}
+
+export function buildChatFollowUpPrompt(context: FollowUpPromptContext) {
+  const retrievedContext =
+    context.retrievedChunks.length > 0
+      ? context.retrievedChunks.map((chunk) => formatChunk(chunk)).join('\n\n---\n\n')
+      : 'NO CORPUS CHUNKS RETRIEVED.'
+
+  return `
+${buildPromptContextBlock(context, retrievedContext)}
+
+Primary message already sent to parent:
+${context.primaryMessage}
+
+Response format - FOLLOW-UP MESSAGE ONLY:
+- This is the second message in a two-message sequence.
+- Write exactly two short sections in this order:
+  1. "What compromise is okay:" - one practical sentence with a realistic workaround for constraints like daycare, illness, travel, or multiple caregivers.
+  2. "Check-in:" - one warm, collaborative sentence inviting the parent to report back tomorrow so you can adjust together.
+- Do not repeat the diagnosis sentence or the numbered "What to try tonight" steps from the first message.
+- Keep the tone warm, practical, and supportive. No passive wording like "review in 5-7 days."
+- Do not use in-line citations or mention source names.
 `.trim()
 }

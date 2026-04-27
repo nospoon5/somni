@@ -1,7 +1,7 @@
 import { after } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getDateStringForTimezone, normalizeDailyPlanRow, summarizeDailyPlanForPrompt } from '@/lib/daily-plan'
-import { buildChatPrompt } from '@/lib/ai/prompt'
+import { buildChatFollowUpPrompt, buildChatPrompt } from '@/lib/ai/prompt'
 import { summarizeSleepPlanProfileForPrompt } from '@/lib/sleep-plan-chat-updates'
 import { retrieveRelevantChunksWithDiagnostics, type SleepMethodology } from '@/lib/ai/retrieval'
 import { checkEmergencyRisk, getEmergencyRedirectMessage } from '@/lib/ai/safety'
@@ -255,7 +255,7 @@ export async function POST(request: Request) {
           )
           const scoreSummary = buildSleepScorePromptSummary(sleepScore)
 
-          const prompt = buildChatPrompt({
+          const promptContext = {
             babyName: baby.name,
             ageBand,
             sleepStyleLabel,
@@ -277,26 +277,30 @@ export async function POST(request: Request) {
               })),
             retrievedChunks,
             latestUserMessage: message,
-          })
+          }
 
-          const estimatedPromptTokens = Math.ceil(prompt.length / 4)
-          console.log('[chat] prompt token estimate', {
+          const primaryPrompt = buildChatPrompt(promptContext)
+
+          const estimatedPrimaryPromptTokens = Math.ceil(primaryPrompt.length / 4)
+          console.log('[chat] primary prompt token estimate', {
             conversationId,
-            promptChars: prompt.length,
-            estimatedPromptTokens,
+            promptChars: primaryPrompt.length,
+            estimatedPromptTokens: estimatedPrimaryPromptTokens,
           })
 
-          const geminiResult = await streamGeminiResponse(
-            [{ role: 'user', parts: [{ text: prompt }] }],
+          const primaryGeminiResult = await streamGeminiResponse(
+            [{ role: 'user', parts: [{ text: primaryPrompt }] }],
             isEvalMode,
             sleepStyleLabel,
             (token: string) => {
-              controller.enqueue(encoder.encode(createSseEvent('token', { text: token })))
+              controller.enqueue(
+                encoder.encode(createSseEvent('token', { text: token, message_index: 1 }))
+              )
             }
           )
 
-          let assistantMessage = filterResponse(geminiResult.text)
-          let replaceMessage = false
+          let primaryAssistantMessage = filterResponse(primaryGeminiResult.text)
+          let replacePrimaryMessage = false
 
           const savedPlanUpdates = await saveChatPlanUpdates({
             supabase,
@@ -305,13 +309,13 @@ export async function POST(request: Request) {
             babyId: baby.id,
             babyName: baby.name,
             planDate: localToday,
-            functionCalls: geminiResult.functionCalls,
+            functionCalls: primaryGeminiResult.functionCalls,
             userMessage: message,
           })
 
           if (savedPlanUpdates.assistantMessage) {
-            assistantMessage = filterResponse(savedPlanUpdates.assistantMessage)
-            replaceMessage = true
+            primaryAssistantMessage = filterResponse(savedPlanUpdates.assistantMessage)
+            replacePrimaryMessage = true
           }
 
           if (savedPlanUpdates.streamPayload) {
@@ -320,8 +324,8 @@ export async function POST(request: Request) {
             )
           }
 
-          if (!assistantMessage) {
-            assistantMessage =
+          if (!primaryAssistantMessage) {
+            primaryAssistantMessage =
               "I'm missing one key detail before I can shape today's plan. Tell me the one target you want to lock in first, and I'll tighten it up with you."
           }
 
@@ -330,7 +334,7 @@ export async function POST(request: Request) {
             baby_id: baby.id,
             conversation_id: conversationId,
             role: 'assistant',
-            content: assistantMessage,
+            content: primaryAssistantMessage,
             sources_used: sources,
             safety_note: safety.safetyNote,
             is_emergency_redirect: false,
@@ -339,6 +343,109 @@ export async function POST(request: Request) {
           })
           assistantPersisted = true
 
+          controller.enqueue(
+            encoder.encode(
+              createSseEvent('done', {
+                message: primaryAssistantMessage,
+                sources,
+                safety_note: safety.safetyNote,
+                is_emergency_redirect: false,
+                confidence,
+                conversation_id: conversationId,
+                replace_message: replacePrimaryMessage,
+                message_index: 1,
+                retrieval: includeRetrievalDiagnostics ? retrievalDiagnostics : undefined,
+              })
+            )
+          )
+
+          let secondaryAssistantMessage = ''
+          const shouldGenerateFollowUp = /what to try tonight/i.test(primaryAssistantMessage)
+
+          if (shouldGenerateFollowUp) {
+            try {
+              const followUpPrompt = buildChatFollowUpPrompt({
+                ...promptContext,
+                primaryMessage: primaryAssistantMessage,
+              })
+
+              const estimatedFollowUpPromptTokens = Math.ceil(followUpPrompt.length / 4)
+              console.log('[chat] follow-up prompt token estimate', {
+                conversationId,
+                promptChars: followUpPrompt.length,
+                estimatedPromptTokens: estimatedFollowUpPromptTokens,
+              })
+
+              let streamedFollowUpChars = 0
+              let streamedFollowUpSeparator = false
+
+              const followUpResult = await streamGeminiResponse(
+                [{ role: 'user', parts: [{ text: followUpPrompt }] }],
+                true,
+                sleepStyleLabel,
+                (token: string) => {
+                  streamedFollowUpChars += token.length
+                  if (!streamedFollowUpSeparator) {
+                    streamedFollowUpSeparator = true
+                    // Keep legacy single-bubble clients readable while follow-up streams.
+                    controller.enqueue(
+                      encoder.encode(createSseEvent('token', { text: '\n\n', message_index: 2 }))
+                    )
+                  }
+                  controller.enqueue(
+                    encoder.encode(createSseEvent('token', { text: token, message_index: 2 }))
+                  )
+                }
+              )
+
+              secondaryAssistantMessage = filterResponse(followUpResult.text)
+              if (!secondaryAssistantMessage) {
+                secondaryAssistantMessage =
+                  "What compromise is okay: It's okay to choose the gentlest option that keeps everyone calm tonight.\nCheck-in: Check in with me tomorrow and we'll tweak the plan together."
+              }
+
+              if (streamedFollowUpChars === 0) {
+                controller.enqueue(
+                  encoder.encode(
+                    createSseEvent('token', {
+                      text: `\n\n${secondaryAssistantMessage}`,
+                      message_index: 2,
+                    })
+                  )
+                )
+              }
+
+              await supabase.from('messages').insert({
+                profile_id: user.id,
+                baby_id: baby.id,
+                conversation_id: conversationId,
+                role: 'assistant',
+                content: secondaryAssistantMessage,
+                sources_used: sources,
+                safety_note: safety.safetyNote,
+                is_emergency_redirect: false,
+                confidence,
+                model: CHAT_MODEL,
+              })
+
+              controller.enqueue(
+                encoder.encode(
+                  createSseEvent('done', {
+                    message: secondaryAssistantMessage,
+                    sources,
+                    safety_note: safety.safetyNote,
+                    is_emergency_redirect: false,
+                    confidence,
+                    conversation_id: conversationId,
+                    message_index: 2,
+                  })
+                )
+              )
+            } catch (followUpError) {
+              console.error('[chat] follow-up generation failed', followUpError)
+            }
+          }
+
           const memoryPersistencePromise = persistAiMemoryAfterChat({
             supabase,
             profileId: user.id,
@@ -346,7 +453,7 @@ export async function POST(request: Request) {
             babyName: baby.name,
             conversationId,
             fallbackUserMessage: message,
-            fallbackAssistantMessage: assistantMessage,
+            fallbackAssistantMessage: secondaryAssistantMessage || primaryAssistantMessage,
           })
 
           // Ensure the isolate stays alive on Vercel to finish the memory update
@@ -358,20 +465,6 @@ export async function POST(request: Request) {
             }
           })
 
-          controller.enqueue(
-            encoder.encode(
-              createSseEvent('done', {
-                message: assistantMessage,
-                sources,
-                safety_note: safety.safetyNote,
-                is_emergency_redirect: false,
-                confidence,
-                conversation_id: conversationId,
-                replace_message: replaceMessage,
-                retrieval: includeRetrievalDiagnostics ? retrievalDiagnostics : undefined,
-              })
-            )
-          )
           controller.close()
         } catch (error) {
           if (quotaConsumed && !assistantPersisted) {
