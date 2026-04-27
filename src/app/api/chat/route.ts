@@ -3,7 +3,11 @@ import { createClient } from '@/lib/supabase/server'
 import { getDateStringForTimezone, normalizeDailyPlanRow, summarizeDailyPlanForPrompt } from '@/lib/daily-plan'
 import { buildChatFollowUpPrompt, buildChatPrompt } from '@/lib/ai/prompt'
 import { summarizeSleepPlanProfileForPrompt } from '@/lib/sleep-plan-chat-updates'
-import { retrieveRelevantChunksWithDiagnostics, type SleepMethodology } from '@/lib/ai/retrieval'
+import {
+  generateEmbedding,
+  retrieveRelevantChunksWithDiagnostics,
+  type SleepMethodology,
+} from '@/lib/ai/retrieval'
 import { checkEmergencyRisk, getEmergencyRedirectMessage } from '@/lib/ai/safety'
 import { buildSleepScorePromptSummary, calculateSleepScore, getAgeBand, getSleepScoreLookbackStart, SLEEP_SCORE_FETCH_LIMIT } from '@/lib/scoring/sleep-score'
 import { buildDailyLimitPayload, consumeChatQuota, releaseChatQuota, sanitizeTimezone } from '@/lib/billing/usage'
@@ -89,6 +93,11 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Baby profile missing' }, { status: 404 })
   }
 
+  const safety = checkEmergencyRisk(message)
+  const queryEmbeddingPromise = safety.isEmergency
+    ? Promise.resolve<number[] | null>(null)
+    : generateEmbedding(message)
+
   const timezone = sanitizeTimezone(profile.timezone)
   const localToday = getDateStringForTimezone(timezone)
   const [
@@ -97,6 +106,7 @@ export async function POST(request: Request) {
     currentDailyPlanResult,
     recentSleepLogsResult,
     recentMessagesResult,
+    precomputedQueryEmbedding,
   ] = await Promise.all([
     ensureSubscriptionRecord({
       profileId: user.id,
@@ -130,6 +140,7 @@ export async function POST(request: Request) {
       .eq('conversation_id', conversationId)
       .order('created_at', { ascending: true })
       .limit(8),
+    queryEmbeddingPromise,
   ])
 
   const { data: preferences } = preferencesResult
@@ -178,7 +189,6 @@ export async function POST(request: Request) {
     return Response.json({ error: userInsert.error.message }, { status: 500 })
   }
 
-  const safety = checkEmergencyRisk(message)
   const encoder = new TextEncoder()
 
   const stream = new ReadableStream<Uint8Array>({
@@ -229,6 +239,7 @@ export async function POST(request: Request) {
             ageBand,
             methodology: sleepStyleLabel,
             limit: 5,
+            queryEmbedding: precomputedQueryEmbedding,
           })
           const retrievedChunks = retrievalResult.chunks
           const retrievalDiagnostics = retrievalResult.diagnostics
@@ -271,6 +282,7 @@ export async function POST(request: Request) {
             scoreSummary,
             conversationHistory: (recentMessages ?? [])
               .filter((item) => item.role === 'user' || item.role === 'assistant')
+              .slice(-4)
               .map((item) => ({
                 role: item.role as 'user' | 'assistant',
                 content: item.content,

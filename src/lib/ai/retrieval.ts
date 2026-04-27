@@ -33,6 +33,7 @@ export type RetrieveChunksInput = {
   ageBand?: string | null
   methodology?: SleepMethodology | null
   limit?: number
+  queryEmbedding?: number[] | null
 }
 
 export type RetrieveChunksResult = {
@@ -170,7 +171,7 @@ function scoreChunk(
   return baseSimilarity + ageBandBoost + methodologyBoost + safetyBoost
 }
 
-async function embedQuery(query: string) {
+export async function generateEmbedding(query: string) {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
     throw new Error('Missing GEMINI_API_KEY for retrieval embedding')
@@ -293,7 +294,10 @@ export async function retrieveRelevantChunksWithDiagnostics(
     }
   }
 
-  const queryEmbedding = await embedQuery(trimmedQuery)
+  const queryEmbedding =
+    Array.isArray(input.queryEmbedding) && input.queryEmbedding.length === EMBEDDING_DIMENSION
+      ? input.queryEmbedding
+      : await generateEmbedding(trimmedQuery)
   const supabase = await createClient()
   const preferredMethodology = normalizeMethodology(input.methodology)
   const preferredAgeBand = input.ageBand?.trim() || null
