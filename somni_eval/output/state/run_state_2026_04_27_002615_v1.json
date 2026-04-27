@@ -1,14 +1,26 @@
 {
   "run_id": "2026_04_27_002615_v1",
-  "updated_at": "2026-04-26T14:27:25+00:00",
-  "status": "running",
+  "updated_at": "2026-04-26T14:28:30+00:00",
+  "status": "finished",
   "total_questions_in_scope": 3,
-  "completed_row_count": 2,
-  "successful_row_count": 2,
+  "completed_row_count": 3,
+  "successful_row_count": 3,
   "failed_row_count": 0,
   "completed_question_ids": [
     "Q116",
-    "Q117"
+    "Q117",
+    "Q001"
   ],
-  "last_completed_question_id": "Q117"
+  "finished_at": "2026-04-26T14:28:30+00:00",
+  "summary": {
+    "total_questions_in_scope": 3,
+    "rows_written": 3,
+    "successful_rows": 3,
+    "failed_rows": 0,
+    "average_latency_seconds": 5.02,
+    "empty_success_responses": [],
+    "short_success_responses": [],
+    "suspicious_duplicate_response_groups": 0,
+    "suspicious_duplicate_response_counts": {}
+  }
 }

@@ -1,0 +1,28 @@
+{
+  "run_id": "smoke_1",
+  "updated_at": "2026-04-26T14:31:16+00:00",
+  "status": "finished",
+  "total_questions_in_scope": 5,
+  "completed_row_count": 5,
+  "successful_row_count": 5,
+  "failed_row_count": 0,
+  "completed_question_ids": [
+    "Q116",
+    "Q117",
+    "Q001",
+    "Q002",
+    "Q003"
+  ],
+  "finished_at": "2026-04-26T14:31:16+00:00",
+  "summary": {
+    "total_questions_in_scope": 5,
+    "rows_written": 5,
+    "successful_rows": 5,
+    "failed_rows": 0,
+    "average_latency_seconds": 4.67,
+    "empty_success_responses": [],
+    "short_success_responses": [],
+    "suspicious_duplicate_response_groups": 0,
+    "suspicious_duplicate_response_counts": {}
+  }
+}
