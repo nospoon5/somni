@@ -321,6 +321,11 @@ def _build_summary(
         for row in success_rows
         if len(row.get("somni_response", "").strip()) < 40
     ]
+    incomplete_success_responses = [
+        row["question_id"]
+        for row in success_rows
+        if _looks_incomplete_response(row.get("somni_response", ""))
+    ]
     duplicate_response_counts = Counter(
         _normalize_response(row.get("somni_response", ""))
         for row in success_rows
@@ -340,6 +345,7 @@ def _build_summary(
         "average_latency_seconds": round(statistics.mean(latencies), 3) if latencies else None,
         "empty_success_responses": empty_success_responses,
         "short_success_responses": short_success_responses,
+        "incomplete_success_responses": incomplete_success_responses,
         "suspicious_duplicate_response_groups": len(suspicious_duplicates),
         "suspicious_duplicate_response_counts": suspicious_duplicates,
     }
@@ -354,6 +360,7 @@ def _format_summary_lines(summary: dict[str, object]) -> list[str]:
         f"Summary | average_latency_seconds={summary['average_latency_seconds']}",
         f"Summary | empty_success_responses={summary['empty_success_responses']}",
         f"Summary | short_success_responses={summary['short_success_responses']}",
+        f"Summary | incomplete_success_responses={summary['incomplete_success_responses']}",
         "Summary | suspicious_duplicate_response_groups="
         f"{summary['suspicious_duplicate_response_groups']}",
     ]
@@ -416,6 +423,20 @@ def _truncate_error(text: str, limit: int = 500) -> str:
 
 def _normalize_response(text: str) -> str:
     return " ".join(text.lower().split())
+
+
+def _looks_incomplete_response(text: str) -> bool:
+    stripped = text.strip()
+    if not stripped:
+        return True
+
+    if len(stripped.split()) < 60:
+        return True
+
+    if stripped.lower().endswith(("check-in:", "check in:", "what to try tonight:")):
+        return True
+
+    return stripped[-1] not in ".!?)\"'✨💖"
 
 
 def _utc_now_iso() -> str:

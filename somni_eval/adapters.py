@@ -343,8 +343,8 @@ def create_adapter(config: EvalConfig) -> SomniAdapter:
 
 def _read_sse_response_text(response: requests.Response, request_started_at: float) -> AdapterResult:
     event_lines: list[str] = []
-    streamed_text = ""
-    done_message = ""
+    streamed_messages: dict[int, str] = {}
+    done_messages: dict[int, str] = {}
     done_retrieval: dict[str, object] | None = None
     done_sources: list[object] | None = None
     done_confidence = ""
@@ -352,18 +352,20 @@ def _read_sse_response_text(response: requests.Response, request_started_at: flo
     first_token_at: float | None = None
 
     def apply_event(event_name: str, payload: dict[str, object]) -> None:
-        nonlocal streamed_text, done_message, done_retrieval, done_sources, done_confidence
+        nonlocal done_retrieval, done_sources, done_confidence
         nonlocal error_message, first_token_at
 
         if event_name == "token" and isinstance(payload.get("text"), str):
             if first_token_at is None:
                 first_token_at = time.perf_counter()
-            streamed_text += payload["text"]
+            message_index = _parse_message_index(payload.get("message_index"))
+            streamed_messages[message_index] = streamed_messages.get(message_index, "") + payload["text"]
             return
 
         if event_name == "done":
             if isinstance(payload.get("message"), str):
-                done_message = payload["message"]
+                message_index = _parse_message_index(payload.get("message_index"))
+                done_messages[message_index] = payload["message"]
             retrieval = payload.get("retrieval")
             if isinstance(retrieval, dict):
                 done_retrieval = retrieval
@@ -402,7 +404,7 @@ def _read_sse_response_text(response: requests.Response, request_started_at: flo
     if error_message:
         raise RetryableAdapterError(f"Chat stream error: {error_message}")
 
-    final_message = streamed_text.strip() or done_message.strip()
+    final_message = _combine_sse_messages(streamed_messages, done_messages)
     if not final_message:
         raise RetryableAdapterError("Chat stream finished without a usable response message.")
 
@@ -417,6 +419,51 @@ def _read_sse_response_text(response: requests.Response, request_started_at: flo
         confidence=done_confidence,
         ttft_seconds=ttft_seconds,
     )
+
+
+def _parse_message_index(value: object) -> int:
+    if isinstance(value, int) and value > 0:
+        return value
+    if isinstance(value, str) and value.isdigit():
+        return max(1, int(value))
+    return 1
+
+
+def _is_complete_message(text: str) -> bool:
+    stripped = text.strip()
+    if not stripped:
+        return False
+
+    if stripped.lower().endswith(("check-in:", "check in:", "what to try tonight:")):
+        return False
+
+    return stripped[-1] in ".!?)\"'"
+
+
+def _best_message_part(streamed_text: str, done_text: str) -> str:
+    streamed_text = streamed_text.strip()
+    done_text = done_text.strip()
+
+    if not streamed_text:
+        return done_text
+    if not done_text:
+        return streamed_text
+    if _is_complete_message(done_text) and (
+        not _is_complete_message(streamed_text) or len(done_text) >= len(streamed_text)
+    ):
+        return done_text
+    if len(done_text) > len(streamed_text) * 1.2:
+        return done_text
+    return streamed_text
+
+
+def _combine_sse_messages(streamed_messages: dict[int, str], done_messages: dict[int, str]) -> str:
+    message_indexes = sorted(set(streamed_messages) | set(done_messages))
+    parts = [
+        _best_message_part(streamed_messages.get(index, ""), done_messages.get(index, ""))
+        for index in message_indexes
+    ]
+    return "\n\n".join(part for part in parts if part.strip()).strip()
 
 
 def _parse_sse_event(lines: list[str]) -> tuple[str, dict[str, object]]:

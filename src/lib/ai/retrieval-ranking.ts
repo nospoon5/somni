@@ -15,6 +15,13 @@ export type RetrievalIntentSignal =
   | 'daycare_constraints'
   | 'nap_transition'
   | 'vague_reset'
+  | 'safe_sleep_surface'
+  | 'rolling_swaddle'
+  | 'sleep_object_safety'
+  | 'medication_supplement'
+  | 'fever_lethargy'
+  | 'formula_reflux'
+  | 'mental_health_crisis'
 
 export type RetrievalBoostReason = {
   label: string
@@ -55,6 +62,7 @@ type IntentRule = {
   id: RetrievalIntentSignal
   label: string
   boost: number
+  forceInclude?: boolean
   queryPatterns: RegExp[]
   candidatePatterns: RegExp[]
 }
@@ -148,6 +156,137 @@ const INTENT_RULES: IntentRule[] = [
     boost: 0.15,
     queryPatterns: [/\bsleep is bad\b/, /\bfix it\b/, /\breset\b/, /\bnothing works\b/, /\beverything is awful\b/],
     candidatePatterns: [/\breset plan\b/, /\bindependent settling\b/, /\beverything feels messy\b/],
+  },
+  {
+    id: 'safe_sleep_surface',
+    label: 'Matched safe sleep surface guidance',
+    boost: 0.28,
+    forceInclude: true,
+    queryPatterns: [
+      /\bbouncer\b/,
+      /\bswing\b/,
+      /\bcar seat\b/,
+      /\bchest\b/,
+      /\binclin(?:e|ed)\b/,
+      /\belevat(?:e|ed|ing)\b/,
+      /\bcouch\b/,
+      /\bsofa\b/,
+      /\bco[\s-]?sleep\b/,
+      /\bbed\b/,
+    ],
+    candidatePatterns: [
+      /\bsafe sleep(?:ing)?\b/,
+      /\bfirm flat\b/,
+      /\bflat surface\b/,
+      /\bsuffocation\b/,
+      /\bsids\b/,
+      /\bbouncer\b/,
+      /\bcar seat\b/,
+      /\bswing\b/,
+      /\binclin(?:e|ed)\b/,
+      /\bchest\b/,
+      /\bcouch\b/,
+      /\bsofa\b/,
+    ],
+  },
+  {
+    id: 'rolling_swaddle',
+    label: 'Matched rolling and swaddle safety guidance',
+    boost: 0.3,
+    forceInclude: true,
+    queryPatterns: [/\bswaddl\w*\b.*\broll\w*\b/, /\broll\w*\b.*\bswaddl\w*\b/, /\btransition(?:ing)? sleeping bag\b/],
+    candidatePatterns: [
+      /\bswaddl\w*\b.*\broll\w*\b/,
+      /\broll\w*\b.*\bswaddl\w*\b/,
+      /\bno longer safe\b/,
+      /\barms free\b/,
+      /\bsafe sleep(?:ing)?\b/,
+    ],
+  },
+  {
+    id: 'sleep_object_safety',
+    label: 'Matched safe sleep object guidance',
+    boost: 0.26,
+    forceInclude: true,
+    queryPatterns: [/\bstuffed animal\b/, /\bsoft toy\b/, /\bcomforter\b/, /\blovey\b/, /\bpillow\b/, /\bblanket\b/],
+    candidatePatterns: [
+      /\bsafe sleep(?:ing)?\b/,
+      /\bsoft objects?\b/,
+      /\bstuffed animal\b/,
+      /\bsoft toy\b/,
+      /\bcomforter\b/,
+      /\bpillow\b/,
+      /\bblanket\b/,
+      /\bcot clear\b/,
+    ],
+  },
+  {
+    id: 'medication_supplement',
+    label: 'Matched medication or supplement boundary guidance',
+    boost: 0.3,
+    forceInclude: true,
+    queryPatterns: [/\bpanadol\b/, /\bparacetamol\b/, /\bmelatonin\b/, /\bsupplement\b/, /\bgumm(?:y|ies)\b/, /\bpain relief\b/],
+    candidatePatterns: [
+      /\bteething\b/,
+      /\billness\b/,
+      /\bmedication\b/,
+      /\bsupplement\b/,
+      /\bmelatonin\b/,
+      /\bpanadol\b/,
+      /\bparacetamol\b/,
+      /\bgp\b/,
+      /\bchild health nurse\b/,
+    ],
+  },
+  {
+    id: 'fever_lethargy',
+    label: 'Matched urgent fever or lethargy guidance',
+    boost: 0.34,
+    forceInclude: true,
+    queryPatterns: [/\bfever\b/, /\b39(?:\.\d+)?\b/, /\blethargic\b/, /\bfloppy\b/, /\bpassing out\b/, /\bpassed out\b/],
+    candidatePatterns: [
+      /\bfever\b/,
+      /\blethargic\b/,
+      /\bfloppy\b/,
+      /\burgent\b/,
+      /\bemergency\b/,
+      /\bmedical\b/,
+      /\billness\b/,
+      /\bgp\b/,
+      /\bhealthdirect\b/,
+    ],
+  },
+  {
+    id: 'formula_reflux',
+    label: 'Matched reflux or formula boundary guidance',
+    boost: 0.28,
+    forceInclude: true,
+    queryPatterns: [/\breflux\b/, /\bhypoallergenic\b/, /\bformula brand\b/, /\bspecific formula\b/, /\bformula\b.*\bsleep\b/],
+    candidatePatterns: [
+      /\breflux\b/,
+      /\bformula\b/,
+      /\bhypoallergenic\b/,
+      /\ballerg(?:y|ies|ic)\b/,
+      /\bmedical\b/,
+      /\bgp\b/,
+      /\bchild health nurse\b/,
+    ],
+  },
+  {
+    id: 'mental_health_crisis',
+    label: 'Matched parental mental health crisis guidance',
+    boost: 0.42,
+    forceInclude: true,
+    queryPatterns: [/\bpostpartum depression\b/, /\bshak(?:e|ing)\b/, /\bcan t do this anymore\b/, /\bcan't do this anymore\b/, /\bharm\b/],
+    candidatePatterns: [
+      /\bpostpartum mental health\b/,
+      /\bparental crisis\b/,
+      /\bpanda\b/,
+      /\blifeline\b/,
+      /\b000\b/,
+      /\bshak(?:e|ing)\b/,
+      /\bharm\b/,
+    ],
   },
 ]
 
@@ -247,7 +386,8 @@ export function rerankRetrievedChunks(args: {
       return b.similarity - a.similarity
     })
 
-  const selectedChunkIds = new Set(ranked.slice(0, args.limit).map((candidate) => candidate.chunkId))
+  const selected = selectRankedCandidates(ranked, analysis.intents, args.limit)
+  const selectedChunkIds = new Set(selected.map((candidate) => candidate.chunkId))
 
   const diagnostics: RetrievalDiagnostics = {
     queryPreview:
@@ -257,7 +397,7 @@ export function rerankRetrievedChunks(args: {
     strategy: args.strategy,
     limit: args.limit,
     candidateCount: ranked.length,
-    selectedCount: Math.min(args.limit, ranked.length),
+    selectedCount: selected.length,
     intents: analysis.intents,
     candidates: ranked.map((candidate) => ({
       chunkId: candidate.chunkId,
@@ -276,7 +416,7 @@ export function rerankRetrievedChunks(args: {
   }
 
   return {
-    selected: ranked.slice(0, args.limit).map((candidate) => {
+    selected: selected.map((candidate) => {
       const { rerankBoost, finalScore, reasons, ...rest } = candidate
       void rerankBoost
       void finalScore
@@ -284,5 +424,115 @@ export function rerankRetrievedChunks(args: {
       return rest
     }),
     diagnostics,
+  }
+}
+
+function selectRankedCandidates<
+  Candidate extends RetrievalRankingCandidate & {
+    finalScore: number
+    reasons: RetrievalBoostReason[]
+  },
+>(ranked: Candidate[], intents: RetrievalIntentSignal[], limit: number) {
+  const selected: Candidate[] = []
+  const selectedIds = new Set<string>()
+  const forceRules = INTENT_RULES.filter(
+    (rule) => rule.forceInclude && intents.includes(rule.id)
+  )
+
+  for (const rule of forceRules) {
+    const forcedCandidate = ranked
+      .filter(
+        (candidate) =>
+          !selectedIds.has(candidate.chunkId) &&
+          candidate.reasons.some((reason) => reason.label === rule.label)
+      )
+      .sort((a, b) => {
+        const priorityDiff = getForcedCandidatePriority(rule.id, b) - getForcedCandidatePriority(rule.id, a)
+        if (priorityDiff !== 0) {
+          return priorityDiff
+        }
+        return b.finalScore - a.finalScore
+      })[0]
+
+    if (!forcedCandidate) {
+      continue
+    }
+
+    selected.push(forcedCandidate)
+    selectedIds.add(forcedCandidate.chunkId)
+  }
+
+  for (const candidate of ranked) {
+    if (selected.length >= limit) {
+      break
+    }
+
+    if (selectedIds.has(candidate.chunkId)) {
+      continue
+    }
+
+    selected.push(candidate)
+    selectedIds.add(candidate.chunkId)
+  }
+
+  return selected
+}
+
+function getForcedCandidatePriority(
+  intent: RetrievalIntentSignal,
+  candidate: RetrievalRankingCandidate
+) {
+  const text = normalizeText([candidate.chunkId, candidate.topic, candidate.content].join(' '))
+
+  switch (intent) {
+    case 'safe_sleep_surface':
+      if (/\ball ages safe sleep(?:ing)?\b/.test(text) || /\bsafe sleep(?:ing)?\b/.test(normalizeText(candidate.topic))) {
+        return 50
+      }
+      if (/\bbouncer\b|\bsuffocation\b|\bfirm flat\b|\bflat surface\b|\bsids\b/.test(text)) {
+        return 40
+      }
+      return 0
+    case 'rolling_swaddle':
+      if (/\bswaddl\w*\b.*\broll\w*\b|\broll\w*\b.*\bswaddl\w*\b/.test(text)) {
+        return 50
+      }
+      if (/\bno longer safe\b|\barms free\b/.test(text)) {
+        return 40
+      }
+      return 0
+    case 'sleep_object_safety':
+      if (/\bsafe sleep(?:ing)?\b|\bsoft objects?\b|\bcot clear\b/.test(text)) {
+        return 50
+      }
+      return 0
+    case 'medication_supplement':
+      if (/\bmedication\b|\bsupplement\b|\bmelatonin\b|\bpanadol\b|\bparacetamol\b/.test(text)) {
+        return 50
+      }
+      if (/\bgp\b|\bchild health nurse\b/.test(text)) {
+        return 40
+      }
+      return 0
+    case 'fever_lethargy':
+      if (/\bfever\b|\blethargic\b|\burgent\b|\bemergency\b|\bmedical\b/.test(text)) {
+        return 50
+      }
+      return 0
+    case 'formula_reflux':
+      if (/\breflux\b|\bhypoallergenic\b|\bformula\b|\ballerg/.test(text)) {
+        return 50
+      }
+      if (/\bgp\b|\bchild health nurse\b|\bmedical\b/.test(text)) {
+        return 40
+      }
+      return 0
+    case 'mental_health_crisis':
+      if (/\bpostpartum mental health\b|\bparental crisis\b|\bpanda\b|\blifeline\b|\b000\b/.test(text)) {
+        return 50
+      }
+      return 0
+    default:
+      return 0
   }
 }

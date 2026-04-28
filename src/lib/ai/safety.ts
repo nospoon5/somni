@@ -12,6 +12,13 @@ const EMERGENCY_PATTERNS = [
   /fit\b/i,
   /choking/i,
   /collapsed/i,
+  /feel\s+like\s+shak(?:e|ing)\s+(?:him|her|them|the\s+baby)/i,
+  /\bshak(?:e|ing)\s+(?:him|her|them|the\s+baby)\b/i,
+  /\bpostpartum depression\b/i,
+  /\bcan't\s+do\s+this\s+anymore\b/i,
+  /\bcan'?t\s+do\s+this\s+anymore\b/i,
+  /\bharm\s+(?:myself|him|her|them|the\s+baby)\b/i,
+  /\bsuicid/i,
 ]
 
 export type SafetyCheckResult = {
@@ -32,14 +39,14 @@ export function checkEmergencyRisk(message: string): SafetyCheckResult {
   return {
     isEmergency: true,
     safetyNote:
-      'This sounds urgent. If your baby is having trouble breathing, is unresponsive, or is getting worse, call 000 now.',
+      'This is urgent. Put the baby safely in the cot, step away, and call 000 now if anyone is at immediate risk.',
   }
 }
 
 export function getEmergencyRedirectMessage() {
   return (
-    'I am really glad you reached out. I cannot safely coach through this in chat. ' +
-    'Please call 000 now if your baby has breathing trouble, looks blue, is unresponsive, or you feel this is an emergency. ' +
-    'If it feels urgent but not immediately life-threatening, contact your GP, Healthdirect (1800 022 222), or your nearest emergency department now.'
+    'I am really glad you reached out. Put the baby safely in the cot now, step away, and call for help before doing anything else. ' +
+    'If anyone is at immediate risk, call 000 now. For urgent parent mental health support, call PANDA on 1300 726 306 or Lifeline on 13 11 14. ' +
+    'Sleep coaching can wait until you and the baby are safe.'
   )
 }

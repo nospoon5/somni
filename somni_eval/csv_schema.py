@@ -62,7 +62,14 @@ def load_questions(question_path: Path, max_questions: int | None = None) -> lis
             question_id = (raw_row.get("question_id") or "").strip()
             target_persona = (raw_row.get("target_persona") or "").strip()
             question_text = (raw_row.get("question_text") or "").strip()
+            benchmark_set = (raw_row.get("benchmark_set") or "").strip().lower()
             sequence_id = (raw_row.get("sequence_id") or "").strip()
+
+            # The master CSV contains 117 rows, but the comparable benchmark set is the
+            # 110 core questions only. The extra rows are follow-up or adversarial items
+            # that should not be mixed into the overnight benchmark run.
+            if benchmark_set != "core" or sequence_id:
+                continue
 
             if not question_id:
                 raise ConfigError(f"Missing question_id at row {row_number} in {question_path}")

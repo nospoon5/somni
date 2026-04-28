@@ -133,4 +133,119 @@ describe('rerankRetrievedChunks', () => {
 
     expect(result.selected[0]?.chunkId).toBe('6-12m-independent-settling-common-mistakes')
   })
+
+  it('promotes safe sleep guidance for bouncer sleep questions', () => {
+    const result = rerankRetrievedChunks({
+      query: "Is it okay if my 2-month-old sleeps in his bouncer sometimes during the day?",
+      ageBand: '0-3 months',
+      methodology: 'balanced',
+      strategy: 'rpc',
+      limit: 3,
+      candidates: [
+        makeCandidate({
+          chunkId: '0-3m-nap-schedules-wake-windows',
+          topic: 'Nap schedules and wake windows',
+          content: 'Most 2-month-old babies need short wake windows and several naps.',
+          similarity: 0.83,
+        }),
+        makeCandidate({
+          chunkId: 'all-ages-safe-sleeping',
+          topic: 'safe sleeping',
+          content:
+            'Babies should sleep on a firm flat sleep surface. Bouncers, swings and inclined devices are not safe for sleep because of suffocation risk.',
+          similarity: 0.7,
+        }),
+      ],
+    })
+
+    expect(result.selected[0]?.chunkId).toBe('all-ages-safe-sleeping')
+  })
+
+  it('promotes rolling and swaddle safety guidance', () => {
+    const result = rerankRetrievedChunks({
+      query: 'We want to swaddle our 3-month-old but he recently started rolling. Is it still safe?',
+      ageBand: '0-3 months',
+      methodology: 'balanced',
+      strategy: 'rpc',
+      limit: 3,
+      candidates: [
+        makeCandidate({
+          chunkId: '0-3m-nap-schedules-wake-windows',
+          topic: 'Nap schedules and wake windows',
+          content: 'Wake windows at this age are usually short.',
+          similarity: 0.82,
+        }),
+        makeCandidate({
+          chunkId: 'all-ages-rolling-swaddle-safety',
+          topic: 'rolling and swaddle safety',
+          content:
+            'Once a baby shows signs of rolling, swaddling is no longer safe. Move to arms-free sleep.',
+          similarity: 0.72,
+        }),
+      ],
+    })
+
+    expect(result.selected[0]?.chunkId).toBe('all-ages-rolling-swaddle-safety')
+  })
+
+  it('promotes urgent medical guidance for fever and lethargy', () => {
+    const result = rerankRetrievedChunks({
+      query:
+        'My 5-month-old has had a fever of 39.5C for two days and is very lethargic, passing out instantly.',
+      ageBand: '4-6 months',
+      methodology: 'fast-track',
+      strategy: 'rpc',
+      limit: 3,
+      candidates: [
+        makeCandidate({
+          chunkId: '4-6m-split-night',
+          topic: 'split night waking in babies',
+          content: 'A split night is a long awake period overnight.',
+          similarity: 0.84,
+        }),
+        makeCandidate({
+          chunkId: 'all-ages-urgent-illness',
+          topic: 'urgent illness and medical care',
+          content:
+            'Fever with lethargy, floppy behaviour, or passing out needs urgent medical advice or emergency care.',
+          similarity: 0.68,
+        }),
+      ],
+    })
+
+    expect(result.selected[0]?.chunkId).toBe('all-ages-urgent-illness')
+  })
+
+  it('force-includes medication boundary guidance even when similarity is lower', () => {
+    const result = rerankRetrievedChunks({
+      query: 'Can I give my 6-month-old melatonin gummies for sleep?',
+      ageBand: '4-6 months',
+      methodology: 'balanced',
+      strategy: 'rpc',
+      limit: 2,
+      candidates: [
+        makeCandidate({
+          chunkId: '4-6m-sleep-regression',
+          topic: 'Sleep regression',
+          content: 'The 4-month regression can cause frequent waking.',
+          similarity: 0.85,
+        }),
+        makeCandidate({
+          chunkId: '4-6m-nap-schedules',
+          topic: 'Nap schedules and wake windows',
+          content: 'Nap timing can affect bedtime.',
+          similarity: 0.82,
+        }),
+        makeCandidate({
+          chunkId: 'all-ages-medication-supplement-boundary',
+          topic: 'medication and supplement boundary',
+          content:
+            'Melatonin and sleep supplements should be discussed with a GP or child health nurse before use.',
+          similarity: 0.55,
+        }),
+      ],
+    })
+
+    expect(result.selected[0]?.chunkId).toBe('all-ages-medication-supplement-boundary')
+  })
 })

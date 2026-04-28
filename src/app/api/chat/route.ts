@@ -1,7 +1,7 @@
 import { after } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getDateStringForTimezone, normalizeDailyPlanRow, summarizeDailyPlanForPrompt } from '@/lib/daily-plan'
-import { buildChatFollowUpPrompt, buildChatPrompt } from '@/lib/ai/prompt'
+import { buildChatPrompt } from '@/lib/ai/prompt'
 import { summarizeSleepPlanProfileForPrompt } from '@/lib/sleep-plan-chat-updates'
 import {
   generateEmbedding,
@@ -16,7 +16,11 @@ import { ensureSleepPlanProfile } from '@/lib/sleep-plan-profile-init'
 import { parseNightFeeds } from '@/lib/onboarding-preferences'
 import { CHAT_MODEL, clampChatMessage, streamGeminiResponse } from '@/lib/ai/gemini'
 import { persistAiMemoryAfterChat, saveChatPlanUpdates } from '@/lib/ai/chat-plan-persistence'
-import { filterResponse } from '@/lib/ai/response-filter'
+import {
+  containsForbiddenResponsePhrase,
+  createResponseTokenFilter,
+  filterResponse,
+} from '@/lib/ai/response-filter'
 import {
   buildRetrievalLogPayload,
   createSseEvent,
@@ -300,19 +304,51 @@ export async function POST(request: Request) {
             estimatedPromptTokens: estimatedPrimaryPromptTokens,
           })
 
-          const primaryGeminiResult = await streamGeminiResponse(
+          const primaryTokenFilter = createResponseTokenFilter((token) => {
+            controller.enqueue(
+              encoder.encode(createSseEvent('token', { text: token, message_index: 1 }))
+            )
+          })
+
+          let primaryGeminiResult = await streamGeminiResponse(
             [{ role: 'user', parts: [{ text: primaryPrompt }] }],
             isEvalMode,
             sleepStyleLabel,
             (token: string) => {
-              controller.enqueue(
-                encoder.encode(createSseEvent('token', { text: token, message_index: 1 }))
-              )
+              primaryTokenFilter.push(token)
             }
           )
+          primaryTokenFilter.flush()
+
+          if (containsForbiddenResponsePhrase(primaryGeminiResult.text)) {
+            const retryResult = await streamGeminiResponse(
+              [
+                {
+                  role: 'user',
+                  parts: [
+                    {
+                      text: `${primaryPrompt}\n\nRewrite the parent-facing response one time. Keep the same advice, but use the opening confidence policy above and avoid the recurring sound-based hedge.`,
+                    },
+                  ],
+                },
+              ],
+              true,
+              sleepStyleLabel,
+              () => {}
+            )
+
+            if (retryResult.text.trim()) {
+              primaryGeminiResult = {
+                ...primaryGeminiResult,
+                text: retryResult.text,
+              }
+            }
+          }
 
           let primaryAssistantMessage = filterResponse(primaryGeminiResult.text)
-          let replacePrimaryMessage = false
+          let replacePrimaryMessage =
+            primaryAssistantMessage !== primaryGeminiResult.text.trim() ||
+            containsForbiddenResponsePhrase(primaryGeminiResult.text)
 
           const savedPlanUpdates = await saveChatPlanUpdates({
             supabase,
@@ -371,93 +407,6 @@ export async function POST(request: Request) {
             )
           )
 
-          let secondaryAssistantMessage = ''
-          const shouldGenerateFollowUp = /what to try tonight/i.test(primaryAssistantMessage)
-
-          if (shouldGenerateFollowUp) {
-            try {
-              const followUpPrompt = buildChatFollowUpPrompt({
-                ...promptContext,
-                primaryMessage: primaryAssistantMessage,
-              })
-
-              const estimatedFollowUpPromptTokens = Math.ceil(followUpPrompt.length / 4)
-              console.log('[chat] follow-up prompt token estimate', {
-                conversationId,
-                promptChars: followUpPrompt.length,
-                estimatedPromptTokens: estimatedFollowUpPromptTokens,
-              })
-
-              let streamedFollowUpChars = 0
-              let streamedFollowUpSeparator = false
-
-              const followUpResult = await streamGeminiResponse(
-                [{ role: 'user', parts: [{ text: followUpPrompt }] }],
-                true,
-                sleepStyleLabel,
-                (token: string) => {
-                  streamedFollowUpChars += token.length
-                  if (!streamedFollowUpSeparator) {
-                    streamedFollowUpSeparator = true
-                    // Keep legacy single-bubble clients readable while follow-up streams.
-                    controller.enqueue(
-                      encoder.encode(createSseEvent('token', { text: '\n\n', message_index: 2 }))
-                    )
-                  }
-                  controller.enqueue(
-                    encoder.encode(createSseEvent('token', { text: token, message_index: 2 }))
-                  )
-                }
-              )
-
-              secondaryAssistantMessage = filterResponse(followUpResult.text)
-              if (!secondaryAssistantMessage) {
-                secondaryAssistantMessage =
-                  "What compromise is okay: It's okay to choose the gentlest option that keeps everyone calm tonight.\nCheck-in: Check in with me tomorrow and we'll tweak the plan together."
-              }
-
-              if (streamedFollowUpChars === 0) {
-                controller.enqueue(
-                  encoder.encode(
-                    createSseEvent('token', {
-                      text: `\n\n${secondaryAssistantMessage}`,
-                      message_index: 2,
-                    })
-                  )
-                )
-              }
-
-              await supabase.from('messages').insert({
-                profile_id: user.id,
-                baby_id: baby.id,
-                conversation_id: conversationId,
-                role: 'assistant',
-                content: secondaryAssistantMessage,
-                sources_used: sources,
-                safety_note: safety.safetyNote,
-                is_emergency_redirect: false,
-                confidence,
-                model: CHAT_MODEL,
-              })
-
-              controller.enqueue(
-                encoder.encode(
-                  createSseEvent('done', {
-                    message: secondaryAssistantMessage,
-                    sources,
-                    safety_note: safety.safetyNote,
-                    is_emergency_redirect: false,
-                    confidence,
-                    conversation_id: conversationId,
-                    message_index: 2,
-                  })
-                )
-              )
-            } catch (followUpError) {
-              console.error('[chat] follow-up generation failed', followUpError)
-            }
-          }
-
           const memoryPersistencePromise = persistAiMemoryAfterChat({
             supabase,
             profileId: user.id,
@@ -465,7 +414,7 @@ export async function POST(request: Request) {
             babyName: baby.name,
             conversationId,
             fallbackUserMessage: message,
-            fallbackAssistantMessage: secondaryAssistantMessage || primaryAssistantMessage,
+            fallbackAssistantMessage: primaryAssistantMessage,
           })
 
           // Ensure the isolate stays alive on Vercel to finish the memory update

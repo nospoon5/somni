@@ -24,9 +24,15 @@ export function getConfidenceLabel(matchCount: number): 'high' | 'medium' | 'low
 
 export function toSourceAttribution(chunks: RetrievedChunk[]): SourceAttribution[] {
   const seen = new Set<string>()
+  const seenTopics = new Set<string>()
   const output: SourceAttribution[] = []
 
   for (const chunk of chunks) {
+    const topicKey = chunk.topic.toLowerCase()
+    if (seenTopics.has(topicKey)) {
+      continue
+    }
+
     for (const source of chunk.sources) {
       const key = `${source.name.toLowerCase()}::${chunk.topic.toLowerCase()}`
       if (seen.has(key)) {
@@ -34,10 +40,12 @@ export function toSourceAttribution(chunks: RetrievedChunk[]): SourceAttribution
       }
 
       seen.add(key)
+      seenTopics.add(topicKey)
       output.push({ name: source.name, topic: chunk.topic })
       if (output.length >= 5) {
         return output
       }
+      break
     }
   }
 

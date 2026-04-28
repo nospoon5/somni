@@ -35,4 +35,36 @@ describe('buildChatPrompt', () => {
     expect(prompt).toContain('update_sleep_plan_profile')
     expect(prompt).toContain('Learned baseline profile')
   })
+
+  it('adds the opening confidence class and bans the recurring sounds-like phrase', async () => {
+    const { buildChatPrompt, classifyOpeningConfidence } = await import('./prompt')
+
+    const prompt = buildChatPrompt({
+      babyName: 'Ari',
+      ageBand: '4-6 months',
+      sleepStyleLabel: 'balanced',
+      timezone: 'Australia/Sydney',
+      localToday: '2026-04-28',
+      aiMemory: null,
+      durableProfileSummary: 'No learned baseline yet.',
+      todayPlanSummary: 'No plan yet.',
+      biggestIssue: null,
+      feedingType: null,
+      bedtimeRange: null,
+      recentSleepSummary: 'No recent sleep logs yet.',
+      scoreSummary: 'Learning state.',
+      conversationHistory: [],
+      retrievedChunks: [],
+      latestUserMessage: 'He wakes every 45 minutes overnight.',
+    })
+
+    expect(classifyOpeningConfidence('He wakes every 45 minutes overnight.')).toBe(
+      'clear_pattern'
+    )
+    expect(classifyOpeningConfidence('Sleep is bad. Fix it.')).toBe('ambiguous')
+    expect(classifyOpeningConfidence('Can I give melatonin gummies?')).toBe('medical_safety')
+    expect(prompt).toContain('Opening confidence class: clear_pattern')
+    expect(prompt).toContain('Never use the recurring sound-based hedge.')
+    expect(prompt).not.toContain('"sounds like"')
+  })
 })
