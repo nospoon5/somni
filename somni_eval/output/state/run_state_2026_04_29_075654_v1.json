@@ -1,0 +1,29 @@
+{
+  "run_id": "2026_04_29_075654_v1",
+  "updated_at": "2026-04-28T21:57:47+00:00",
+  "status": "finished",
+  "total_questions_in_scope": 5,
+  "completed_row_count": 5,
+  "successful_row_count": 5,
+  "failed_row_count": 0,
+  "completed_question_ids": [
+    "Q001",
+    "Q002",
+    "Q003",
+    "Q004",
+    "Q005"
+  ],
+  "finished_at": "2026-04-28T21:57:47+00:00",
+  "summary": {
+    "total_questions_in_scope": 5,
+    "rows_written": 5,
+    "successful_rows": 5,
+    "failed_rows": 0,
+    "average_latency_seconds": 6.597,
+    "empty_success_responses": [],
+    "short_success_responses": [],
+    "incomplete_success_responses": [],
+    "suspicious_duplicate_response_groups": 0,
+    "suspicious_duplicate_response_counts": {}
+  }
+}

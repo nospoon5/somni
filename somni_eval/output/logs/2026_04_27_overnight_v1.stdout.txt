@@ -1,0 +1,346 @@
+2026-04-27 22:56:15,601 | INFO | Run started | run_id=2026_04_27_overnight_v1 | questions=110 | resume=False
+2026-04-27 22:56:15,602 | INFO | Results file: C:\AI Projects\01_Apps\Somni\somni_eval\output\results\run_results_2026_04_27_overnight_v1.csv
+2026-04-27 22:56:15,602 | INFO | Run log: C:\AI Projects\01_Apps\Somni\somni_eval\output\logs\2026_04_27_overnight_v1.log
+2026-04-27 22:56:15,602 | INFO | Error log: C:\AI Projects\01_Apps\Somni\somni_eval\output\logs\2026_04_27_overnight_v1.errors.log
+2026-04-27 22:56:15,603 | INFO | [1/110] Sending Q001 using persona 'gentle'.
+2026-04-27 22:56:19,622 | INFO | [1/110] Wrote result for Q001 with status=success.
+2026-04-27 22:56:19,622 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 22:57:19,623 | INFO | [2/110] Sending Q002 using persona 'gentle'.
+2026-04-27 22:57:33,388 | INFO | [2/110] Wrote result for Q002 with status=success.
+2026-04-27 22:57:33,389 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 22:58:33,390 | INFO | [3/110] Sending Q003 using persona 'balanced'.
+2026-04-27 22:58:40,736 | INFO | [3/110] Wrote result for Q003 with status=success.
+2026-04-27 22:58:40,738 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 22:59:40,738 | INFO | [4/110] Sending Q004 using persona 'gentle'.
+2026-04-27 22:59:47,001 | INFO | [4/110] Wrote result for Q004 with status=success.
+2026-04-27 22:59:47,002 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:00:47,002 | INFO | [5/110] Sending Q005 using persona 'balanced'.
+2026-04-27 23:00:53,582 | INFO | [5/110] Wrote result for Q005 with status=success.
+2026-04-27 23:00:53,584 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:01:53,586 | INFO | [6/110] Sending Q006 using persona 'fast-track'.
+2026-04-27 23:02:04,382 | INFO | [6/110] Wrote result for Q006 with status=success.
+2026-04-27 23:02:04,384 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:03:04,386 | INFO | [7/110] Sending Q007 using persona 'balanced'.
+2026-04-27 23:03:13,473 | INFO | [7/110] Wrote result for Q007 with status=success.
+2026-04-27 23:03:13,474 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:04:13,475 | INFO | [8/110] Sending Q008 using persona 'gentle'.
+2026-04-27 23:04:20,049 | INFO | [8/110] Wrote result for Q008 with status=success.
+2026-04-27 23:04:20,050 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:05:20,051 | INFO | [9/110] Sending Q009 using persona 'balanced'.
+2026-04-27 23:05:31,658 | INFO | [9/110] Wrote result for Q009 with status=success.
+2026-04-27 23:05:31,659 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:06:31,660 | INFO | [10/110] Sending Q010 using persona 'balanced'.
+2026-04-27 23:06:41,605 | INFO | [10/110] Wrote result for Q010 with status=success.
+2026-04-27 23:06:41,605 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:07:41,606 | INFO | [11/110] Sending Q011 using persona 'balanced'.
+2026-04-27 23:07:49,332 | INFO | [11/110] Wrote result for Q011 with status=success.
+2026-04-27 23:07:49,333 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:08:49,334 | INFO | [12/110] Sending Q012 using persona 'fast-track'.
+2026-04-27 23:08:57,988 | INFO | [12/110] Wrote result for Q012 with status=success.
+2026-04-27 23:08:57,989 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:09:57,990 | INFO | [13/110] Sending Q013 using persona 'balanced'.
+2026-04-27 23:10:03,376 | INFO | [13/110] Wrote result for Q013 with status=success.
+2026-04-27 23:10:03,377 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:11:03,378 | INFO | [14/110] Sending Q014 using persona 'gentle'.
+2026-04-27 23:11:10,911 | INFO | [14/110] Wrote result for Q014 with status=success.
+2026-04-27 23:11:10,912 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:12:10,913 | INFO | [15/110] Sending Q015 using persona 'balanced'.
+2026-04-27 23:12:18,006 | INFO | [15/110] Wrote result for Q015 with status=success.
+2026-04-27 23:12:18,008 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:13:18,008 | INFO | [16/110] Sending Q016 using persona 'fast-track'.
+2026-04-27 23:13:28,146 | INFO | [16/110] Wrote result for Q016 with status=success.
+2026-04-27 23:13:28,148 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:14:28,149 | INFO | [17/110] Sending Q017 using persona 'balanced'.
+2026-04-27 23:14:34,158 | INFO | [17/110] Wrote result for Q017 with status=success.
+2026-04-27 23:14:34,159 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:15:34,160 | INFO | [18/110] Sending Q018 using persona 'balanced'.
+2026-04-27 23:15:40,393 | INFO | [18/110] Wrote result for Q018 with status=success.
+2026-04-27 23:15:40,394 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:16:40,395 | INFO | [19/110] Sending Q019 using persona 'fast-track'.
+2026-04-27 23:16:46,209 | INFO | [19/110] Wrote result for Q019 with status=success.
+2026-04-27 23:16:46,210 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:17:46,210 | INFO | [20/110] Sending Q020 using persona 'gentle'.
+2026-04-27 23:17:55,650 | INFO | [20/110] Wrote result for Q020 with status=success.
+2026-04-27 23:17:55,651 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:18:55,652 | INFO | [21/110] Sending Q021 using persona 'balanced'.
+2026-04-27 23:19:03,125 | INFO | [21/110] Wrote result for Q021 with status=success.
+2026-04-27 23:19:03,126 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:20:03,126 | INFO | [22/110] Sending Q022 using persona 'gentle'.
+2026-04-27 23:20:11,878 | INFO | [22/110] Wrote result for Q022 with status=success.
+2026-04-27 23:20:11,879 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:21:11,879 | INFO | [23/110] Sending Q023 using persona 'balanced'.
+2026-04-27 23:21:18,359 | INFO | [23/110] Wrote result for Q023 with status=success.
+2026-04-27 23:21:18,359 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:22:18,360 | INFO | [24/110] Sending Q024 using persona 'balanced'.
+2026-04-27 23:22:26,074 | INFO | [24/110] Wrote result for Q024 with status=success.
+2026-04-27 23:22:26,075 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:23:26,076 | INFO | [25/110] Sending Q025 using persona 'gentle'.
+2026-04-27 23:23:36,258 | INFO | [25/110] Wrote result for Q025 with status=success.
+2026-04-27 23:23:36,258 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:24:36,259 | INFO | [26/110] Sending Q026 using persona 'fast-track'.
+2026-04-27 23:24:44,672 | INFO | [26/110] Wrote result for Q026 with status=success.
+2026-04-27 23:24:44,673 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:25:44,674 | INFO | [27/110] Sending Q027 using persona 'balanced'.
+2026-04-27 23:25:52,432 | INFO | [27/110] Wrote result for Q027 with status=success.
+2026-04-27 23:25:52,433 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:26:52,434 | INFO | [28/110] Sending Q028 using persona 'balanced'.
+2026-04-27 23:26:57,995 | INFO | [28/110] Wrote result for Q028 with status=success.
+2026-04-27 23:26:57,995 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:27:57,996 | INFO | [29/110] Sending Q029 using persona 'balanced'.
+2026-04-27 23:28:05,265 | INFO | [29/110] Wrote result for Q029 with status=success.
+2026-04-27 23:28:05,267 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:29:05,267 | INFO | [30/110] Sending Q030 using persona 'gentle'.
+2026-04-27 23:29:12,908 | INFO | [30/110] Wrote result for Q030 with status=success.
+2026-04-27 23:29:12,909 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:30:12,910 | INFO | [31/110] Sending Q031 using persona 'balanced'.
+2026-04-27 23:30:20,559 | INFO | [31/110] Wrote result for Q031 with status=success.
+2026-04-27 23:30:20,560 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:31:20,561 | INFO | [32/110] Sending Q032 using persona 'gentle'.
+2026-04-27 23:31:31,333 | INFO | [32/110] Wrote result for Q032 with status=success.
+2026-04-27 23:31:31,334 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:32:31,335 | INFO | [33/110] Sending Q033 using persona 'fast-track'.
+2026-04-27 23:32:37,927 | INFO | [33/110] Wrote result for Q033 with status=success.
+2026-04-27 23:32:37,928 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:33:37,929 | INFO | [34/110] Sending Q034 using persona 'balanced'.
+2026-04-27 23:33:45,213 | INFO | [34/110] Wrote result for Q034 with status=success.
+2026-04-27 23:33:45,213 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:34:45,214 | INFO | [35/110] Sending Q035 using persona 'fast-track'.
+2026-04-27 23:34:52,790 | INFO | [35/110] Wrote result for Q035 with status=success.
+2026-04-27 23:34:52,792 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:35:52,792 | INFO | [36/110] Sending Q036 using persona 'balanced'.
+2026-04-27 23:35:59,090 | INFO | [36/110] Wrote result for Q036 with status=success.
+2026-04-27 23:35:59,091 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:36:59,092 | INFO | [37/110] Sending Q037 using persona 'gentle'.
+2026-04-27 23:37:10,010 | INFO | [37/110] Wrote result for Q037 with status=success.
+2026-04-27 23:37:10,010 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:38:10,011 | INFO | [38/110] Sending Q038 using persona 'balanced'.
+2026-04-27 23:38:17,524 | INFO | [38/110] Wrote result for Q038 with status=success.
+2026-04-27 23:38:17,525 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:39:17,526 | INFO | [39/110] Sending Q039 using persona 'fast-track'.
+2026-04-27 23:39:22,692 | INFO | [39/110] Wrote result for Q039 with status=success.
+2026-04-27 23:39:22,693 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:40:22,693 | INFO | [40/110] Sending Q040 using persona 'gentle'.
+2026-04-27 23:40:34,214 | INFO | [40/110] Wrote result for Q040 with status=success.
+2026-04-27 23:40:34,215 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:41:34,215 | INFO | [41/110] Sending Q041 using persona 'gentle'.
+2026-04-27 23:41:42,527 | INFO | [41/110] Wrote result for Q041 with status=success.
+2026-04-27 23:41:42,528 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:42:42,529 | INFO | [42/110] Sending Q042 using persona 'balanced'.
+2026-04-27 23:42:51,214 | INFO | [42/110] Wrote result for Q042 with status=success.
+2026-04-27 23:42:51,216 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:43:51,218 | INFO | [43/110] Sending Q043 using persona 'balanced'.
+2026-04-27 23:43:57,975 | INFO | [43/110] Wrote result for Q043 with status=success.
+2026-04-27 23:43:57,977 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:44:57,978 | INFO | [44/110] Sending Q044 using persona 'fast-track'.
+2026-04-27 23:45:06,226 | INFO | [44/110] Wrote result for Q044 with status=success.
+2026-04-27 23:45:06,227 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:46:06,228 | INFO | [45/110] Sending Q045 using persona 'balanced'.
+2026-04-27 23:46:10,105 | INFO | [45/110] Wrote result for Q045 with status=success.
+2026-04-27 23:46:10,108 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:47:10,110 | INFO | [46/110] Sending Q046 using persona 'balanced'.
+2026-04-27 23:47:14,319 | INFO | [46/110] Wrote result for Q046 with status=success.
+2026-04-27 23:47:14,319 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:48:14,320 | INFO | [47/110] Sending Q047 using persona 'fast-track'.
+2026-04-27 23:48:20,616 | INFO | [47/110] Wrote result for Q047 with status=success.
+2026-04-27 23:48:20,617 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:49:20,618 | INFO | [48/110] Sending Q048 using persona 'balanced'.
+2026-04-27 23:49:27,486 | INFO | [48/110] Wrote result for Q048 with status=success.
+2026-04-27 23:49:27,488 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:50:27,489 | INFO | [49/110] Sending Q049 using persona 'gentle'.
+2026-04-27 23:50:32,257 | INFO | [49/110] Wrote result for Q049 with status=success.
+2026-04-27 23:50:32,258 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:51:32,259 | INFO | [50/110] Sending Q050 using persona 'balanced'.
+2026-04-27 23:51:37,236 | INFO | [50/110] Wrote result for Q050 with status=success.
+2026-04-27 23:51:37,237 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:52:37,238 | INFO | [51/110] Sending Q051 using persona 'gentle'.
+2026-04-27 23:52:45,225 | INFO | [51/110] Wrote result for Q051 with status=success.
+2026-04-27 23:52:45,227 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:53:45,228 | INFO | [52/110] Sending Q052 using persona 'gentle'.
+2026-04-27 23:53:51,926 | INFO | [52/110] Wrote result for Q052 with status=success.
+2026-04-27 23:53:51,928 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:54:51,929 | INFO | [53/110] Sending Q053 using persona 'balanced'.
+2026-04-27 23:54:56,750 | INFO | [53/110] Wrote result for Q053 with status=success.
+2026-04-27 23:54:56,751 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:55:56,752 | INFO | [54/110] Sending Q054 using persona 'gentle'.
+2026-04-27 23:56:03,306 | INFO | [54/110] Wrote result for Q054 with status=success.
+2026-04-27 23:56:03,307 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:57:03,309 | INFO | [55/110] Sending Q055 using persona 'balanced'.
+2026-04-27 23:57:08,222 | INFO | [55/110] Wrote result for Q055 with status=success.
+2026-04-27 23:57:08,223 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:58:08,224 | INFO | [56/110] Sending Q056 using persona 'fast-track'.
+2026-04-27 23:58:15,242 | INFO | [56/110] Wrote result for Q056 with status=success.
+2026-04-27 23:58:15,244 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-27 23:59:15,245 | INFO | [57/110] Sending Q057 using persona 'balanced'.
+2026-04-27 23:59:21,896 | INFO | [57/110] Wrote result for Q057 with status=success.
+2026-04-27 23:59:21,898 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:00:21,899 | INFO | [58/110] Sending Q058 using persona 'gentle'.
+2026-04-28 00:00:30,755 | INFO | [58/110] Wrote result for Q058 with status=success.
+2026-04-28 00:00:30,756 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:01:30,757 | INFO | [59/110] Sending Q059 using persona 'balanced'.
+2026-04-28 00:01:39,121 | INFO | [59/110] Wrote result for Q059 with status=success.
+2026-04-28 00:01:39,123 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:02:39,125 | INFO | [60/110] Sending Q060 using persona 'balanced'.
+2026-04-28 00:02:45,388 | INFO | [60/110] Wrote result for Q060 with status=success.
+2026-04-28 00:02:45,389 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:03:45,390 | INFO | [61/110] Sending Q061 using persona 'balanced'.
+2026-04-28 00:03:51,832 | INFO | [61/110] Wrote result for Q061 with status=success.
+2026-04-28 00:03:51,834 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:04:51,835 | INFO | [62/110] Sending Q062 using persona 'fast-track'.
+2026-04-28 00:04:59,903 | INFO | [62/110] Wrote result for Q062 with status=success.
+2026-04-28 00:04:59,905 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:05:59,907 | INFO | [63/110] Sending Q063 using persona 'balanced'.
+2026-04-28 00:06:07,022 | INFO | [63/110] Wrote result for Q063 with status=success.
+2026-04-28 00:06:07,023 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:07:07,024 | INFO | [64/110] Sending Q064 using persona 'gentle'.
+2026-04-28 00:07:14,201 | INFO | [64/110] Wrote result for Q064 with status=success.
+2026-04-28 00:07:14,203 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:08:14,204 | INFO | [65/110] Sending Q065 using persona 'balanced'.
+2026-04-28 00:08:22,188 | INFO | [65/110] Wrote result for Q065 with status=success.
+2026-04-28 00:08:22,190 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:09:22,190 | INFO | [66/110] Sending Q066 using persona 'fast-track'.
+2026-04-28 00:09:32,279 | INFO | [66/110] Wrote result for Q066 with status=success.
+2026-04-28 00:09:32,280 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:10:32,281 | INFO | [67/110] Sending Q067 using persona 'balanced'.
+2026-04-28 00:10:38,076 | INFO | [67/110] Wrote result for Q067 with status=success.
+2026-04-28 00:10:38,077 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:11:38,078 | INFO | [68/110] Sending Q068 using persona 'balanced'.
+2026-04-28 00:11:45,350 | INFO | [68/110] Wrote result for Q068 with status=success.
+2026-04-28 00:11:45,351 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:12:45,352 | INFO | [69/110] Sending Q069 using persona 'fast-track'.
+2026-04-28 00:12:56,097 | INFO | [69/110] Wrote result for Q069 with status=success.
+2026-04-28 00:12:56,098 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:13:56,099 | INFO | [70/110] Sending Q070 using persona 'gentle'.
+2026-04-28 00:14:06,747 | INFO | [70/110] Wrote result for Q070 with status=success.
+2026-04-28 00:14:06,749 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:15:06,749 | INFO | [71/110] Sending Q071 using persona 'balanced'.
+2026-04-28 00:15:13,652 | INFO | [71/110] Wrote result for Q071 with status=success.
+2026-04-28 00:15:13,654 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:16:13,655 | INFO | [72/110] Sending Q072 using persona 'gentle'.
+2026-04-28 00:16:21,241 | INFO | [72/110] Wrote result for Q072 with status=success.
+2026-04-28 00:16:21,242 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:17:21,243 | INFO | [73/110] Sending Q073 using persona 'balanced'.
+2026-04-28 00:17:28,367 | INFO | [73/110] Wrote result for Q073 with status=success.
+2026-04-28 00:17:28,369 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:18:28,370 | INFO | [74/110] Sending Q074 using persona 'balanced'.
+2026-04-28 00:18:35,731 | INFO | [74/110] Wrote result for Q074 with status=success.
+2026-04-28 00:18:35,733 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:19:35,733 | INFO | [75/110] Sending Q075 using persona 'gentle'.
+2026-04-28 00:19:40,820 | INFO | [75/110] Wrote result for Q075 with status=success.
+2026-04-28 00:19:40,821 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:20:40,822 | INFO | [76/110] Sending Q076 using persona 'fast-track'.
+2026-04-28 00:20:49,340 | INFO | [76/110] Wrote result for Q076 with status=success.
+2026-04-28 00:20:49,341 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:21:49,342 | INFO | [77/110] Sending Q077 using persona 'balanced'.
+2026-04-28 00:21:57,173 | INFO | [77/110] Wrote result for Q077 with status=success.
+2026-04-28 00:21:57,175 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:22:57,176 | INFO | [78/110] Sending Q078 using persona 'balanced'.
+2026-04-28 00:23:01,546 | INFO | [78/110] Wrote result for Q078 with status=success.
+2026-04-28 00:23:01,547 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:24:01,548 | INFO | [79/110] Sending Q079 using persona 'balanced'.
+2026-04-28 00:24:09,179 | INFO | [79/110] Wrote result for Q079 with status=success.
+2026-04-28 00:24:09,182 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:25:09,184 | INFO | [80/110] Sending Q080 using persona 'gentle'.
+2026-04-28 00:25:18,728 | INFO | [80/110] Wrote result for Q080 with status=success.
+2026-04-28 00:25:18,730 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:26:18,732 | INFO | [81/110] Sending Q081 using persona 'balanced'.
+2026-04-28 00:26:27,113 | INFO | [81/110] Wrote result for Q081 with status=success.
+2026-04-28 00:26:27,115 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:27:27,116 | INFO | [82/110] Sending Q082 using persona 'gentle'.
+2026-04-28 00:27:35,143 | INFO | [82/110] Wrote result for Q082 with status=success.
+2026-04-28 00:27:35,145 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:28:35,145 | INFO | [83/110] Sending Q083 using persona 'fast-track'.
+2026-04-28 00:28:43,576 | INFO | [83/110] Wrote result for Q083 with status=success.
+2026-04-28 00:28:43,577 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:29:43,578 | INFO | [84/110] Sending Q084 using persona 'balanced'.
+2026-04-28 00:29:50,712 | INFO | [84/110] Wrote result for Q084 with status=success.
+2026-04-28 00:29:50,713 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:30:50,715 | INFO | [85/110] Sending Q085 using persona 'fast-track'.
+2026-04-28 00:30:56,587 | INFO | [85/110] Wrote result for Q085 with status=success.
+2026-04-28 00:30:56,588 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:31:56,589 | INFO | [86/110] Sending Q086 using persona 'balanced'.
+2026-04-28 00:32:03,850 | INFO | [86/110] Wrote result for Q086 with status=success.
+2026-04-28 00:32:03,852 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:33:03,853 | INFO | [87/110] Sending Q087 using persona 'gentle'.
+2026-04-28 00:33:21,255 | INFO | [87/110] Wrote result for Q087 with status=success.
+2026-04-28 00:33:21,257 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:34:21,258 | INFO | [88/110] Sending Q088 using persona 'balanced'.
+2026-04-28 00:34:32,792 | INFO | [88/110] Wrote result for Q088 with status=success.
+2026-04-28 00:34:32,793 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:35:32,794 | INFO | [89/110] Sending Q089 using persona 'fast-track'.
+2026-04-28 00:35:39,010 | INFO | [89/110] Wrote result for Q089 with status=success.
+2026-04-28 00:35:39,012 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:36:39,013 | INFO | [90/110] Sending Q090 using persona 'gentle'.
+2026-04-28 00:36:47,165 | INFO | [90/110] Wrote result for Q090 with status=success.
+2026-04-28 00:36:47,166 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:37:47,166 | INFO | [91/110] Sending Q091 using persona 'gentle'.
+2026-04-28 00:37:55,277 | INFO | [91/110] Wrote result for Q091 with status=success.
+2026-04-28 00:37:55,279 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:38:55,280 | INFO | [92/110] Sending Q092 using persona 'balanced'.
+2026-04-28 00:39:04,553 | INFO | [92/110] Wrote result for Q092 with status=success.
+2026-04-28 00:39:04,554 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:40:04,555 | INFO | [93/110] Sending Q093 using persona 'balanced'.
+2026-04-28 00:40:10,689 | WARNING | Retryable failure for Q093 on attempt 1/3: Chat stream error: Something went wrong while generating advice. Please try again in a moment. Gemini stream failed (503): { "error": { "code": 503, "message": "This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.", "status": "UNAVAILABLE" } }
+2026-04-28 00:40:10,690 | INFO | Waiting 15 seconds before retrying Q093.
+2026-04-28 00:40:34,202 | INFO | [93/110] Wrote result for Q093 with status=success.
+2026-04-28 00:40:34,203 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:41:34,204 | INFO | [94/110] Sending Q094 using persona 'fast-track'.
+2026-04-28 00:41:42,211 | INFO | [94/110] Wrote result for Q094 with status=success.
+2026-04-28 00:41:42,212 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:42:42,213 | INFO | [95/110] Sending Q095 using persona 'balanced'.
+2026-04-28 00:42:46,143 | INFO | [95/110] Wrote result for Q095 with status=success.
+2026-04-28 00:42:46,144 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:43:46,145 | INFO | [96/110] Sending Q096 using persona 'balanced'.
+2026-04-28 00:43:56,617 | INFO | [96/110] Wrote result for Q096 with status=success.
+2026-04-28 00:43:56,618 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:44:56,620 | INFO | [97/110] Sending Q097 using persona 'fast-track'.
+2026-04-28 00:45:01,840 | WARNING | Retryable failure for Q097 on attempt 1/3: Chat stream error: Something went wrong while generating advice. Please try again in a moment. Gemini stream failed (503): { "error": { "code": 503, "message": "This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.", "status": "UNAVAILABLE" } }
+2026-04-28 00:45:01,841 | INFO | Waiting 15 seconds before retrying Q097.
+2026-04-28 00:45:23,437 | INFO | [97/110] Wrote result for Q097 with status=success.
+2026-04-28 00:45:23,439 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:46:23,440 | INFO | [98/110] Sending Q098 using persona 'balanced'.
+2026-04-28 00:46:32,305 | INFO | [98/110] Wrote result for Q098 with status=success.
+2026-04-28 00:46:32,307 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:47:32,309 | INFO | [99/110] Sending Q099 using persona 'gentle'.
+2026-04-28 00:47:40,141 | INFO | [99/110] Wrote result for Q099 with status=success.
+2026-04-28 00:47:40,142 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:48:40,143 | INFO | [100/110] Sending Q100 using persona 'balanced'.
+2026-04-28 00:48:46,412 | INFO | [100/110] Wrote result for Q100 with status=success.
+2026-04-28 00:48:46,414 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:49:46,414 | INFO | [101/110] Sending Q101 using persona 'balanced'.
+2026-04-28 00:49:53,466 | INFO | [101/110] Wrote result for Q101 with status=success.
+2026-04-28 00:49:53,468 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:50:53,469 | INFO | [102/110] Sending Q102 using persona 'balanced'.
+2026-04-28 00:51:00,914 | INFO | [102/110] Wrote result for Q102 with status=success.
+2026-04-28 00:51:00,916 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:52:00,917 | INFO | [103/110] Sending Q103 using persona 'fast-track'.
+2026-04-28 00:52:24,096 | INFO | [103/110] Wrote result for Q103 with status=success.
+2026-04-28 00:52:24,098 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:53:24,099 | INFO | [104/110] Sending Q104 using persona 'balanced'.
+2026-04-28 00:53:31,816 | INFO | [104/110] Wrote result for Q104 with status=success.
+2026-04-28 00:53:31,817 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:54:31,818 | INFO | [105/110] Sending Q105 using persona 'gentle'.
+2026-04-28 00:54:42,163 | INFO | [105/110] Wrote result for Q105 with status=success.
+2026-04-28 00:54:42,164 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:55:42,166 | INFO | [106/110] Sending Q106 using persona 'balanced'.
+2026-04-28 00:55:51,485 | INFO | [106/110] Wrote result for Q106 with status=success.
+2026-04-28 00:55:51,486 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:56:51,487 | INFO | [107/110] Sending Q107 using persona 'gentle'.
+2026-04-28 00:56:56,956 | INFO | [107/110] Wrote result for Q107 with status=success.
+2026-04-28 00:56:56,957 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:57:56,958 | INFO | [108/110] Sending Q108 using persona 'gentle'.
+2026-04-28 00:58:07,535 | INFO | [108/110] Wrote result for Q108 with status=success.
+2026-04-28 00:58:07,537 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 00:59:07,538 | INFO | [109/110] Sending Q109 using persona 'fast-track'.
+2026-04-28 00:59:14,765 | INFO | [109/110] Wrote result for Q109 with status=success.
+2026-04-28 00:59:14,766 | INFO | Sleeping for 60 seconds before the next question.
+2026-04-28 01:00:14,768 | INFO | [110/110] Sending Q110 using persona 'fast-track'.
+2026-04-28 01:00:24,385 | INFO | [110/110] Wrote result for Q110 with status=success.
+2026-04-28 01:00:24,392 | INFO | Run finished.
+2026-04-28 01:00:24,392 | INFO | Summary | total_questions_in_scope=110
+2026-04-28 01:00:24,393 | INFO | Summary | rows_written=110
+2026-04-28 01:00:24,393 | INFO | Summary | successful_rows=110
+2026-04-28 01:00:24,393 | INFO | Summary | failed_rows=0
+2026-04-28 01:00:24,393 | INFO | Summary | average_latency_seconds=7.879
+2026-04-28 01:00:24,393 | INFO | Summary | empty_success_responses=[]
+2026-04-28 01:00:24,393 | INFO | Summary | short_success_responses=['Q046', 'Q050']
+2026-04-28 01:00:24,394 | INFO | Summary | suspicious_duplicate_response_groups=0

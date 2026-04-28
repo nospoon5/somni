@@ -1,0 +1,27 @@
+2026-04-27 22:52:51,685 | INFO | Run started | run_id=2026_04_27_smoke_real | questions=5 | resume=False
+2026-04-27 22:52:51,685 | INFO | Results file: C:\AI Projects\01_Apps\Somni\somni_eval\output\results\run_results_2026_04_27_smoke_real.csv
+2026-04-27 22:52:51,686 | INFO | Run log: C:\AI Projects\01_Apps\Somni\somni_eval\output\logs\2026_04_27_smoke_real.log
+2026-04-27 22:52:51,686 | INFO | Error log: C:\AI Projects\01_Apps\Somni\somni_eval\output\logs\2026_04_27_smoke_real.errors.log
+2026-04-27 22:52:51,687 | INFO | [1/5] Sending Q116 using persona 'gentle'.
+2026-04-27 22:53:00,431 | INFO | [1/5] Wrote result for Q116 with status=success.
+2026-04-27 22:53:00,431 | INFO | Sleeping for 5 seconds before the next question.
+2026-04-27 22:53:05,432 | INFO | [2/5] Sending Q117 using persona 'gentle'.
+2026-04-27 22:53:10,455 | INFO | [2/5] Wrote result for Q117 with status=success.
+2026-04-27 22:53:10,455 | INFO | Sleeping for 5 seconds before the next question.
+2026-04-27 22:53:15,455 | INFO | [3/5] Sending Q001 using persona 'gentle'.
+2026-04-27 22:53:20,380 | INFO | [3/5] Wrote result for Q001 with status=success.
+2026-04-27 22:53:20,380 | INFO | Sleeping for 5 seconds before the next question.
+2026-04-27 22:53:25,380 | INFO | [4/5] Sending Q002 using persona 'gentle'.
+2026-04-27 22:53:31,313 | INFO | [4/5] Wrote result for Q002 with status=success.
+2026-04-27 22:53:31,313 | INFO | Sleeping for 5 seconds before the next question.
+2026-04-27 22:53:36,314 | INFO | [5/5] Sending Q003 using persona 'balanced'.
+2026-04-27 22:53:43,251 | INFO | [5/5] Wrote result for Q003 with status=success.
+2026-04-27 22:53:43,251 | INFO | Run finished.
+2026-04-27 22:53:43,251 | INFO | Summary | total_questions_in_scope=5
+2026-04-27 22:53:43,251 | INFO | Summary | rows_written=5
+2026-04-27 22:53:43,252 | INFO | Summary | successful_rows=5
+2026-04-27 22:53:43,252 | INFO | Summary | failed_rows=0
+2026-04-27 22:53:43,252 | INFO | Summary | average_latency_seconds=6.311
+2026-04-27 22:53:43,252 | INFO | Summary | empty_success_responses=[]
+2026-04-27 22:53:43,252 | INFO | Summary | short_success_responses=[]
+2026-04-27 22:53:43,252 | INFO | Summary | suspicious_duplicate_response_groups=0

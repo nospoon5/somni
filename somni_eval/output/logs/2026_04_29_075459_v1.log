@@ -1,0 +1,28 @@
+2026-04-29 07:54:59,698 | INFO | Run started | run_id=2026_04_29_075459_v1 | questions=5 | resume=False
+2026-04-29 07:54:59,699 | INFO | Results file: C:\AI Projects\01_Apps\Somni\somni_eval\output\results\run_results_2026_04_29_075459_v1.csv
+2026-04-29 07:54:59,699 | INFO | Run log: C:\AI Projects\01_Apps\Somni\somni_eval\output\logs\2026_04_29_075459_v1.log
+2026-04-29 07:54:59,699 | INFO | Error log: C:\AI Projects\01_Apps\Somni\somni_eval\output\logs\2026_04_29_075459_v1.errors.log
+2026-04-29 07:54:59,700 | INFO | [1/5] Sending Q001 using persona 'gentle'.
+2026-04-29 07:55:09,427 | INFO | [1/5] Wrote result for Q001 with status=success.
+2026-04-29 07:55:09,428 | INFO | Sleeping for 5 seconds before the next question.
+2026-04-29 07:55:14,429 | INFO | [2/5] Sending Q002 using persona 'gentle'.
+2026-04-29 07:55:21,301 | INFO | [2/5] Wrote result for Q002 with status=success.
+2026-04-29 07:55:21,301 | INFO | Sleeping for 5 seconds before the next question.
+2026-04-29 07:55:26,302 | INFO | [3/5] Sending Q003 using persona 'balanced'.
+2026-04-29 07:55:30,181 | INFO | [3/5] Wrote result for Q003 with status=success.
+2026-04-29 07:55:30,182 | INFO | Sleeping for 5 seconds before the next question.
+2026-04-29 07:55:35,182 | INFO | [4/5] Sending Q004 using persona 'gentle'.
+2026-04-29 07:55:41,757 | INFO | [4/5] Wrote result for Q004 with status=success.
+2026-04-29 07:55:41,757 | INFO | Sleeping for 5 seconds before the next question.
+2026-04-29 07:55:46,758 | INFO | [5/5] Sending Q005 using persona 'balanced'.
+2026-04-29 07:55:54,030 | INFO | [5/5] Wrote result for Q005 with status=success.
+2026-04-29 07:55:54,032 | INFO | Run finished.
+2026-04-29 07:55:54,032 | INFO | Summary | total_questions_in_scope=5
+2026-04-29 07:55:54,032 | INFO | Summary | rows_written=5
+2026-04-29 07:55:54,032 | INFO | Summary | successful_rows=5
+2026-04-29 07:55:54,033 | INFO | Summary | failed_rows=0
+2026-04-29 07:55:54,033 | INFO | Summary | average_latency_seconds=6.861
+2026-04-29 07:55:54,033 | INFO | Summary | empty_success_responses=[]
+2026-04-29 07:55:54,033 | INFO | Summary | short_success_responses=[]
+2026-04-29 07:55:54,033 | INFO | Summary | incomplete_success_responses=[]
+2026-04-29 07:55:54,034 | INFO | Summary | suspicious_duplicate_response_groups=0
