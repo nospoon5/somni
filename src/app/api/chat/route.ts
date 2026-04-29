@@ -20,6 +20,7 @@ import {
   containsForbiddenResponsePhrase,
   createResponseTokenFilter,
   filterResponse,
+  hasMedicationContext,
 } from '@/lib/ai/response-filter'
 import {
   buildRetrievalLogPayload,
@@ -202,7 +203,7 @@ export async function POST(request: Request) {
 
         try {
           if (safety.isEmergency) {
-            const assistantMessage = getEmergencyRedirectMessage()
+            const assistantMessage = getEmergencyRedirectMessage(safety.route)
             const sources: SourceAttribution[] = []
 
             await supabase.from('messages').insert({
@@ -304,7 +305,12 @@ export async function POST(request: Request) {
             estimatedPromptTokens: estimatedPrimaryPromptTokens,
           })
 
+          const shouldHoldStreamingForMedicationSafety = hasMedicationContext(message)
           const primaryTokenFilter = createResponseTokenFilter((token) => {
+            if (shouldHoldStreamingForMedicationSafety) {
+              return
+            }
+
             controller.enqueue(
               encoder.encode(createSseEvent('token', { text: token, message_index: 1 }))
             )
@@ -320,14 +326,14 @@ export async function POST(request: Request) {
           )
           primaryTokenFilter.flush()
 
-          if (containsForbiddenResponsePhrase(primaryGeminiResult.text)) {
+          if (containsForbiddenResponsePhrase(primaryGeminiResult.text, message)) {
             const retryResult = await streamGeminiResponse(
               [
                 {
                   role: 'user',
                   parts: [
                     {
-                      text: `${primaryPrompt}\n\nRewrite the parent-facing response one time. Keep the same advice, but use the opening confidence policy above and avoid the recurring sound-based hedge.`,
+                      text: `${primaryPrompt}\n\nRewrite the parent-facing response one time. Keep the same advice, but use the opening confidence policy above, avoid the recurring sound-based hedge, and do not authorise medication use. For medication, say it may be commonly used in some situations, follow the label and age/weight dosing instructions, check with a GP/pharmacist/child health nurse if unsure, seek medical advice for concerning symptoms, and pause sleep coaching while pain or illness is being handled.`,
                     },
                   ],
                 },
@@ -345,10 +351,11 @@ export async function POST(request: Request) {
             }
           }
 
-          let primaryAssistantMessage = filterResponse(primaryGeminiResult.text)
+          let primaryAssistantMessage = filterResponse(primaryGeminiResult.text, message)
           let replacePrimaryMessage =
             primaryAssistantMessage !== primaryGeminiResult.text.trim() ||
-            containsForbiddenResponsePhrase(primaryGeminiResult.text)
+            containsForbiddenResponsePhrase(primaryGeminiResult.text, message) ||
+            shouldHoldStreamingForMedicationSafety
 
           const savedPlanUpdates = await saveChatPlanUpdates({
             supabase,
@@ -362,7 +369,7 @@ export async function POST(request: Request) {
           })
 
           if (savedPlanUpdates.assistantMessage) {
-            primaryAssistantMessage = filterResponse(savedPlanUpdates.assistantMessage)
+            primaryAssistantMessage = filterResponse(savedPlanUpdates.assistantMessage, message)
             replacePrimaryMessage = true
           }
 

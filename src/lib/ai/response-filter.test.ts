@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest'
 
 import {
   containsForbiddenResponsePhrase,
+  containsUnsafeMedicationPermission,
   createResponseTokenFilter,
   filterResponse,
+  hasMedicationContext,
 } from './response-filter'
 
 describe('filterResponse', () => {
@@ -26,6 +28,39 @@ describe('filterResponse', () => {
   it('detects forbidden sounds-like phrasing', () => {
     expect(containsForbiddenResponsePhrase('This sounds like a split night.')).toBe(true)
     expect(containsForbiddenResponsePhrase('This points to a split night.')).toBe(false)
+  })
+
+  it('detects unsafe medication permission only in medication context', () => {
+    expect(hasMedicationContext('Can I use Panadol tonight?')).toBe(true)
+    expect(
+      containsUnsafeMedicationPermission(
+        'Yes, you can absolutely use Panadol while teething.',
+        'Can I use Panadol tonight?'
+      )
+    ).toBe(true)
+    expect(
+      containsUnsafeMedicationPermission(
+        'Yes, you can use it if she seems uncomfortable.',
+        'Can I use Panadol tonight?'
+      )
+    ).toBe(true)
+    expect(containsForbiddenResponsePhrase('Panadol is safe to give at the right dose.')).toBe(
+      true
+    )
+    expect(containsForbiddenResponsePhrase('Yes, you can resettle first.')).toBe(false)
+  })
+
+  it('rewrites unsafe medication authorisation into boundary wording', () => {
+    const output = filterResponse(
+      'Yes, you can absolutely use Panadol while teething. Then keep resettling.',
+      'Can I use Panadol?'
+    )
+
+    expect(output).toContain('commonly used in some situations')
+    expect(output).toContain('label and the age/weight dosing instructions')
+    expect(output).toContain('GP, pharmacist, or child health nurse')
+    expect(output).toMatch(/pause sleep coaching/i)
+    expect(output).not.toMatch(/absolutely use|you can absolutely|yes,\s+you can|safe to give/i)
   })
 
   it('filters forbidden phrasing across streamed token boundaries', () => {
