@@ -265,7 +265,9 @@ function rerankChunks(args: {
   strategy: RetrievalDiagnostics['strategy']
   limit: number
   candidates: RetrievedCorpusChunk[]
+  timing?: RetrievalDiagnostics['timing']
 }): RetrieveChunksResult {
+  const rerankStartedAt = performance.now()
   const reranked = rerankRetrievedChunks({
     query: args.query,
     ageBand: args.ageBand,
@@ -274,10 +276,17 @@ function rerankChunks(args: {
     limit: args.limit,
     candidates: args.candidates as RetrievalRankingCandidate[],
   })
+  const rerankSeconds = Number(((performance.now() - rerankStartedAt) / 1000).toFixed(3))
 
   return {
     chunks: reranked.selected as RetrievedCorpusChunk[],
-    diagnostics: reranked.diagnostics,
+    diagnostics: {
+      ...reranked.diagnostics,
+      timing: {
+        ...args.timing,
+        rerankSeconds,
+      },
+    },
   }
 }
 
@@ -303,12 +312,14 @@ export async function retrieveRelevantChunksWithDiagnostics(
   const preferredAgeBand = input.ageBand?.trim() || null
   const internalLimit = getInternalMatchLimit(limit)
 
+  const rpcStartedAt = performance.now()
   const { data, error } = await supabase.rpc('match_corpus_chunks', {
     query_embedding: formatVectorLiteral(queryEmbedding),
     match_count: internalLimit,
     preferred_age_band: preferredAgeBand,
     preferred_methodology: preferredMethodology,
   })
+  const rpcSeconds = Number(((performance.now() - rpcStartedAt) / 1000).toFixed(3))
 
   if (!error) {
     const rows = (Array.isArray(data) ? data : [])
@@ -322,6 +333,7 @@ export async function retrieveRelevantChunksWithDiagnostics(
       strategy: 'rpc',
       limit,
       candidates: rows,
+      timing: { rpcSeconds },
     })
   }
 
@@ -333,14 +345,19 @@ export async function retrieveRelevantChunksWithDiagnostics(
     throw new Error(`Retrieval query failed: ${error.message}`)
   }
 
+  const fallbackFetchStartedAt = performance.now()
   const { data: fallbackRows, error: fallbackError } = await supabase
     .from('corpus_chunks')
     .select('id, chunk_id, topic, age_band, methodology, content, sources, confidence, embedding')
+  const fallbackFetchSeconds = Number(
+    ((performance.now() - fallbackFetchStartedAt) / 1000).toFixed(3)
+  )
 
   if (fallbackError) {
     throw new Error(`Retrieval fallback query failed: ${fallbackError.message}`)
   }
 
+  const fallbackScoreStartedAt = performance.now()
   const ranked = (fallbackRows ?? [])
     .map((row) => {
       const chunkEmbedding = parseEmbeddingLiteral(row.embedding)
@@ -371,6 +388,9 @@ export async function retrieveRelevantChunksWithDiagnostics(
     .filter((row) => row.similarity >= MIN_SIMILARITY)
     .sort((a, b) => b.similarity - a.similarity)
     .slice(0, internalLimit)
+  const fallbackScoreSeconds = Number(
+    ((performance.now() - fallbackScoreStartedAt) / 1000).toFixed(3)
+  )
 
   return rerankChunks({
     query: trimmedQuery,
@@ -379,5 +399,6 @@ export async function retrieveRelevantChunksWithDiagnostics(
     strategy: 'fallback',
     limit,
     candidates: ranked,
+    timing: { rpcSeconds, fallbackFetchSeconds, fallbackScoreSeconds },
   })
 }

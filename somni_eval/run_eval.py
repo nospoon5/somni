@@ -202,6 +202,7 @@ def _process_question(question, config, adapter, logger, conversation_id: str = 
                 sources=result.sources,
                 confidence=result.confidence,
                 ttft_seconds=result.ttft_seconds,
+                timings=result.timings,
             )
         except RetryableAdapterError as exc:
             latency_seconds = time.perf_counter() - started_at
@@ -233,6 +234,7 @@ def _process_question(question, config, adapter, logger, conversation_id: str = 
                 sources=None,
                 confidence="",
                 ttft_seconds=None,
+                timings=None,
             )
         except FatalAdapterError as exc:
             latency_seconds = time.perf_counter() - started_at
@@ -249,6 +251,7 @@ def _process_question(question, config, adapter, logger, conversation_id: str = 
                 sources=None,
                 confidence="",
                 ttft_seconds=None,
+                timings=None,
             )
 
     return _build_output_row(
@@ -262,6 +265,7 @@ def _process_question(question, config, adapter, logger, conversation_id: str = 
         sources=None,
         confidence="",
         ttft_seconds=None,
+        timings=None,
     )
 
 
@@ -277,7 +281,9 @@ def _build_output_row(
     sources: list[object] | None,
     confidence: str,
     ttft_seconds: float | None,
+    timings: dict[str, object] | None,
 ) -> dict[str, str]:
+    timing_fields = _build_timing_output_fields(timings)
     return {
         "run_id": config.run.run_id,
         "test_date": _utc_now_iso(),
@@ -298,7 +304,118 @@ def _build_output_row(
         "sources": json.dumps(sources, ensure_ascii=True) if sources is not None else "",
         "confidence": confidence,
         "ttft_seconds": f"{ttft_seconds:.3f}" if ttft_seconds is not None else "",
+        **timing_fields,
     }
+
+
+def _build_timing_output_fields(timings: dict[str, object] | None) -> dict[str, str]:
+    return {
+        "timings": json.dumps(timings, ensure_ascii=True) if timings is not None else "",
+        "auth_session_seconds": _format_timing_stage(timings, "auth_session_lookup"),
+        "profile_context_seconds": _format_timing_stage(
+            timings,
+            "profile_baby_lookup",
+            "profile_context_load",
+            "sleep_plan_profile_load",
+            "quota_lookup",
+        ),
+        "latest_message_age_extraction_seconds": _format_timing_stage(
+            timings, "latest_message_age_extraction"
+        ),
+        "embedding_seconds": _format_timing_stage(timings, "embedding_creation"),
+        "retrieval_total_seconds": _format_timing_stage(timings, "retrieval_total"),
+        "retrieval_vector_search_seconds": _format_timing_stage(
+            timings,
+            "retrieval_rpc_vector_search",
+            "retrieval_fallback_fetch",
+            "retrieval_fallback_score",
+        ),
+        "retrieval_rerank_source_selection_seconds": _format_timing_stage(
+            timings, "retrieval_rerank_source_selection"
+        ),
+        "prompt_assembly_seconds": _format_timing_stage(timings, "prompt_assembly"),
+        "primary_model_call_seconds": _format_timing_stage(timings, "primary_model_call"),
+        "primary_model_ttft_seconds": _format_timing_stage(timings, "primary_model_ttft"),
+        "response_validation_filtering_seconds": _format_timing_stage(
+            timings, "response_validation_filtering"
+        ),
+        "retry_rewrite_seconds": _format_timing_stage(timings, "retry_or_rewrite_pass"),
+        "persistence_database_write_seconds": _format_timing_stage(
+            timings, "persistence_database_write"
+        ),
+        "server_total_latency_seconds": _format_timing_value(
+            _timing_number(timings, "total_latency_seconds")
+        ),
+        "server_time_to_first_token_seconds": _format_timing_value(
+            _timing_mark(timings, "time_to_first_token")
+        ),
+        "retry_count": _format_timing_metadata(timings, "retry_count"),
+        "retry_reason": _format_timing_metadata(timings, "retry_reason"),
+        "response_character_count": _format_timing_metadata(
+            timings, "response_character_count"
+        ),
+        "prompt_character_count": _format_timing_metadata(timings, "prompt_character_count"),
+        "prompt_token_estimate": _format_timing_metadata(timings, "prompt_token_estimate"),
+        "selected_source_count": _format_timing_metadata(timings, "selected_source_count"),
+        "chat_model_name": _format_timing_metadata(timings, "model_name"),
+        "chat_model_provider": _format_timing_metadata(timings, "model_provider"),
+    }
+
+
+def _format_timing_stage(timings: dict[str, object] | None, *stage_names: str) -> str:
+    if not timings:
+        return ""
+
+    stage_seconds = timings.get("stage_seconds")
+    if not isinstance(stage_seconds, dict):
+        return ""
+
+    values = []
+    for stage_name in stage_names:
+        value = stage_seconds.get(stage_name)
+        if isinstance(value, (int, float)):
+            values.append(float(value))
+
+    if not values:
+        return ""
+
+    return _format_timing_value(sum(values))
+
+
+def _format_timing_value(value: float | None) -> str:
+    return f"{value:.3f}" if value is not None else ""
+
+
+def _format_timing_metadata(timings: dict[str, object] | None, key: str) -> str:
+    if not timings:
+        return ""
+
+    value = timings.get(key)
+    if value is None:
+        return ""
+    if isinstance(value, (dict, list)):
+        return json.dumps(value, ensure_ascii=True)
+    return str(value)
+
+
+def _timing_number(timings: dict[str, object] | None, key: str) -> float | None:
+    if not timings:
+        return None
+
+    value = timings.get(key)
+    return float(value) if isinstance(value, (int, float)) else None
+
+
+def _timing_mark(timings: dict[str, object] | None, key: str) -> float | None:
+    if not timings:
+        return None
+
+    marks_seconds = timings.get("marks_seconds")
+    if not isinstance(marks_seconds, dict):
+        return None
+
+    value = marks_seconds.get(key)
+    return float(value) if isinstance(value, (int, float)) else None
 
 
 def _build_summary(
@@ -311,6 +428,20 @@ def _build_summary(
         for row in success_rows
         if row.get("response_latency_seconds", "").strip()
     ]
+    slowest_rows = sorted(
+        (
+            {
+                "question_id": row.get("question_id", ""),
+                "latency_seconds": float(row.get("response_latency_seconds", "0") or 0),
+                "ttft_seconds": _optional_float(row.get("ttft_seconds", "")),
+            }
+            for row in success_rows
+            if row.get("response_latency_seconds", "").strip()
+        ),
+        key=lambda item: item["latency_seconds"],
+        reverse=True,
+    )[:5]
+    average_stage_seconds = _build_average_stage_seconds(success_rows)
     empty_success_responses = [
         row["question_id"]
         for row in success_rows
@@ -343,6 +474,8 @@ def _build_summary(
         "successful_rows": len(success_rows),
         "failed_rows": len(failed_rows),
         "average_latency_seconds": round(statistics.mean(latencies), 3) if latencies else None,
+        "slowest_rows": slowest_rows,
+        "average_stage_seconds": average_stage_seconds,
         "empty_success_responses": empty_success_responses,
         "short_success_responses": short_success_responses,
         "incomplete_success_responses": incomplete_success_responses,
@@ -358,12 +491,55 @@ def _format_summary_lines(summary: dict[str, object]) -> list[str]:
         f"Summary | successful_rows={summary['successful_rows']}",
         f"Summary | failed_rows={summary['failed_rows']}",
         f"Summary | average_latency_seconds={summary['average_latency_seconds']}",
+        f"Summary | slowest_rows={summary['slowest_rows']}",
+        f"Summary | average_stage_seconds={summary['average_stage_seconds']}",
         f"Summary | empty_success_responses={summary['empty_success_responses']}",
         f"Summary | short_success_responses={summary['short_success_responses']}",
         f"Summary | incomplete_success_responses={summary['incomplete_success_responses']}",
         "Summary | suspicious_duplicate_response_groups="
         f"{summary['suspicious_duplicate_response_groups']}",
     ]
+
+
+def _build_average_stage_seconds(rows: list[dict[str, str]]) -> dict[str, float]:
+    stage_values: dict[str, list[float]] = {}
+
+    for row in rows:
+        raw_timings = row.get("timings", "").strip()
+        if not raw_timings:
+            continue
+
+        try:
+            timings = json.loads(raw_timings)
+        except json.JSONDecodeError:
+            continue
+
+        if not isinstance(timings, dict):
+            continue
+
+        stage_seconds = timings.get("stage_seconds")
+        if not isinstance(stage_seconds, dict):
+            continue
+
+        for stage_name, value in stage_seconds.items():
+            if isinstance(value, (int, float)):
+                stage_values.setdefault(str(stage_name), []).append(float(value))
+
+    averages = {
+        stage_name: round(statistics.mean(values), 3)
+        for stage_name, values in stage_values.items()
+        if values
+    }
+    return dict(sorted(averages.items(), key=lambda item: item[1], reverse=True)[:8])
+
+
+def _optional_float(value: str) -> float | None:
+    try:
+        if not value.strip():
+            return None
+        return round(float(value), 3)
+    except ValueError:
+        return None
 
 
 def _classify_retryable_error(error_text: str) -> str:

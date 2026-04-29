@@ -80,6 +80,7 @@ export function buildRetrievalLogPayload(diagnostics: RetrievalDiagnostics, conv
     strategy: diagnostics.strategy,
     ageBand: diagnostics.ageBand,
     methodology: diagnostics.methodology,
+    timing: diagnostics.timing,
     intents: diagnostics.intents,
     selectedCount: diagnostics.selectedCount,
     candidates: diagnostics.candidates

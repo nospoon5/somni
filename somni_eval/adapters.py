@@ -36,6 +36,7 @@ class AdapterResult:
     sources: list[object] | None = None
     confidence: str = ""
     ttft_seconds: float | None = None
+    timings: dict[str, object] | None = None
 
 
 class SomniAdapter(Protocol):
@@ -348,11 +349,12 @@ def _read_sse_response_text(response: requests.Response, request_started_at: flo
     done_retrieval: dict[str, object] | None = None
     done_sources: list[object] | None = None
     done_confidence = ""
+    done_timings: dict[str, object] | None = None
     error_message = ""
     first_token_at: float | None = None
 
     def apply_event(event_name: str, payload: dict[str, object]) -> None:
-        nonlocal done_retrieval, done_sources, done_confidence
+        nonlocal done_retrieval, done_sources, done_confidence, done_timings
         nonlocal error_message, first_token_at
 
         if event_name == "token" and isinstance(payload.get("text"), str):
@@ -375,6 +377,9 @@ def _read_sse_response_text(response: requests.Response, request_started_at: flo
             confidence = payload.get("confidence")
             if isinstance(confidence, str):
                 done_confidence = confidence
+            timings = payload.get("timing")
+            if isinstance(timings, dict):
+                done_timings = timings
             return
 
         if event_name == "error":
@@ -418,6 +423,7 @@ def _read_sse_response_text(response: requests.Response, request_started_at: flo
         sources=done_sources,
         confidence=done_confidence,
         ttft_seconds=ttft_seconds,
+        timings=done_timings,
     )
 
 

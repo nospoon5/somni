@@ -50,6 +50,12 @@ export type RetrievalDiagnostics = {
   selectedCount: number
   intents: RetrievalIntentSignal[]
   candidates: RetrievalDiagnosticCandidate[]
+  timing?: {
+    rpcSeconds?: number
+    fallbackFetchSeconds?: number
+    fallbackScoreSeconds?: number
+    rerankSeconds?: number
+  }
 }
 
 type QueryAnalysis = {

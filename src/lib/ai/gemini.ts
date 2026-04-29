@@ -276,6 +276,42 @@ export async function streamGeminiResponse(
   const functionCalls: GeminiFunctionCall[] = []
   const seenFunctionCalls = new Set<string>()
 
+  function processDataLine(line: string) {
+    const trimmed = line.trim()
+    if (!trimmed.startsWith('data:')) {
+      return
+    }
+
+    const dataPayload = trimmed.slice(5).trim()
+    if (!dataPayload || dataPayload === '[DONE]') {
+      return
+    }
+
+    try {
+      const parsed = JSON.parse(dataPayload)
+      const token = extractGeminiText(parsed)
+      const parsedFunctionCalls = extractGeminiFunctionCalls(parsed)
+
+      if (token) {
+        fullText += token
+        onToken(token)
+      }
+
+      for (const functionCall of parsedFunctionCalls) {
+        const key = `${functionCall.id ?? 'no-id'}::${functionCall.name}::${JSON.stringify(functionCall.args)}`
+        if (seenFunctionCalls.has(key)) {
+          continue
+        }
+
+        seenFunctionCalls.add(key)
+        functionCalls.push(functionCall)
+      }
+    } catch (error) {
+      console.error('JSON PARSE FAILED', (error as Error).message, dataPayload.substring(0, 100))
+      // Ignore malformed chunks and continue streaming the rest.
+    }
+  }
+
   while (true) {
     const { done, value } = await reader.read()
     if (done) {
@@ -287,45 +323,13 @@ export async function streamGeminiResponse(
     buffer = lines.pop() ?? ''
 
     for (const line of lines) {
-      const trimmed = line.trim()
-      if (!trimmed.startsWith('data:')) {
-        continue
-      }
-
-      const dataPayload = trimmed.slice(5).trim()
-      if (!dataPayload || dataPayload === '[DONE]') {
-        continue
-      }
-
-      try {
-        const parsed = JSON.parse(dataPayload)
-        const token = extractGeminiText(parsed)
-        const parsedFunctionCalls = extractGeminiFunctionCalls(parsed)
-
-        if (token) {
-          fullText += token
-          onToken(token)
-        }
-
-        for (const functionCall of parsedFunctionCalls) {
-          const key = `${functionCall.id ?? 'no-id'}::${functionCall.name}::${JSON.stringify(functionCall.args)}`
-          if (seenFunctionCalls.has(key)) {
-            continue
-          }
-
-          seenFunctionCalls.add(key)
-          functionCalls.push(functionCall)
-        }
-      } catch (error) {
-        console.error('JSON PARSE FAILED', (error as Error).message, dataPayload.substring(0, 100))
-        // Ignore malformed chunks and continue streaming the rest.
-      }
+      processDataLine(line)
     }
   }
 
-  // Ensure any final data left in buffer is processed if it has not been printed
-  if (buffer.trim()) {
-    console.error('WARNING: FINAL BUFFER NOT EMPTY', buffer)
+  buffer += decoder.decode()
+  for (const line of buffer.split('\n')) {
+    processDataLine(line)
   }
 
   console.log(`Gemini Stream Completed internally. Extracted ${fullText.length} characters.`)
