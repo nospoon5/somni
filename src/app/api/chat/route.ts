@@ -2,6 +2,11 @@ import { after } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getDateStringForTimezone, normalizeDailyPlanRow, summarizeDailyPlanForPrompt } from '@/lib/daily-plan'
 import { buildChatPrompt } from '@/lib/ai/prompt'
+import {
+  containsConflictingQuestionAge,
+  parseQuestionStatedAge,
+  rewriteConflictingQuestionAge,
+} from '@/lib/ai/age-override'
 import { summarizeSleepPlanProfileForPrompt } from '@/lib/sleep-plan-chat-updates'
 import {
   generateEmbedding,
@@ -236,7 +241,9 @@ export async function POST(request: Request) {
             return
           }
 
-          const ageBand = getAgeBand(baby.date_of_birth)
+          const profileAgeBand = getAgeBand(baby.date_of_birth)
+          const questionStatedAge = parseQuestionStatedAge(message)
+          const ageBand = questionStatedAge?.ageBand ?? profileAgeBand
           const sleepStyleLabel =
             (preferences?.sleep_style_label as SleepMethodology | null) ?? 'all'
           const retrievalResult = await retrieveRelevantChunksWithDiagnostics({
@@ -274,6 +281,8 @@ export async function POST(request: Request) {
           const promptContext = {
             babyName: baby.name,
             ageBand,
+            profileAgeBand,
+            questionStatedAge: questionStatedAge?.label ?? null,
             sleepStyleLabel,
             timezone,
             localToday,
@@ -382,6 +391,31 @@ export async function POST(request: Request) {
           if (!primaryAssistantMessage) {
             primaryAssistantMessage =
               "I'm missing one key detail before I can shape today's plan. Tell me the one target you want to lock in first, and I'll tighten it up with you."
+          }
+
+          if (containsConflictingQuestionAge(primaryAssistantMessage, questionStatedAge)) {
+            const retryResult = await streamGeminiResponse(
+              [
+                {
+                  role: 'user',
+                  parts: [
+                    {
+                      text: `${primaryPrompt}\n\nRewrite the parent-facing response one time. Keep the same advice and safety boundaries, but correct the age handling. The latest parent message states the child is ${questionStatedAge?.label}; use that age for the current answer and do not mention any conflicting profile age from stored memory, logs, or prior context. Also keep the recurring sound-based hedge banned.`,
+                    },
+                  ],
+                },
+              ],
+              true,
+              sleepStyleLabel,
+              () => {}
+            )
+            const retriedMessage = filterResponse(retryResult.text, message)
+
+            primaryAssistantMessage =
+              retriedMessage && !containsConflictingQuestionAge(retriedMessage, questionStatedAge)
+                ? retriedMessage
+                : rewriteConflictingQuestionAge(primaryAssistantMessage, questionStatedAge)
+            replacePrimaryMessage = true
           }
 
           await supabase.from('messages').insert({
