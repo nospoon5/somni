@@ -230,6 +230,7 @@ function buildEmptyDiagnostics(input: RetrieveChunksInput, limit: number): Retri
     candidateCount: 0,
     selectedCount: 0,
     intents: [],
+    selectedEvidence: [],
     candidates: [],
   }
 }

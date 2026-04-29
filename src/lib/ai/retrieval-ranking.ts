@@ -37,6 +37,20 @@ export type RetrievalDiagnosticCandidate = {
   rerankBoost: number
   finalScore: number
   selected: boolean
+  selectedOrder?: number
+  reasons: RetrievalBoostReason[]
+}
+
+export type RetrievalDiagnosticEvidence = {
+  selectedOrder: number
+  chunkId: string
+  sourceName?: string
+  topic: string
+  ageBand: string | null
+  methodology: string
+  retrievalScore: number
+  rerankBoost: number
+  finalScore: number
   reasons: RetrievalBoostReason[]
 }
 
@@ -394,6 +408,10 @@ export function rerankRetrievedChunks(args: {
 
   const selected = selectRankedCandidates(ranked, analysis.intents, args.limit)
   const selectedChunkIds = new Set(selected.map((candidate) => candidate.chunkId))
+  const selectedOrderMap = new Map<string, number>()
+  selected.forEach((candidate, index) => {
+    selectedOrderMap.set(candidate.chunkId, index + 1)
+  })
 
   const diagnostics: RetrievalDiagnostics = {
     queryPreview:
@@ -405,6 +423,21 @@ export function rerankRetrievedChunks(args: {
     candidateCount: ranked.length,
     selectedCount: selected.length,
     intents: analysis.intents,
+    selectedEvidence: selected.map((candidate, index) => ({
+      selectedOrder: index + 1,
+      chunkId: candidate.chunkId,
+      sourceName: candidate.sources?.[0]?.name,
+      topic: candidate.topic,
+      ageBand: candidate.ageBand,
+      methodology: candidate.methodology,
+      retrievalScore: Number(candidate.similarity.toFixed(4)),
+      rerankBoost: Number(candidate.rerankBoost.toFixed(4)),
+      finalScore: Number(candidate.finalScore.toFixed(4)),
+      reasons: candidate.reasons.map((reason) => ({
+        label: reason.label,
+        value: Number(reason.value.toFixed(4)),
+      })),
+    })),
     candidates: ranked.map((candidate) => ({
       chunkId: candidate.chunkId,
       topic: candidate.topic,
@@ -414,6 +447,7 @@ export function rerankRetrievedChunks(args: {
       rerankBoost: Number(candidate.rerankBoost.toFixed(4)),
       finalScore: Number(candidate.finalScore.toFixed(4)),
       selected: selectedChunkIds.has(candidate.chunkId),
+      selectedOrder: selectedOrderMap.get(candidate.chunkId),
       reasons: candidate.reasons.map((reason) => ({
         label: reason.label,
         value: Number(reason.value.toFixed(4)),
