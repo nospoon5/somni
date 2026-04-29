@@ -1,0 +1,66 @@
+{
+  "run_id": "phase4_smoke_2026_04_29_2241",
+  "updated_at": "2026-04-29T12:41:42+00:00",
+  "status": "finished",
+  "total_questions_in_scope": 5,
+  "completed_row_count": 5,
+  "successful_row_count": 5,
+  "failed_row_count": 0,
+  "completed_question_ids": [
+    "Q001",
+    "Q002",
+    "Q003",
+    "Q004",
+    "Q005"
+  ],
+  "finished_at": "2026-04-29T12:41:42+00:00",
+  "summary": {
+    "total_questions_in_scope": 5,
+    "rows_written": 5,
+    "successful_rows": 5,
+    "failed_rows": 0,
+    "average_latency_seconds": 8.316,
+    "slowest_rows": [
+      {
+        "question_id": "Q001",
+        "latency_seconds": 10.285,
+        "ttft_seconds": 3.131
+      },
+      {
+        "question_id": "Q002",
+        "latency_seconds": 10.25,
+        "ttft_seconds": 2.542
+      },
+      {
+        "question_id": "Q004",
+        "latency_seconds": 8.11,
+        "ttft_seconds": 2.016
+      },
+      {
+        "question_id": "Q005",
+        "latency_seconds": 7.371,
+        "ttft_seconds": 2.401
+      },
+      {
+        "question_id": "Q003",
+        "latency_seconds": 5.565,
+        "ttft_seconds": 2.866
+      }
+    ],
+    "average_stage_seconds": {
+      "retry_or_rewrite_pass": 3.629,
+      "primary_model_call": 3.539,
+      "primary_model_ttft": 1.562,
+      "embedding_creation": 0.522,
+      "persistence_database_write": 0.137,
+      "retrieval_total": 0.118,
+      "profile_context_load": 0.113,
+      "retrieval_rpc_vector_search": 0.109
+    },
+    "empty_success_responses": [],
+    "short_success_responses": [],
+    "incomplete_success_responses": [],
+    "suspicious_duplicate_response_groups": 0,
+    "suspicious_duplicate_response_counts": {}
+  }
+}

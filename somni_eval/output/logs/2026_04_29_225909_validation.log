@@ -1,0 +1,7 @@
+2026-04-29 22:59:09,614 | INFO | Run started | run_id=2026_04_29_225909_validation | questions=4 | resume=False
+2026-04-29 22:59:09,614 | INFO | Results file: C:\AI Projects\01_Apps\Somni\somni_eval\output\results\run_results_2026_04_29_225909_validation.csv
+2026-04-29 22:59:09,614 | INFO | Run log: C:\AI Projects\01_Apps\Somni\somni_eval\output\logs\2026_04_29_225909_validation.log
+2026-04-29 22:59:09,614 | INFO | Error log: C:\AI Projects\01_Apps\Somni\somni_eval\output\logs\2026_04_29_225909_validation.errors.log
+2026-04-29 22:59:09,615 | INFO | [1/4] Sending Q003 using persona 'balanced'.
+2026-04-29 22:59:14,612 | WARNING | Retryable failure for Q003 on attempt 1/3: Chat stream error: Something went wrong while generating advice. Please try again in a moment. selectedOrderMap is not defined
+2026-04-29 22:59:14,613 | INFO | Waiting 15 seconds before retrying Q003.

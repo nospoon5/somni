@@ -1,0 +1,28 @@
+2026-04-29 23:09:14,721 | INFO | Run started | run_id=2026_04_29_230914_v1 | questions=110 | resume=False
+2026-04-29 23:09:14,721 | INFO | Results file: C:\AI Projects\01_Apps\Somni\somni_eval\output\results\run_results_2026_04_29_230914_v1.csv
+2026-04-29 23:09:14,722 | INFO | Run log: C:\AI Projects\01_Apps\Somni\somni_eval\output\logs\2026_04_29_230914_v1.log
+2026-04-29 23:09:14,722 | INFO | Error log: C:\AI Projects\01_Apps\Somni\somni_eval\output\logs\2026_04_29_230914_v1.errors.log
+2026-04-29 23:09:14,722 | INFO | [1/110] Sending Q001 using persona 'gentle'.
+2026-04-29 23:09:20,621 | INFO | [1/110] Wrote result for Q001 with status=success.
+2026-04-29 23:09:20,623 | INFO | Sleeping for 5 seconds before the next question.
+2026-04-29 23:09:25,623 | INFO | [2/110] Sending Q002 using persona 'gentle'.
+2026-04-29 23:09:32,733 | INFO | [2/110] Wrote result for Q002 with status=success.
+2026-04-29 23:09:32,733 | INFO | Sleeping for 5 seconds before the next question.
+2026-04-29 23:09:37,734 | INFO | [3/110] Sending Q003 using persona 'balanced'.
+2026-04-29 23:09:42,304 | INFO | [3/110] Wrote result for Q003 with status=success.
+2026-04-29 23:09:42,305 | INFO | Sleeping for 5 seconds before the next question.
+2026-04-29 23:09:47,305 | INFO | [4/110] Sending Q004 using persona 'gentle'.
+2026-04-29 23:09:51,482 | INFO | [4/110] Wrote result for Q004 with status=success.
+2026-04-29 23:09:51,483 | INFO | Sleeping for 5 seconds before the next question.
+2026-04-29 23:09:56,483 | INFO | [5/110] Sending Q005 using persona 'balanced'.
+2026-04-29 23:10:00,828 | INFO | [5/110] Wrote result for Q005 with status=success.
+2026-04-29 23:10:00,828 | INFO | Sleeping for 5 seconds before the next question.
+2026-04-29 23:10:05,829 | INFO | [6/110] Sending Q006 using persona 'fast-track'.
+2026-04-29 23:10:09,811 | INFO | [6/110] Wrote result for Q006 with status=success.
+2026-04-29 23:10:09,812 | INFO | Sleeping for 5 seconds before the next question.
+2026-04-29 23:10:14,813 | INFO | [7/110] Sending Q007 using persona 'balanced'.
+2026-04-29 23:10:24,390 | INFO | [7/110] Wrote result for Q007 with status=success.
+2026-04-29 23:10:24,390 | INFO | Sleeping for 5 seconds before the next question.
+2026-04-29 23:10:29,391 | INFO | [8/110] Sending Q008 using persona 'gentle'.
+2026-04-29 23:10:33,079 | INFO | [8/110] Wrote result for Q008 with status=success.
+2026-04-29 23:10:33,079 | INFO | Sleeping for 5 seconds before the next question.

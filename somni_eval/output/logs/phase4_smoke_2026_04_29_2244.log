@@ -1,0 +1,26 @@
+2026-04-29 22:44:05,231 | INFO | Run started | run_id=phase4_smoke_2026_04_29_2244 | questions=5 | resume=False
+2026-04-29 22:44:05,231 | INFO | Results file: C:\AI Projects\01_Apps\Somni\somni_eval\output\results\run_results_phase4_smoke_2026_04_29_2244.csv
+2026-04-29 22:44:05,231 | INFO | Run log: C:\AI Projects\01_Apps\Somni\somni_eval\output\logs\phase4_smoke_2026_04_29_2244.log
+2026-04-29 22:44:05,232 | INFO | Error log: C:\AI Projects\01_Apps\Somni\somni_eval\output\logs\phase4_smoke_2026_04_29_2244.errors.log
+2026-04-29 22:44:05,232 | INFO | [1/5] Sending Q001 using persona 'gentle'.
+2026-04-29 22:44:09,968 | INFO | [1/5] Wrote result for Q001 with status=success.
+2026-04-29 22:44:09,969 | INFO | [2/5] Sending Q002 using persona 'gentle'.
+2026-04-29 22:44:15,806 | INFO | [2/5] Wrote result for Q002 with status=success.
+2026-04-29 22:44:15,807 | INFO | [3/5] Sending Q003 using persona 'balanced'.
+2026-04-29 22:44:20,374 | INFO | [3/5] Wrote result for Q003 with status=success.
+2026-04-29 22:44:20,375 | INFO | [4/5] Sending Q004 using persona 'gentle'.
+2026-04-29 22:44:24,460 | INFO | [4/5] Wrote result for Q004 with status=success.
+2026-04-29 22:44:24,461 | INFO | [5/5] Sending Q005 using persona 'balanced'.
+2026-04-29 22:44:29,970 | INFO | [5/5] Wrote result for Q005 with status=success.
+2026-04-29 22:44:29,974 | INFO | Run finished.
+2026-04-29 22:44:29,975 | INFO | Summary | total_questions_in_scope=5
+2026-04-29 22:44:29,975 | INFO | Summary | rows_written=5
+2026-04-29 22:44:29,975 | INFO | Summary | successful_rows=5
+2026-04-29 22:44:29,976 | INFO | Summary | failed_rows=0
+2026-04-29 22:44:29,976 | INFO | Summary | average_latency_seconds=4.943
+2026-04-29 22:44:29,976 | INFO | Summary | slowest_rows=[{'question_id': 'Q002', 'latency_seconds': 5.836, 'ttft_seconds': 4.308}, {'question_id': 'Q005', 'latency_seconds': 5.505, 'ttft_seconds': 2.288}, {'question_id': 'Q001', 'latency_seconds': 4.731, 'ttft_seconds': 2.862}, {'question_id': 'Q003', 'latency_seconds': 4.563, 'ttft_seconds': 1.99}, {'question_id': 'Q004', 'latency_seconds': 4.079, 'ttft_seconds': 2.32}]
+2026-04-29 22:44:29,976 | INFO | Summary | average_stage_seconds={'primary_model_call': 3.579, 'primary_model_ttft': 1.804, 'embedding_creation': 0.484, 'persistence_database_write': 0.143, 'profile_context_load': 0.102, 'retrieval_total': 0.09, 'retrieval_rpc_vector_search': 0.081, 'profile_baby_lookup': 0.071}
+2026-04-29 22:44:29,977 | INFO | Summary | empty_success_responses=[]
+2026-04-29 22:44:29,977 | INFO | Summary | short_success_responses=[]
+2026-04-29 22:44:29,977 | INFO | Summary | incomplete_success_responses=['Q001', 'Q002', 'Q003', 'Q004']
+2026-04-29 22:44:29,977 | INFO | Summary | suspicious_duplicate_response_groups=0
