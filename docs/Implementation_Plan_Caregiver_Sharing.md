@@ -17,11 +17,11 @@ Currently, Somni's database model restricts access to a baby record solely to th
 **Goal:** Create the relational join schema and update RLS policies to permit shared read/write access.
 
 ### Tasks
-- [ ] **Task 1.1: Create `baby_shares` Table**
+- [x] **Task 1.1: Create `baby_shares` Table**
   - **Migration:** Add `supabase/migrations/20260714_add_baby_shares.sql`.
   - **Columns:** `id`, `baby_id` (foreign key), `profile_id` (foreign key, nullable until accepted), `email` (for invitations), `access_role` (`admin`, `caregiver`), `status` (`pending`, `accepted`), `created_at`.
   - **Constraints:** Unique index on `(baby_id, email)`.
-- [ ] **Task 1.2: Update Supabase RLS Policies**
+- [x] **Task 1.2: Update Supabase RLS Policies**
   - Update policies on `babies`, `sleep_logs`, `daily_plans`, `sleep_plan_profiles`, and `sleep_plan_change_events` to check if `auth.uid()` matches either the owner's `profile_id` OR has an `accepted` status row in `baby_shares`.
 
 ### Model Recommendations
