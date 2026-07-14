@@ -13,20 +13,22 @@ The goal of this phase is to elevate the **onboarding experience, copywriting, a
 **Goal:** Soften copy, add helpful context, and simplify technical dropdown descriptions.
 
 ### Tasks
-- [ ] **Task 1.1: Update Main Heading & Subtitle**
+- [x] **Task 1.1: Update Main Heading & Subtitle**
   - **File:** [onboarding/page.tsx](file:///c:/AI%20Projects/01_Apps/Somni/src/app/onboarding/page.tsx)
   - **Heading:** *"A few simple details to help Somni tailor your baby's plan."*
   - **Subtitle:** *"We ask these questions to tailor Somni to your baby's details and your parenting style."*
-- [ ] **Task 1.2: Update Step 2 (Style questionnaire) Intro**
+- [x] **Task 1.2: Update Step 2 (Style questionnaire) Intro**
   - **File:** [OnboardingForm.tsx](file:///c:/AI%20Projects/01_Apps/Somni/src/components/onboarding/OnboardingForm.tsx)
   - **Intro Text:** *"Somni will adapt to you as it gets to know you better. This is just a starting point to determine which coaching style suits your family best: gentle, balanced, or fast track. There is no right or wrong answer here."*
-- [ ] **Task 1.3: Add Subtitle Context**
+- [x] **Task 1.3: Add Subtitle Context**
   - **File:** [OnboardingForm.tsx](file:///c:/AI%20Projects/01_Apps/Somni/src/components/onboarding/OnboardingForm.tsx)
   - **Action:** Add a helpful subtitle below the *"How would you like the plan to feel?"* selector to explain that it sets the target pacing of sleep adjustments.
-- [ ] **Task 1.4: Simplify Select Options**
+- [x] **Task 1.4: Simplify Select Options**
   - **File:** [onboarding-preferences.ts](file:///c:/AI%20Projects/01_Apps/Somni/src/lib/onboarding-preferences.ts)
   - **Action:** Simplify night feeds option label (change *"Yes, night feeds are still part of things"* -> *"Yes, still feeding at night"*).
   - **Action:** Simplify day structure option label (change *"Mostly at home, so the day can stay flexible"* -> *"Mostly at home, flexible"*).
+
+
 
 ### Model Recommendations
 *   **Antigravity:** `Gemini 3.5 Flash (Low/Medium)` (Simple text changes, low reasoning needed)
