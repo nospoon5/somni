@@ -1,0 +1,20 @@
+{
+  "run_id": "2026_07_14_220836_v1",
+  "updated_at": "2026-07-14T12:09:12+00:00",
+  "status": "running",
+  "total_questions_in_scope": 110,
+  "completed_row_count": 8,
+  "successful_row_count": 8,
+  "failed_row_count": 0,
+  "completed_question_ids": [
+    "Q001",
+    "Q002",
+    "Q003",
+    "Q004",
+    "Q005",
+    "Q006",
+    "Q007",
+    "Q008"
+  ],
+  "last_completed_question_id": "Q008"
+}

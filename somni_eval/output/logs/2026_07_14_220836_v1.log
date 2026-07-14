@@ -1,0 +1,23 @@
+2026-07-14 22:08:36,868 | INFO | Run started | run_id=2026_07_14_220836_v1 | questions=110 | resume=False
+2026-07-14 22:08:36,868 | INFO | Results file: C:\AI Projects\01_Apps\Somni\somni_eval\output\results\run_results_2026_07_14_220836_v1.csv
+2026-07-14 22:08:36,868 | INFO | Run log: C:\AI Projects\01_Apps\Somni\somni_eval\output\logs\2026_07_14_220836_v1.log
+2026-07-14 22:08:36,868 | INFO | Error log: C:\AI Projects\01_Apps\Somni\somni_eval\output\logs\2026_07_14_220836_v1.errors.log
+2026-07-14 22:08:36,869 | INFO | [1/110] Sending Q001 using persona 'gentle'.
+2026-07-14 22:08:41,253 | INFO | [1/110] Wrote result for Q001 with status=success.
+2026-07-14 22:08:41,254 | INFO | Sleeping for 1 seconds before the next question.
+2026-07-14 22:08:42,255 | INFO | [2/110] Sending Q002 using persona 'gentle'.
+2026-07-14 22:08:45,417 | INFO | [2/110] Wrote result for Q002 with status=success.
+2026-07-14 22:08:45,417 | INFO | Sleeping for 1 seconds before the next question.
+2026-07-14 22:08:46,417 | INFO | [3/110] Sending Q003 using persona 'balanced'.
+2026-07-14 22:08:49,792 | INFO | [3/110] Wrote result for Q003 with status=success.
+2026-07-14 22:08:49,792 | INFO | Sleeping for 1 seconds before the next question.
+2026-07-14 22:08:50,792 | INFO | [4/110] Sending Q004 using persona 'gentle'.
+2026-07-14 22:08:54,365 | INFO | [4/110] Wrote result for Q004 with status=success.
+2026-07-14 22:08:54,365 | INFO | Sleeping for 1 seconds before the next question.
+2026-07-14 22:08:55,366 | INFO | [5/110] Sending Q005 using persona 'balanced'.
+2026-07-14 22:08:58,823 | INFO | [5/110] Wrote result for Q005 with status=success.
+2026-07-14 22:08:58,823 | INFO | Sleeping for 1 seconds before the next question.
+2026-07-14 22:08:59,824 | INFO | [6/110] Sending Q006 using persona 'fast-track'.
+2026-07-14 22:09:03,353 | INFO | [6/110] Wrote result for Q006 with status=success.
+2026-07-14 22:09:03,353 | INFO | Sleeping for 1 seconds before the next question.
+2026-07-14 22:09:04,353 | INFO | [7/110] Sending Q007 using persona 'balanced'.

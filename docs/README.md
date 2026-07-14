@@ -10,6 +10,12 @@ This folder keeps the current working documentation and active plans. Completed 
 - [Chat_QA_and_Testing_Plan.md](file:///c:/AI%20Projects/01_Apps/Somni/docs/Chat_QA_and_Testing_Plan.md)
   The testing and evaluation framework to verify and polish the conversational coaching quality.
 
+- [Implementation_Plan_Caregiver_Sharing.md](file:///c:/AI%20Projects/01_Apps/Somni/docs/Implementation_Plan_Caregiver_Sharing.md)
+  Plan for building shared accounts and co-parenting logs/profiles.
+
+- [Implementation_Plan_Support_Dashboard.md](file:///c:/AI%20Projects/01_Apps/Somni/docs/Implementation_Plan_Support_Dashboard.md)
+  Plan for building a secure, internal support ticket viewer for triage.
+
 ## Core Product Guides
 
 - [somni_context.md](file:///c:/AI%20Projects/01_Apps/Somni/docs/somni_context.md)
