@@ -17,11 +17,12 @@ Currently, Somni logs user feedback and errors through a public support form dir
 **Goal:** Add administrative role attributes to user profiles and secure the support queries.
 
 ### Tasks
-- [ ] **Task 1.1: Add `is_admin` Column**
-  - **Migration:** Add `supabase/migrations/20260714_add_admin_flag.sql`.
+- [x] **Task 1.1: Add `is_admin` Column**
+  - **Migration:** Added `supabase/migrations/202607141500_add_admin_flag.sql`.
   - **Action:** Add `is_admin` boolean column to the `profiles` table, defaulting to `false`. Seed your specific developer profile ID to `true`.
-- [ ] **Task 1.2: Support Tickets RLS updates**
+- [x] **Task 1.2: Support Tickets RLS updates**
   - **Action:** Update RLS on the `support_tickets` table so that normal users can only `INSERT` (submit tickets), but profiles with `is_admin = true` can `SELECT` and `UPDATE` all tickets.
+  - **Security:** Authenticated users retain updates to ordinary profile fields but cannot change `is_admin` themselves.
 
 ### Model Recommendations
 *   **Antigravity:** `Claude Sonnet 4.6`
@@ -33,9 +34,10 @@ Currently, Somni logs user feedback and errors through a public support form dir
 **Goal:** Secure the `/admin` path at the routing/server component level.
 
 ### Tasks
-- [ ] **Task 2.1: Admin Verification Guard**
-  - **File:** `src/middleware.ts` or a server-side helper `src/lib/admin/guard.ts`.
-  - **Action:** Verify the authenticated user session has `is_admin = true` in their profile. If not, redirect immediately to `/dashboard` with a 403 status.
+- [x] **Task 2.1: Admin Verification Guard**
+  - **Files:** `src/lib/admin/guard.ts` and `src/app/admin/layout.tsx`.
+  - **Action:** Verify the authenticated user session has `is_admin = true` in their profile. If not, redirect immediately to `/dashboard`.
+  - **Security:** Every admin Server Action and Route Handler must also call `requireAdmin()` because a layout is not sufficient authorization for a direct mutation request.
 
 ### Model Recommendations
 *   **Antigravity:** `Claude Sonnet 4.6` or `Gemini 3.1 Pro (High)`
