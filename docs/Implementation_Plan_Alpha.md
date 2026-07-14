@@ -40,13 +40,13 @@ The goal of this phase is to elevate the **onboarding experience, copywriting, a
 **Goal:** Fix visual bugs (calendar icon contrast, dropdown overflows) and refactor grid to a modern, centered single-column layout.
 
 ### Tasks
-- [ ] **Task 2.1: Fix Date Input Calendar Contrast**
+- [x] **Task 2.1: Fix Date Input Calendar Contrast**
   - **File:** [OnboardingForm.module.css](file:///c:/AI%20Projects/01_Apps/Somni/src/components/onboarding/OnboardingForm.module.css)
   - **Action:** Add `color-scheme: dark;` to the date input (`.field input[type="date"]`) so the calendar icon is visible (white instead of black) on dark backgrounds.
-- [ ] **Task 2.2: Standardize Field Widths & Prevent Overhangs**
+- [x] **Task 2.2: Standardize Field Widths & Prevent Overhangs**
   - **File:** [OnboardingForm.module.css](file:///c:/AI%20Projects/01_Apps/Somni/src/components/onboarding/OnboardingForm.module.css)
   - **Action:** Ensure all `.field input` and `.field select` have `width: 100%`, `max-width: 100%`, and `box-sizing: border-box` to prevent the "nap pattern" dropdown from overflowing its container.
-- [ ] **Task 2.3: Convert Grid to Premium Single-Column Layout**
+- [x] **Task 2.3: Convert Grid to Premium Single-Column Layout**
   - **File:** [OnboardingForm.module.css](file:///c:/AI%20Projects/01_Apps/Somni/src/components/onboarding/OnboardingForm.module.css)
   - **Action:** Refactor the 2-column `.fieldGrid` layout into a centered, single-column container with a maximum width (`max-width: 500px; margin: 0 auto;`) for a cleaner, more focused feel.
 
@@ -60,7 +60,7 @@ The goal of this phase is to elevate the **onboarding experience, copywriting, a
 **Goal:** Make the 1-10 slider scales intuitive by providing descriptive text anchors at both ends of the scale.
 
 ### Tasks
-- [ ] **Task 3.1: Define Slider Anchor Objects**
+- [x] **Task 3.1: Define Slider Anchor Objects**
   - **File:** [OnboardingForm.tsx](file:///c:/AI%20Projects/01_Apps/Somni/src/components/onboarding/OnboardingForm.tsx)
   - **Action:** Map the 5 questions to descriptive anchors instead of simple numeric prompts:
     1. **Approach to progress:** Left: *"Very gentle, even if progress takes longer"* | Right: *"Fastest progress, comfortable with a stricter approach"*
@@ -68,7 +68,7 @@ The goal of this phase is to elevate the **onboarding experience, copywriting, a
     3. **Responsiveness vs. Structure:** Left: *"Prioritize high responsiveness/soothing"* | Right: *"Prioritize structure/independent sleep"*
     4. **Pacing of changes:** Left: *"Small, gradual changes over time"* | Right: *"A quick, comprehensive reset"*
     5. **Comfort with faster methods:** Left: *"Cautious, prefer to avoid fast methods"* | Right: *"Ready to try faster methods if safe"*
-- [ ] **Task 3.2: Update Slider Layout**
+- [x] **Task 3.2: Update Slider Layout**
   - **File:** [OnboardingForm.tsx](file:///c:/AI%20Projects/01_Apps/Somni/src/components/onboarding/OnboardingForm.tsx) and [OnboardingForm.module.css](file:///c:/AI%20Projects/01_Apps/Somni/src/components/onboarding/OnboardingForm.module.css)
   - **Action:** Render these labels on either side of the slider row. Ensure text wraps cleanly and doesn't overlap on mobile viewports.
 
