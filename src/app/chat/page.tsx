@@ -31,7 +31,6 @@ export default async function ChatPage() {
   const { data: baby } = await supabase
     .from('babies')
     .select('name')
-    .eq('profile_id', user.id)
     .order('created_at', { ascending: true })
     .limit(1)
     .maybeSingle()

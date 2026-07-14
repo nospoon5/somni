@@ -1,0 +1,46 @@
+.page {
+  min-height: 100vh;
+  padding: 24px 18px 40px;
+  background: var(--color-bg);
+}
+
+.card {
+  width: min(540px, 100%);
+  margin: 10vh auto 0;
+  padding: 34px 28px;
+  display: grid;
+  gap: 20px;
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.body {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.error {
+  color: var(--color-error);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.actions :global(.btn-primary),
+.actions :global(.btn-secondary) {
+  width: 100%;
+}

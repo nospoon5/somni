@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { logoutAction } from '@/app/auth-actions'
 import { createClient } from '@/lib/supabase/server'
 import { ensureSubscriptionRecord, hasPremiumAccess } from '@/lib/billing/subscriptions'
+import { CaregiverSettings } from '@/components/profile/CaregiverSettings'
 import styles from './page.module.css'
 
 export default async function ProfilePage() {
@@ -31,6 +32,45 @@ export default async function ProfilePage() {
   })
 
   const premium = hasPremiumAccess(subscription)
+
+  const { data: ownedBaby } = await supabase
+    .from('babies')
+    .select('id, name')
+    .eq('profile_id', user.id)
+    .order('created_at', { ascending: true })
+    .limit(1)
+    .maybeSingle()
+
+  interface DBShareRow {
+    id: string
+    email: string
+    access_role: 'admin' | 'caregiver'
+    status: 'pending' | 'accepted'
+    profile_id: string | null
+    profiles: {
+      full_name: string | null
+    } | null
+  }
+
+  let sharesData: DBShareRow[] = []
+  if (ownedBaby) {
+    const { data: shares } = await supabase
+      .from('baby_shares')
+      .select('id, email, access_role, status, profile_id, profiles(full_name)')
+      .eq('baby_id', ownedBaby.id)
+    sharesData = (shares as unknown as DBShareRow[]) || []
+  }
+
+  const formattedShares = sharesData.map((share) => ({
+    id: share.id,
+    email: share.email,
+    access_role: share.access_role,
+    status: share.status,
+    profile_id: share.profile_id,
+    fullName: share.profiles?.full_name ?? null,
+  }))
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://127.0.0.1:3000'
 
   return (
     <main className={styles.page}>
@@ -68,6 +108,15 @@ export default async function ProfilePage() {
             </Link>
           </div>
         </article>
+
+        {ownedBaby ? (
+          <CaregiverSettings
+            babyId={ownedBaby.id}
+            babyName={ownedBaby.name}
+            shares={formattedShares}
+            appUrl={appUrl}
+          />
+        ) : null}
 
         <article className={`${styles.section} card`}>
           <h2 className={`${styles.sectionTitle} text-display`}>Session</h2>

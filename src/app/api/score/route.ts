@@ -28,7 +28,6 @@ export async function GET() {
   const { data: baby } = await supabase
     .from('babies')
     .select('id, date_of_birth')
-    .eq('profile_id', user.id)
     .order('created_at', { ascending: true })
     .limit(1)
     .maybeSingle()

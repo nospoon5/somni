@@ -100,7 +100,6 @@ export async function POST(request: Request) {
       supabase
         .from('babies')
         .select('id, name, date_of_birth, ai_memory, biggest_issue, feeding_type, bedtime_range')
-        .eq('profile_id', user.id)
         .order('created_at', { ascending: true })
         .limit(1)
         .maybeSingle(),

@@ -34,13 +34,13 @@ Currently, Somni's database model restricts access to a baby record solely to th
 **Goal:** Build invite creation, acceptance, and authorization helper logic.
 
 ### Tasks
-- [ ] **Task 2.1: Invite Generation Helper**
+- [x] **Task 2.1: Invite Generation Helper**
   - **File:** `src/app/profile/actions.ts`
   - **Action:** Create `inviteCaregiverAction(babyId, email)`. Write a pending row to `baby_shares`.
-- [ ] **Task 2.2: Acceptance Verification Route**
+- [x] **Task 2.2: Acceptance Verification Route**
   - **File:** `src/app/invite/accept/page.tsx`
   - **Action:** Read the invite code/ID, verify the logged-in user matches the target email, and update status to `accepted` in `baby_shares`.
-- [ ] **Task 2.3: Modify Authorization Queries**
+- [x] **Task 2.3: Modify Authorization Queries**
   - Audit database fetch helpers in `src/lib/daily-plan-derivation.ts` and `src/lib/sleep-plan-profile.ts` to query through shared rights.
 
 ### Model Recommendations
@@ -53,7 +53,7 @@ Currently, Somni's database model restricts access to a baby record solely to th
 **Goal:** Create the parent-facing invite screens.
 
 ### Tasks
-- [ ] **Task 3.1: Profile Caregiver List**
+- [x] **Task 3.1: Profile Caregiver List**
   - **File:** `src/components/profile/CaregiverSettings.tsx`
   - **Action:** Display currently linked caregivers, their statuses (`pending`/`accepted`), and a form to invite a new caregiver.
 - [ ] **Task 3.2: Verification & Real-time Check**

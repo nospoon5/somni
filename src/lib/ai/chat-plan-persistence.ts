@@ -289,7 +289,6 @@ export async function persistAiMemoryAfterChat(args: PersistAiMemoryArgs) {
       .from('babies')
       .select('ai_memory')
       .eq('id', args.babyId)
-      .eq('profile_id', args.profileId)
       .maybeSingle()
 
     if (babyReadError) {
@@ -311,7 +310,6 @@ export async function persistAiMemoryAfterChat(args: PersistAiMemoryArgs) {
       .from('babies')
       .update({ ai_memory: updatedMemory })
       .eq('id', args.babyId)
-      .eq('profile_id', args.profileId)
 
     if (updateError) {
       throw updateError

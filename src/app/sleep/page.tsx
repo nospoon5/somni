@@ -30,7 +30,6 @@ export default async function SleepPage() {
   const { data: baby } = await supabase
     .from('babies')
     .select('id, name, date_of_birth')
-    .eq('profile_id', user.id)
     .order('created_at', { ascending: true })
     .limit(1)
     .maybeSingle()
