@@ -56,7 +56,7 @@ Currently, Somni's database model restricts access to a baby record solely to th
 - [x] **Task 3.1: Profile Caregiver List**
   - **File:** `src/components/profile/CaregiverSettings.tsx`
   - **Action:** Display currently linked caregivers, their statuses (`pending`/`accepted`), and a form to invite a new caregiver.
-- [ ] **Task 3.2: Verification & Real-time Check**
+- [x] **Task 3.2: Verification & Real-time Check**
   - Ensure that changes saved by Caregiver A (e.g., logging a nap) instantly reflect on Caregiver B's dashboard.
 
 ### Model Recommendations
