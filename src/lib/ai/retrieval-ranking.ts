@@ -64,6 +64,7 @@ export type RetrievalDiagnostics = {
   selectedCount: number
   intents: RetrievalIntentSignal[]
   candidates: RetrievalDiagnosticCandidate[]
+  selectedEvidence?: RetrievalDiagnosticEvidence[]
   timing?: {
     rpcSeconds?: number
     fallbackFetchSeconds?: number

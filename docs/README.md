@@ -1,55 +1,50 @@
 # Somni Docs Guide
 
-This folder now keeps the current working docs only. Older handoff notes, superseded plans,
-and one-off prompt files have been moved to `archive/`.
+This folder keeps the current working documentation and active plans. Completed implementation plans, legacy reviews, and deprecated test sheets have been moved to [archive/](file:///c:/AI%20Projects/01_Apps/Somni/archive/).
 
-## Read these first
+## Living Plans (Start here)
 
-- `somni_context.md`
-  What Somni is, who it is for, what is live today, and what we are trying to improve next.
+- [Implementation_Plan_Alpha.md](file:///c:/AI%20Projects/01_Apps/Somni/docs/Implementation_Plan_Alpha.md)
+  The active next-step execution plan for Pathway 1 (UX/Copy Polish & Beta Launch). Keep this updated as tasks are completed.
 
-- `somni_architecture.md`
-  Technical source of truth for routes, data model, integrations, and system behavior.
+- [Chat_QA_and_Testing_Plan.md](file:///c:/AI%20Projects/01_Apps/Somni/docs/Chat_QA_and_Testing_Plan.md)
+  The testing and evaluation framework to verify and polish the conversational coaching quality.
 
-- `somni_implementation_plan_v7.md`
-  The current next-step execution plan. Each section is designed to be worked in a separate
-  Codex chat.
+## Core Product Guides
 
-- `somni_verification_checklist.md`
-  The minimum post-change checks to keep quality gates and docs consistency reliable.
+- [somni_context.md](file:///c:/AI%20Projects/01_Apps/Somni/docs/somni_context.md)
+  What Somni is, who it is for, product principles, and live features.
 
-- `somni_ai_quality_hardening.md`
-  The current retrieval weakness list, diagnostics hooks, and targeted regression checks.
+- [somni_architecture.md](file:///c:/AI%20Projects/01_Apps/Somni/docs/somni_architecture.md)
+  Technical source of truth for routes, schemas, dynamic adapters, and background flows.
 
-## Supporting current docs
+- [somni_ai_persona.md](file:///c:/AI%20Projects/01_Apps/Somni/docs/somni_ai_persona.md)
+  Tone of voice, style guides, and response constraints for the coach.
 
-- `somni_ai_persona.md`
-  Tone and coaching style for the assistant.
+- [somni_corpus_plan.md](file:///c:/AI%20Projects/01_Apps/Somni/docs/somni_corpus_plan.md)
+  Rules for the curated knowledge base and sleep corpus.
 
-- `somni_implementation_plan_v6.md`
-  Recent UX and dashboard planning work, including the current baseline-plan implementation.
+- [TEST_ACCOUNTS.md](file:///c:/AI%20Projects/01_Apps/Somni/docs/TEST_ACCOUNTS.md)
+  Pre-created archetype accounts for local and end-to-end testing.
 
-- `somni_corpus_plan.md`
-  Rules for the curated sleep corpus and retrieval quality expectations.
+## Checklists & Operations
 
-- `somni_implementation_plan_v4.md`
-  Completed AI and RAG improvement work for Stages 11 to 14.
+- [somni_verification_checklist.md](file:///c:/AI%20Projects/01_Apps/Somni/docs/somni_verification_checklist.md)
+  The checklist to run before and after making codebase changes.
 
-- `somni_rag_test_cases.md`
-  Somni evaluation prompts.
+- [somni_release_checklist.md](file:///c:/AI%20Projects/01_Apps/Somni/docs/somni_release_checklist.md)
+  Production checklist for staging releases and feature gates.
 
-- `somni_rag_test_cases_Chatgpt.md`
-  Baseline comparison responses.
+- [somni_support_triage.md](file:///c:/AI%20Projects/01_Apps/Somni/docs/somni_support_triage.md)
+  Triage guidelines for handling logged support forms.
 
-- `somni_rag_evaluation_v2_comparison.md`
-  Latest scored comparison summary.
+## Document Precedence
 
-## Document precedence
+If two current docs disagree on system behavior:
 
-If two current docs disagree:
+1. [somni_architecture.md](file:///c:/AI%20Projects/01_Apps/Somni/docs/somni_architecture.md)
+2. [Implementation_Plan_Alpha.md](file:///c:/AI%20Projects/01_Apps/Somni/docs/Implementation_Plan_Alpha.md)
+3. [somni_context.md](file:///c:/AI%20Projects/01_Apps/Somni/docs/somni_context.md)
 
-1. `somni_architecture.md`
-2. `somni_implementation_plan_v7.md`
-3. `somni_context.md`
+If a codebase change alters system behavior, update the relevant documentation in the same work stream.
 
-If a change in the code makes a current doc wrong, update the doc in the same work stream.

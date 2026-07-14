@@ -22,6 +22,10 @@ import { parseNightFeeds } from '@/lib/onboarding-preferences'
 import { CHAT_MODEL, clampChatMessage, streamGeminiResponse } from '@/lib/ai/gemini'
 import { persistAiMemoryAfterChat, saveChatPlanUpdates } from '@/lib/ai/chat-plan-persistence'
 import {
+  buildCompleteFallbackResponse,
+  looksIncompleteAssistantResponse,
+} from '@/lib/ai/response-completeness'
+import {
   containsForbiddenResponsePhrase,
   containsUnsafeMedicationPermission,
   createResponseTokenFilter,
@@ -40,27 +44,6 @@ import {
 } from '@/lib/ai/chat-sources'
 import { readChatMessage, resolveConversationId, type ChatRequestBody } from '@/lib/ai/chat-request'
 import { createLatencyTimer } from '@/lib/ai/latency-timing'
-
-function looksIncompleteAssistantResponse(text: string) {
-  const stripped = text.trim()
-  if (!stripped) {
-    return true
-  }
-
-  if (stripped.split(/\s+/).length < 60) {
-    return true
-  }
-
-  if (
-    ['check-in:', 'check in:', 'what to try tonight:'].some((ending) =>
-      stripped.toLowerCase().endsWith(ending)
-    )
-  ) {
-    return true
-  }
-
-  return !/[.!?)"']$/.test(stripped)
-}
 
 export async function POST(request: Request) {
   const timing = createLatencyTimer()
@@ -556,6 +539,15 @@ export async function POST(request: Request) {
               retriedMessage && !containsConflictingQuestionAge(retriedMessage, questionStatedAge)
                 ? retriedMessage
                 : rewriteConflictingQuestionAge(primaryAssistantMessage, questionStatedAge)
+            replacePrimaryMessage = true
+          }
+
+          if (looksIncompleteAssistantResponse(primaryAssistantMessage)) {
+            retryReasons.push('final_incomplete_fallback_used')
+            primaryAssistantMessage = buildCompleteFallbackResponse({
+              babyName: baby.name,
+              medicationContext: hasMedicationContext(message),
+            })
             replacePrimaryMessage = true
           }
 
