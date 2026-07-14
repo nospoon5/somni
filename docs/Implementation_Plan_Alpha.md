@@ -82,10 +82,10 @@ The goal of this phase is to elevate the **onboarding experience, copywriting, a
 **Goal:** Soften dashboard copy and guarantee smooth responsiveness on 375px wide screens.
 
 ### Tasks
-- [ ] **Task 4.1: Soften Daily Plan Summary Copy**
+- [x] **Task 4.1: Soften Daily Plan Summary Copy**
   - **File:** [DailyPlanPanel.tsx](file:///c:/AI%20Projects/01_Apps/Somni/src/components/dashboard/DailyPlanPanel.tsx)
   - **Action:** Replace technical phrases (e.g. *"This is the shared plan Somni is keeping in sync today"*) with warmer, parent-centric copy.
-- [ ] **Task 4.2: Spacing & Layout Check (375px Viewport)**
+- [x] **Task 4.2: Spacing & Layout Check (375px Viewport)**
   - **Action:** Audit `/dashboard`, `/chat`, `/sleep`, and `/support` on a 375px simulated mobile viewport. Adjust padding, margin, and font sizes where needed to eliminate awkward overflows.
 
 ### Model Recommendations
@@ -98,11 +98,11 @@ The goal of this phase is to elevate the **onboarding experience, copywriting, a
 **Goal:** Hook up and test real payment redirection and webhook processing.
 
 ### Tasks
-- [ ] **Task 5.1: Review Stripe Env Configuration**
+- [x] **Task 5.1: Review Stripe Env Configuration**
   - **Action:** Verify public and secret Stripe keys are correctly mapped.
-- [ ] **Task 5.2: Test Stripe Checkout Redirect & Portal**
+- [x] **Task 5.2: Test Stripe Checkout Redirect & Portal**
   - **Action:** Verify checking out transitions cleanly to Stripe and back to the app `/dashboard`.
-- [ ] **Task 5.3: Webhook Verification**
+- [x] **Task 5.3: Webhook Verification**
   - **Action:** Verify local Stripe webhook listener updates the `subscriptions` table correctly when a mockup checkout is completed.
 
 ### Model Recommendations
