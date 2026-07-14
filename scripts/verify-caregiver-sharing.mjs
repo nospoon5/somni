@@ -65,6 +65,9 @@ async function run() {
 
   console.log("Successfully logged in both clients.");
 
+  const { data: { user: currentUser } } = await ownerClient.auth.getUser();
+  console.log(`Current logged in owner client user ID: ${currentUser?.id}, expected: ${ownerUser.user.id}`);
+
   console.log("Owner inserting a baby profile...");
   const { data: baby, error: babyError } = await ownerClient
     .from('babies')
