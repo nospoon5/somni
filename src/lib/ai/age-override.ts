@@ -217,3 +217,13 @@ export function rewriteConflictingQuestionAge(
 
   return rewritten
 }
+
+export function rewriteNewbornLabelForAgeBand(responseText: string, activeAgeBand: string) {
+  if (activeAgeBand === '0-3 months') {
+    return responseText
+  }
+
+  return responseText
+    .replace(/\bnewborns\b/gi, (match) => (match[0] === 'N' ? 'Babies' : 'babies'))
+    .replace(/\bnewborn\b/gi, (match) => (match[0] === 'N' ? 'Baby' : 'baby'))
+}

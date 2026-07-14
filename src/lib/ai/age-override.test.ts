@@ -4,9 +4,21 @@ import {
   containsConflictingQuestionAge,
   parseQuestionStatedAge,
   rewriteConflictingQuestionAge,
+  rewriteNewbornLabelForAgeBand,
 } from './age-override'
 
 describe('explicit latest-message age override', () => {
+  it('removes newborn wording when the active profile age is older', () => {
+    expect(
+      rewriteNewbornLabelForAgeBand(
+        'Newborns often feed frequently, but this newborn is now older.',
+        '6-12 months'
+      )
+    ).toBe('Babies often feed frequently, but this baby is now older.')
+    expect(rewriteNewbornLabelForAgeBand('This newborn is feeding.', '0-3 months')).toBe(
+      'This newborn is feeding.'
+    )
+  })
   it.each([
     ['Can my 8-month-old sleep with a stuffed animal yet?', '8 months', '6-12 months'],
     ['Can my 8 month old sleep with a stuffed animal yet?', '8 months', '6-12 months'],

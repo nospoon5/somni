@@ -33,7 +33,10 @@ describe('safety routing', () => {
 
     expect(safety.isEmergency).toBe(true)
     expect(safety.route).toBe('crisis')
+    expect(message).toContain('safest choice here, not a failure')
+    expect(message).toContain('Call someone you trust')
     expect(message).toContain('PANDA')
     expect(message).toContain('Sleep coaching can wait')
+    expect(message).not.toContain('What to try')
   })
 })

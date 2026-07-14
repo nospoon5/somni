@@ -84,19 +84,23 @@ describe('buildCompleteFallbackResponse', () => {
     const fallback = buildCompleteFallbackResponse({ babyName: 'Ari' })
 
     expect(looksIncompleteAssistantResponse(fallback)).toBe(false)
-    expect(fallback).toContain('What to try tonight:')
-    expect(fallback).toContain('Check-in:')
+    expect(fallback).toContain('exact sticking point for Ari')
+    expect(fallback.match(/\?/g)).toHaveLength(1)
+    expect(fallback).not.toContain('What to try tonight:')
+    expect(fallback).not.toContain('Check-in:')
   })
 
   it('adds medication boundaries when the original question involved medication', () => {
     const fallback = buildCompleteFallbackResponse({
       babyName: 'Aria',
       medicationContext: true,
+      medicationBoundary:
+        "You were right to check. Do not give melatonin unless your child's GP or pharmacist has specifically recommended it.",
     })
 
-    expect(fallback).toContain('Medication note:')
-    expect(fallback).toContain('label and age/weight instructions')
-    expect(fallback).toContain('GP, pharmacist, or child health nurse')
+    expect(fallback).toContain('Do not give melatonin')
+    expect(fallback).toContain('GP or pharmacist')
+    expect(fallback).not.toContain('Medication note:')
     expect(fallback).not.toMatch(/absolutely use|yes,\s+you can|safe to give/i)
   })
 })

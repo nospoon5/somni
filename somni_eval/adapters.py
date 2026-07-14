@@ -346,6 +346,7 @@ def _read_sse_response_text(response: requests.Response, request_started_at: flo
     event_lines: list[str] = []
     streamed_messages: dict[int, str] = {}
     done_messages: dict[int, str] = {}
+    replaced_message_indexes: set[int] = set()
     done_retrieval: dict[str, object] | None = None
     done_sources: list[object] | None = None
     done_confidence = ""
@@ -368,6 +369,8 @@ def _read_sse_response_text(response: requests.Response, request_started_at: flo
             if isinstance(payload.get("message"), str):
                 message_index = _parse_message_index(payload.get("message_index"))
                 done_messages[message_index] = payload["message"]
+                if payload.get("replace_message") is True:
+                    replaced_message_indexes.add(message_index)
             retrieval = payload.get("retrieval")
             if isinstance(retrieval, dict):
                 done_retrieval = retrieval
@@ -409,7 +412,11 @@ def _read_sse_response_text(response: requests.Response, request_started_at: flo
     if error_message:
         raise RetryableAdapterError(f"Chat stream error: {error_message}")
 
-    final_message = _combine_sse_messages(streamed_messages, done_messages)
+    final_message = _combine_sse_messages(
+        streamed_messages,
+        done_messages,
+        replaced_message_indexes,
+    )
     if not final_message:
         raise RetryableAdapterError("Chat stream finished without a usable response message.")
 
@@ -446,10 +453,12 @@ def _is_complete_message(text: str) -> bool:
     return stripped[-1] in ".!?)\"'"
 
 
-def _best_message_part(streamed_text: str, done_text: str) -> str:
+def _best_message_part(streamed_text: str, done_text: str, force_done: bool = False) -> str:
     streamed_text = streamed_text.strip()
     done_text = done_text.strip()
 
+    if force_done and done_text:
+        return done_text
     if not streamed_text:
         return done_text
     if not done_text:
@@ -463,10 +472,19 @@ def _best_message_part(streamed_text: str, done_text: str) -> str:
     return streamed_text
 
 
-def _combine_sse_messages(streamed_messages: dict[int, str], done_messages: dict[int, str]) -> str:
+def _combine_sse_messages(
+    streamed_messages: dict[int, str],
+    done_messages: dict[int, str],
+    replaced_message_indexes: set[int] | None = None,
+) -> str:
+    replaced_message_indexes = replaced_message_indexes or set()
     message_indexes = sorted(set(streamed_messages) | set(done_messages))
     parts = [
-        _best_message_part(streamed_messages.get(index, ""), done_messages.get(index, ""))
+        _best_message_part(
+            streamed_messages.get(index, ""),
+            done_messages.get(index, ""),
+            force_done=index in replaced_message_indexes,
+        )
         for index in message_indexes
     ]
     return "\n\n".join(part for part in parts if part.strip()).strip()

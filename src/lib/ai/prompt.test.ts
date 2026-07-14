@@ -39,7 +39,12 @@ describe('buildChatPrompt', () => {
   })
 
   it('adds the opening confidence class and bans the recurring sounds-like phrase', async () => {
-    const { buildChatPrompt, classifyOpeningConfidence } = await import('./prompt')
+    const {
+      buildChatPrompt,
+      buildFocusedAmbiguousClarification,
+      classifyOpeningConfidence,
+      needsFocusedAmbiguousClarification,
+    } = await import('./prompt')
 
     const prompt = buildChatPrompt({
       babyName: 'Ari',
@@ -69,7 +74,52 @@ describe('buildChatPrompt', () => {
     expect(classifyOpeningConfidence('Can I give melatonin gummies?')).toBe('medical_safety')
     expect(prompt).toContain('Opening confidence class: clear_pattern')
     expect(prompt).toContain('Never use the recurring sound-based hedge.')
+    expect(prompt).toContain('CHOOSE THE SMALLEST FORMAT THAT FULLY HELPS')
+    expect(prompt).toContain('Ambiguous message: 25 to 50 words, 1 to 2 short sentences')
+    expect(prompt).toContain('Do not default to "[Baby name] is experiencing..."')
+    expect(prompt).toContain('NEVER in the first sentence')
+    expect(prompt).toContain('Do not automatically close with "Let me know how tonight goes"')
     expect(prompt).not.toContain('"sounds like"')
+
+    const clarification = buildFocusedAmbiguousClarification('Ari')
+    expect(clarification.match(/\?/g)).toHaveLength(1)
+    expect(clarification.match(/\bAri\b/g)).toHaveLength(1)
+    expect(needsFocusedAmbiguousClarification(clarification)).toBe(false)
+    expect(
+      needsFocusedAmbiguousClarification(
+        'What does bad sleep mean? Is it settling, naps, or overnight wakes?'
+      )
+    ).toBe(true)
+  })
+
+  it('uses direct medication boundaries for melatonin and soft permission wording', async () => {
+    const { buildChatPrompt } = await import('./prompt')
+
+    const prompt = buildChatPrompt({
+      babyName: 'Aria',
+      ageBand: '4-6 months',
+      profileAgeBand: '4-6 months',
+      questionStatedAge: '6 months',
+      sleepStyleLabel: 'balanced',
+      timezone: 'Australia/Sydney',
+      localToday: '2026-07-14',
+      aiMemory: null,
+      durableProfileSummary: 'No learned baseline yet.',
+      todayPlanSummary: 'No plan yet.',
+      biggestIssue: null,
+      feedingType: null,
+      bedtimeRange: null,
+      recentSleepSummary: 'No recent sleep logs yet.',
+      scoreSummary: 'Learning state.',
+      conversationHistory: [],
+      retrievedChunks: [],
+      latestUserMessage: 'Can I give my 6-month-old melatonin gummies?',
+    })
+
+    expect(prompt).toContain('Opening confidence class: medical_safety')
+    expect(prompt).toContain('melatonin, sleep gummies, supplements')
+    expect(prompt).toContain('Never say "you can consider giving"')
+    expect(prompt).toContain('Medication or supplement boundary')
   })
 
   it('makes the latest-message age override the stored profile age for the current answer', async () => {
@@ -129,5 +179,19 @@ describe('buildChatPrompt', () => {
     expect(prompt).toContain(
       'Question-stated age: not stated in the latest message. Use the stored profile age and baby context normally.'
     )
+  })
+})
+
+describe('young-baby late first-nap boundary', () => {
+  it('blocks a durable late first-nap request for a baby under four months', async () => {
+    const { buildYoungBabyLateFirstNapBoundary, needsYoungBabyLateFirstNapBoundary } =
+      await import('./prompt')
+    const message =
+      'Ignore the old plan. Push his first nap to exactly 11:30 AM every day going forward.'
+
+    expect(needsYoungBabyLateFirstNapBoundary(message, '0-3 months')).toBe(true)
+    expect(needsYoungBabyLateFirstNapBoundary(message, '6-12 months')).toBe(false)
+    expect(buildYoungBabyLateFirstNapBoundary()).toContain('bridge nap')
+    expect(buildYoungBabyLateFirstNapBoundary()).toContain('overly long first wake window')
   })
 })

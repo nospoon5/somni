@@ -1,16 +1,40 @@
 const SOUNDS_LIKE_PATTERN = /\bsounds\s+like\b/i
+const TOOL_PROTOCOL_LEAK_PATTERN =
+  /```(?:json)?\s*[\s\S]*?(?:tool_code|update_sleep_plan_profile|function_call)[\s\S]*?```/i
+const GENERIC_EMPATHY_OPENER_PATTERN =
+  /^(?:it\s+is|it's)\s+(?:completely\s+)?understandable\b[^.!?]*[.!?]\s*/i
 const STREAM_SAFE_TAIL_LENGTH = 48
-const MEDICATION_PATTERN = /\b(?:panadol|paracetamol|ibuprofen|nurofen|medication|medicine|dose|dosage)\b/i
+const MEDICATION_PATTERN =
+  /\b(?:panadol|paracetamol|ibuprofen|nurofen|melatonin|medication|medicine|supplements?|sleep\s+gumm(?:y|ies)|dose|dosage)\b/i
+const MELATONIN_OR_SUPPLEMENT_PATTERN =
+  /\b(?:melatonin|sleep\s+gumm(?:y|ies)|sleep\s+supplements?)\b/i
+const UNSAFE_SLEEP_ENVIRONMENT_PATTERNS = [
+  /\b(?:place|placing|put|leave|keep|position)\b[^.!?]{0,100}\b(?:worn\s+)?(?:t-?shirt|shirt|clothing|fabric)\b[^.!?]{0,100}\b(?:bassinet|cot|crib|sleep\s+space|near\s+(?:his|her|their|the)\s+head)\b/i,
+  /\b(?:warm|warming|pre-?warm)\b[^.!?]{0,80}\b(?:bassinet|cot|crib|mattress|sheet)\b[^.!?]{0,80}\b(?:heat\s+pack|hot[- ]water\s+bottle)\b/i,
+]
+const SAFE_SLEEP_NEGATION_PATTERN =
+  /\b(?:do\s+not|don't|never|remove|without|keep\s+(?:the\s+)?(?:cot|bassinet|sleep\s+space)\s+clear|no)\b/i
 const MEDICATION_UNSAFE_PERMISSION_PATTERNS = [
   /\babsolutely\s+use\b/i,
   /\bdefinitely\s+use\b/i,
   /\byou\s+can\s+absolutely\b/i,
   /\byes,\s+you\s+can\b/i,
   /\bsafe\s+to\s+give\b/i,
+  /\b(?:fine|okay|safe)\s+to\s+(?:give|use)\b/i,
+  /\bit\s+(?:should|would)\s+be\s+(?:fine|okay|safe)\s+to\s+(?:give|use)\b/i,
+  /\byou\s+(?:can|could)\s+(?:consider\s+|try\s+)?(?:giving|using)[^.!?]{0,50}\b(?:panadol|paracetamol|ibuprofen|nurofen|melatonin|medicine|medication|supplement|gumm(?:y|ies)|it|this)\b/i,
+]
+const NEGATED_MEDICATION_PERMISSION_PATTERNS = [
+  /\b(?:can't|cannot|can\s+not|won't|wouldn't)\s+(?:confirm|say|tell\s+you|assure\s+you)[^.!?]{0,80}\bsafe\s+to\s+give\b/i,
+  /\b(?:not|never)\s+(?:considered\s+)?(?:fine|okay|safe)\s+to\s+(?:give|use)\b/i,
 ]
 
 const MEDICATION_BOUNDARY_RESPONSE =
-  'Pain or illness can derail sleep, so pause sleep coaching while you work out whether pain relief is appropriate. Paracetamol/Panadol is commonly used in some situations, but only use it according to the label and the age/weight dosing instructions. If you are unsure, check with your GP, pharmacist, or child health nurse before giving medicine. Seek medical advice promptly if there are concerning symptoms such as fever, unusual drowsiness, poor feeding, breathing difficulty, dehydration signs, or your gut says something is not right. Once pain or illness is handled, use calm resettling and return to the sleep plan when your baby is well.'
+  "You were right to check before giving medicine. I can't decide whether pain relief is appropriate for your baby, so follow the product label and age/weight instructions and check with your GP, pharmacist, or child health nurse if you are unsure before giving it. Seek medical advice promptly for concerning symptoms such as fever, unusual drowsiness, poor feeding, breathing difficulty, dehydration signs, or if your gut says something is not right. Pause sleep coaching while pain or illness is being handled."
+const MELATONIN_BOUNDARY_RESPONSE =
+  "You were right to check. Do not give melatonin, sleep gummies, or sleep supplements unless your child's GP or pharmacist has specifically recommended them. Babies and young children need individual clinical guidance here rather than a general sleep recommendation. Pause the supplement plan and address the sleep pattern without medication while you wait for that advice."
+const SAFE_SLEEP_BOUNDARY_RESPONSE =
+  'Contact-seeking is very common in the early months. For every sleep, place your baby on their back in their own bassinet or cot on a firm, flat, level mattress, and keep the sleep space clear - no clothing, heat packs, pillows, toys, or loose fabric. To make the transfer gentler, wait until their body relaxes, lower them feet-first and then bottom and head, and keep a steady hand on their chest for a moment. If you might fall asleep while holding them, put them down safely even if they protest and ask another adult for help if one is available.'
 
 function splitIntoSentences(text: string) {
   return text.match(/[^.!?]+[.!?]?/g) ?? [text]
@@ -20,28 +44,39 @@ export function hasMedicationContext(text: string) {
   return MEDICATION_PATTERN.test(text)
 }
 
+function sentenceContainsUnsafeMedicationPermission(sentence: string) {
+  if (NEGATED_MEDICATION_PERMISSION_PATTERNS.some((pattern) => pattern.test(sentence))) {
+    return false
+  }
+
+  return MEDICATION_UNSAFE_PERMISSION_PATTERNS.some((pattern) => pattern.test(sentence))
+}
+
 export function containsUnsafeMedicationPermission(text: string, contextText = '') {
   const combinedContext = `${contextText}\n${text}`
   if (!hasMedicationContext(combinedContext)) {
     return false
   }
 
-  if (
-    hasMedicationContext(contextText) &&
-    MEDICATION_UNSAFE_PERMISSION_PATTERNS.some((pattern) => pattern.test(text))
-  ) {
-    return true
-  }
-
   return splitIntoSentences(text).some(
     (sentence) =>
-      MEDICATION_PATTERN.test(sentence) &&
-      MEDICATION_UNSAFE_PERMISSION_PATTERNS.some((pattern) => pattern.test(sentence))
+      (hasMedicationContext(contextText) || MEDICATION_PATTERN.test(sentence)) &&
+      sentenceContainsUnsafeMedicationPermission(sentence)
   )
 }
 
-export function getMedicationBoundaryResponse() {
-  return MEDICATION_BOUNDARY_RESPONSE
+export function containsUnsafeSleepEnvironmentAdvice(text: string) {
+  return splitIntoSentences(text).some(
+    (sentence) =>
+      !SAFE_SLEEP_NEGATION_PATTERN.test(sentence) &&
+      UNSAFE_SLEEP_ENVIRONMENT_PATTERNS.some((pattern) => pattern.test(sentence))
+  )
+}
+
+export function getMedicationBoundaryResponse(contextText = '') {
+  return MELATONIN_OR_SUPPLEMENT_PATTERN.test(contextText)
+    ? MELATONIN_BOUNDARY_RESPONSE
+    : MEDICATION_BOUNDARY_RESPONSE
 }
 
 export function filterResponse(text: string, contextText = ''): string {
@@ -49,45 +84,69 @@ export function filterResponse(text: string, contextText = ''): string {
     return text
   }
 
-  const withoutLeadingOh = text.replace(/^(\s*)oh,\s*/i, '$1')
-  const withoutSoundsLike = withoutLeadingOh
-    .replace(/^(\s*)it\s+sounds\s+like\s+/i, '$1')
+  const withoutToolProtocol = text
+    .replace(
+      /```(?:json)?\s*[\s\S]*?(?:tool_code|update_sleep_plan_profile|function_call)[\s\S]*?```/gi,
+      ''
+    )
+    .trim()
+  const withoutLeadingOh = withoutToolProtocol.replace(/^(\s*)oh,\s*/i, '$1')
+  const withoutGenericEmpathy = withoutLeadingOh
+    .replace(GENERIC_EMPATHY_OPENER_PATTERN, '')
+    .replace(/^however,\s*/i, '')
+  const withoutSoundsLike = withoutGenericEmpathy
+    .replace(/\band\s+it\s+sounds\s+like\s+/gi, 'and ')
+    .replace(/\bit\s+sounds\s+like\s+/gi, '')
     .replace(/\bthat\s+sounds\s+like\b/gi, 'that points to')
     .replace(/\bthis\s+sounds\s+like\b/gi, 'this points to')
     .replace(/\bsounds\s+like\b/gi, 'points to')
 
   const medicationSafeText = containsUnsafeMedicationPermission(withoutSoundsLike, contextText)
-    ? MEDICATION_BOUNDARY_RESPONSE
+    ? getMedicationBoundaryResponse(`${contextText}\n${withoutSoundsLike}`)
     : withoutSoundsLike
+  const safeSleepText = containsUnsafeSleepEnvironmentAdvice(medicationSafeText)
+    ? SAFE_SLEEP_BOUNDARY_RESPONSE
+    : medicationSafeText
 
-  const firstLetterIndex = medicationSafeText.search(/[A-Za-z]/)
+  const firstLetterIndex = safeSleepText.search(/[A-Za-z]/)
 
   if (firstLetterIndex === -1) {
-    return medicationSafeText
+    return safeSleepText
   }
 
-  const firstLetter = medicationSafeText.charAt(firstLetterIndex)
+  const firstLetter = safeSleepText.charAt(firstLetterIndex)
   const capitalizedLetter = firstLetter.toUpperCase()
 
   if (firstLetter === capitalizedLetter) {
-    return medicationSafeText
+    return safeSleepText
   }
 
   return (
-    medicationSafeText.slice(0, firstLetterIndex) +
+    safeSleepText.slice(0, firstLetterIndex) +
     capitalizedLetter +
-    medicationSafeText.slice(firstLetterIndex + 1)
+    safeSleepText.slice(firstLetterIndex + 1)
   )
 }
 
 export function containsForbiddenResponsePhrase(text: string, contextText = '') {
-  return SOUNDS_LIKE_PATTERN.test(text) || containsUnsafeMedicationPermission(text, contextText)
+  return (
+    SOUNDS_LIKE_PATTERN.test(text) ||
+    TOOL_PROTOCOL_LEAK_PATTERN.test(text) ||
+    containsUnsafeMedicationPermission(text, contextText) ||
+    containsUnsafeSleepEnvironmentAdvice(text)
+  )
 }
 
 function sanitizeStreamingText(text: string, isAtStart: boolean) {
   const withoutLeadingOh = isAtStart ? text.replace(/^(\s*)oh,\s*/i, '$1') : text
-  const withoutSoundsLike = withoutLeadingOh
-    .replace(/^(\s*)it\s+sounds\s+like\s+/i, '$1')
+  const withoutGenericEmpathy = isAtStart
+    ? withoutLeadingOh
+        .replace(GENERIC_EMPATHY_OPENER_PATTERN, '')
+        .replace(/^however,\s*/i, '')
+    : withoutLeadingOh
+  const withoutSoundsLike = withoutGenericEmpathy
+    .replace(/\band\s+it\s+sounds\s+like\s+/gi, 'and ')
+    .replace(/\bit\s+sounds\s+like\s+/gi, '')
     .replace(/\bthat\s+sounds\s+like\b/gi, 'that points to')
     .replace(/\bthis\s+sounds\s+like\b/gi, 'this points to')
     .replace(/\bsounds\s+like\b/gi, 'points to')

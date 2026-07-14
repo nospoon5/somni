@@ -95,8 +95,8 @@ export function getEmergencyRedirectMessage(route: SafetyCheckResult['route'] = 
   }
 
   return (
-    'I am really glad you reached out. Put the baby safely in the cot now, step away, and call for help before doing anything else. ' +
-    'If anyone is at immediate risk, call 000 now. For urgent parent mental health support, call PANDA on 1300 726 306 or Lifeline on 13 11 14. ' +
+    'I am really glad you reached out. Put the baby safely in the cot now and step away, even if they are crying. Stepping away is the safest choice here, not a failure. ' +
+    'Call someone you trust who can come to you or stay on the phone. If you think you might act on the urge, or anyone is at immediate risk, call 000 now. For urgent parent mental health support, call PANDA on 1300 726 306 or Lifeline on 13 11 14. ' +
     'Sleep coaching can wait until you and the baby are safe.'
   )
 }

@@ -47,30 +47,26 @@ export function looksIncompleteAssistantResponse(text: string) {
 type CompleteFallbackOptions = {
   babyName?: string | null
   medicationContext?: boolean
+  medicationBoundary?: string | null
 }
 
 export function buildCompleteFallbackResponse({
   babyName,
   medicationContext = false,
+  medicationBoundary,
 }: CompleteFallbackOptions = {}) {
   const childLabel = babyName?.trim() || 'your baby'
-  const medicalBoundary = medicationContext
-    ? [
-        '',
-        'Medication note:',
-        'If pain relief or medicine is being considered, only use it according to the label and age/weight instructions. If you are unsure, check with your GP, pharmacist, or child health nurse before giving medicine.',
-      ]
-    : []
+
+  if (medicationContext) {
+    return [
+      'I want to keep this clear and safe rather than guess.',
+      medicationBoundary?.trim() ||
+        "You were right to check before giving medicine. I can't decide whether it is appropriate for your baby, so follow the product label and age/weight instructions and check with your GP, pharmacist, or child health nurse if you are unsure before giving it.",
+    ].join('\n\n')
+  }
 
   return [
-    'I want to keep this practical and safe rather than overcomplicate it.',
-    '',
-    'What to try tonight:',
-    `1. Keep ${childLabel}'s next sleep attempt calm, dark, and predictable.`,
-    '2. Offer comfort until things settle, then place your baby back down when they are calm.',
-    '3. If crying escalates, illness symptoms appear, or something feels medically off, pause sleep coaching and seek appropriate medical advice.',
-    ...medicalBoundary,
-    '',
-    "Check-in: Tell me what happened at the next wake or nap, and I'll help you adjust.",
-  ].join('\n')
+    'I want to answer this properly rather than guess after my last reply cut off.',
+    `At the next sleep, what is the exact sticking point for ${childLabel}: settling, the transfer into the cot, or waking again soon after?`,
+  ].join(' ')
 }
