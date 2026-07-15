@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
 export type InviteActionState = {
@@ -140,13 +141,12 @@ export async function revokeCaregiverAction(
 }
 
 export async function acceptInviteAction(
-  _prevState: InviteActionState,
   formData: FormData
-): Promise<InviteActionState> {
+): Promise<void> {
   const shareId = formData.get('shareId') as string
 
   if (!shareId) {
-    return { error: 'Invalid invitation link.' }
+    throw new Error('Invalid invitation link.')
   }
 
   const supabase = await createClient()
@@ -155,7 +155,7 @@ export async function acceptInviteAction(
   } = await supabase.auth.getUser()
 
   if (!user?.email) {
-    return { error: 'You must be signed in to accept an invitation.' }
+    throw new Error('You must be signed in to accept an invitation.')
   }
 
   // 1. Fetch the share record
@@ -166,16 +166,16 @@ export async function acceptInviteAction(
     .maybeSingle()
 
   if (shareError || !share) {
-    return { error: 'Invitation not found or has been revoked.' }
+    throw new Error('Invitation not found or has been revoked.')
   }
 
   if (share.status === 'accepted') {
-    return { error: 'This invitation has already been accepted.' }
+    throw new Error('This invitation has already been accepted.')
   }
 
   // 2. Ensure email matches
   if (share.email.toLowerCase() !== user.email.toLowerCase()) {
-    return { error: `This invitation was sent to ${share.email}, but you are signed in as ${user.email}.` }
+    throw new Error(`This invitation was sent to ${share.email}, but you are signed in as ${user.email}.`)
   }
 
   // 3. Update the share record to accept
@@ -189,7 +189,7 @@ export async function acceptInviteAction(
 
   if (updateError) {
     console.error('[invite] failed to accept share', updateError)
-    return { error: 'Failed to accept invitation. Please try again.' }
+    throw new Error('Failed to accept invitation. Please try again.')
   }
 
   // Set onboarding_completed to true on the guest's profile so they bypass onboarding redirect
