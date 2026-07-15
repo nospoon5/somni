@@ -49,10 +49,10 @@ Currently, Somni logs user feedback and errors through a public support form dir
 **Goal:** Build the ticket display list and status transition controls.
 
 ### Tasks
-- [ ] **Task 3.1: Admin Dashboard View**
+- [x] **Task 3.1: Admin Dashboard View**
   - **File:** `src/app/admin/support/page.tsx`
   - **Action:** Render a tabular list of support tickets sorted by `created_at` descending. Include user email, issue description, origin page, and status.
-- [ ] **Task 3.2: Status Update Action**
+- [x] **Task 3.2: Status Update Action**
   - **File:** `src/app/admin/support/actions.ts`
   - **Action:** Implement `updateTicketStatusAction(ticketId, newStatus)`. Create button tags in the UI to instantly toggle status.
 
