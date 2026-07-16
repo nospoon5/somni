@@ -1,6 +1,8 @@
 # Implementation Plan: PWA Web Push & Live Caregiver Alerts
 *This plan outlines the design and implementation steps for self-hosted Web Push notifications, nighttime suppression windows, and an in-app notification feed.*
 
+**Status:** Complete and applied to production Supabase on 17 July 2026. Implemented in commit `e81f3f4`; the two-caregiver browser flow, quiet-hours suppression, and unread bell state were manually verified.
+
 ---
 
 ## 1. Git & Parallel Execution Guardrails
@@ -20,7 +22,7 @@ To prevent merge conflicts and database schema collisions while other subagents 
 **Goal:** Track subscriber browser keys, parent notification preferences, and in-app feed history logs.
 
 ### Tasks
-- [ ] **Task 1.1: Create Migration File**
+- [x] **Task 1.1: Create Migration File**
   - Create file `supabase/migrations/20260716100000_push_notifications.sql`.
   - **`push_subscriptions` table:** Columns `id`, `profile_id` (FK), `endpoint` (Text, Unique), `p256dh` (Text), `auth` (Text), `user_agent` (Text), `created_at`. Add RLS policies permitting insert/delete by the authenticated owner profile.
   - **`profiles` table changes:** Add columns:
@@ -41,10 +43,10 @@ To prevent merge conflicts and database schema collisions while other subagents 
 **Goal:** Setup security handshakes and service worker registration to capture incoming background messages.
 
 ### Tasks
-- [ ] **Task 2.1: Key Generation Script**
+- [x] **Task 2.1: Key Generation Script**
   - Create `scripts/generate-vapid-keys.js` using the NPM `web-push` package.
   - Output public and private VAPID keys to the console, and guide the user on adding them to `.env.local` as `NEXT_PUBLIC_VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY`.
-- [ ] **Task 2.2: Service Worker Handler**
+- [x] **Task 2.2: Service Worker Handler**
   - In `public/sw.js` (or your PWA service worker file), add a listener for the `push` event:
     ```javascript
     self.addEventListener('push', function(event) {
@@ -69,9 +71,9 @@ To prevent merge conflicts and database schema collisions while other subagents 
 **Goal:** Expose endpoints for browser subscription and write the trigger logic with nighttime checks.
 
 ### Tasks
-- [ ] **Task 3.1: Subscribe API Endpoint**
+- [x] **Task 3.1: Subscribe API Endpoint**
   - Create Next.js route `src/app/api/notifications/subscribe/route.ts`. Expose POST to save/update and DELETE to unsubscribe.
-- [ ] **Task 3.2: Write Notification Sender Utility**
+- [x] **Task 3.2: Write Notification Sender Utility**
   - Create file `src/lib/notifications/sender.ts`.
   - Expose `sendNotificationToUser(profileId, title, body)`.
   - Fetch target user's `profiles` preference values.
@@ -89,7 +91,7 @@ To prevent merge conflicts and database schema collisions while other subagents 
 **Goal:** Fire notifications automatically on sleep events.
 
 ### Tasks
-- [ ] **Task 4.1: Sleep Log Hooks**
+- [x] **Task 4.1: Sleep Log Hooks**
   - Modify `src/app/sleep/actions.ts` when logs are added or completed.
   - Retrieve the baby's caregivers list (excluding the current user) via `baby_shares`.
   - For each caregiver, call `sendNotificationToUser(caregiverId, "Sleep Session Update", "[User] started/completed Aria's sleep session.")`.
@@ -104,9 +106,9 @@ To prevent merge conflicts and database schema collisions while other subagents 
 **Goal:** Provide notification settings toggles and an in-app feed display.
 
 ### Tasks
-- [ ] **Task 5.1: Profile Settings Form**
+- [x] **Task 5.1: Profile Settings Form**
   - In `src/app/profile/page.tsx`, add toggles for push alerts, feed, night suppression, and time inputs for start/end suppression windows.
-- [ ] **Task 5.2: Notification Bell Overlay**
+- [x] **Task 5.2: Notification Bell Overlay**
   - In the dashboard header layout, add a "Bell" icon showing count of unread entries from `notification_logs`.
   - Clicking the icon opens a popover listing recent notifications (e.g. *"Dad logged a nap"*) with a button to "Mark all as read".
 
@@ -118,13 +120,14 @@ To prevent merge conflicts and database schema collisions while other subagents 
 
 ## 7. Quality Control Gates
 To complete this plan:
-1. **Compilation Check:** Running `npx tsc --noEmit` returns zero errors.
-2. **Local Key Verification:** Running `node scripts/generate-vapid-keys.js` creates valid keys.
-3. **Simulated Notification Check:**
+1. [x] **Compilation Check:** `npx tsc --noEmit` returned zero errors.
+2. [x] **Local Key Verification:** The VAPID validation script produced and validated a key pair.
+3. [x] **Two-Caregiver Notification Check:**
    - Log in with Test User A on Browser 1 (request/allow notifications).
    - Log in with Co-Caregiver B on Browser 2.
    - User B logs a sleep session.
-   - Verify:
-     * A row is added in `notification_logs` for User A.
-     * User A receives a push notification on Browser 1.
-     * Enable night suppression on User A, repeat the test, and confirm **no** push sounds, but the row appears in User A's header bell feed.
+   - Verified outcomes:
+     * A row was added in `notification_logs` for User A.
+     * User A received a real Chrome push notification on Browser 1.
+     * With quiet hours enabled, no push was delivered but the new row appeared in User A's bell feed.
+     * The bell showed the unread total and **Mark all as read** reduced it to zero.

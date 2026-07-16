@@ -1,12 +1,11 @@
 # Somni - Product Context Summary
 
-## Current Delivery Status (2026-04-12)
+## Current Delivery Status (2026-07-17)
 
-- Active next-step plan: `docs/somni_implementation_plan_v7.md`
-- Recently completed work: Stages 11 to 14 from `docs/somni_implementation_plan_v4.md`
-- Current branch target: `main` is the working branch
+- Recently completed work: caregiver sharing, balanced schedule adaptation, and caregiver notifications
+- Current branch target: `main`
 - Product state: usable first cut across auth, onboarding, dashboard, sleep logging, chat,
-  billing, support, daily plans, and AI memory
+  billing, support, adaptive daily plans, caregiver sharing, push notifications, and AI memory
 
 ## What Somni Is
 
@@ -68,6 +67,9 @@ Core promise:
 - Stripe checkout and billing portal
 - Support form that logs requests to runtime logs
 - AI memory stored on the baby record and refreshed by cron
+- Accepted caregivers can share one baby record and receive sleep-session alerts
+- Meaningful early or late wakes can produce a damped same-day schedule suggestion for parent approval
+- Web Push alerts respect each caregiver's quiet hours while the in-app feed remains available
 
 ## Current Product Strengths
 
@@ -81,16 +83,6 @@ Core promise:
 
 - Retrieval is better, but still has a few weak spots in edge-case scenarios
 
-## Next Strategic Focus
+## Current Strategic Focus
 
-The next execution order is:
-
-1. Adaptive plan data model and guardrails
-2. Onboarding expansion and initial recommended plan
-3. Daily plan derivation from the learned profile
-4. Chat-driven explicit plan updates
-5. Log-driven adaptation with sparse-data safety
-6. Parent-facing trust and explanation UX
-7. Verification and rollout safety
-
-Those sections are detailed in `docs/somni_implementation_plan_v7.md`.
+The adaptive-plan, caregiver-sharing, and notification foundations are now implemented. Future work should be selected from current living plans and validated against `docs/somni_release_checklist.md` before production rollout.

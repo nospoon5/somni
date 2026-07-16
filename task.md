@@ -1,5 +1,7 @@
 # Push Notifications Implementation Tasks
 
+**Completed:** 17 July 2026 in commit `e81f3f4`. Production migration applied and the two-caregiver push, quiet-hours, feed, and unread-state flow verified.
+
 ## Stage 1: Database Migrations
 
 - [x] Create `supabase/migrations/20260716100000_push_notifications.sql`.

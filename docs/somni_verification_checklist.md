@@ -37,6 +37,13 @@ Expected result:
 - Same-day rescue chat changes stay framed as today's plan only.
 - Explicit ongoing parent statements can update the learned baseline without pretending sparse logs are proof.
 
+Notification-focused follow-up when sleep actions, caregiver access, profile settings, or the service worker changed:
+
+1. Use two linked accounts from `docs/TEST_ACCOUNTS.md` in separate browser sessions.
+2. Confirm a sleep start or completion creates a feed row and delivers an allowed browser push to the other caregiver.
+3. Enable quiet hours and repeat; the feed row should still appear while the browser push is suppressed.
+4. Confirm the bell unread count increments and **Mark all as read** returns it to zero.
+
 ## 2) Fast product sanity check
 
 Use the pre-created account in `docs/TEST_ACCOUNTS.md` (do not create a new user).

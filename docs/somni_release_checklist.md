@@ -1,13 +1,14 @@
 # Somni Pre-Release Checklist
 
 Run this short checklist before merging a major feature or deploying a new build to production.
-This checklist now assumes the adaptive-plan rollout from `docs/somni_implementation_plan_v7.md` is active.
+This checklist assumes caregiver sharing, balanced schedule adaptation, and notifications are active.
 If any step fails, do not deploy.
 
 ## 1. Environment & Config Check
 - [ ] `vercel.json` matches intended behavior (e.g., cron jobs are correctly scheduled).
 - [ ] Stripe API keys and Webhook secrets are correctly populated in production environment variables.
 - [ ] Supabase environment variables are connected.
+- [ ] `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, and `VAPID_SUBJECT` are populated in the production environment.
 - [ ] Apply any new SQL migration files to production Supabase.
 
 ## 2. Fast Build & Lint Check
@@ -41,5 +42,9 @@ If the upcoming release modifies these flows, perform a manual click-test via th
 
 - **Dashboard**: Does the sleep score correctly display when data is sparse vs. populated?
 - **Adaptive Plans**: Confirm same-day rescue changes stay day-only, while explicit ongoing statements update the learned baseline.
+- **Schedule Rescue**: Log a wake at least 20 minutes from baseline, confirm the pending damped schedule appears, then test both accept and dismiss.
+- **Caregiver Push**: With two pre-created caregiver accounts, confirm a sleep event creates a feed row and an allowed browser push for the other caregiver.
+- **Quiet Hours**: Repeat inside the recipient's suppression window; confirm the feed row remains but no browser push is delivered.
+- **Notification Bell**: Confirm the unread count increments and **Mark all as read** returns it to zero.
 - **Billing**: Can you click "Upgrade" and reach the Stripe checkout portal?
-- **Support Form**: Can you send a short message and see it in the Supabase `support_tickets` table?
+- **Support Form**: Can you submit a short message and see the structured request in runtime logs?

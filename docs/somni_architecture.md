@@ -19,7 +19,9 @@ Current live product areas:
 - Sleep score
 - AI chat with retrieval
 - Daily plans
-- Adaptive plan foundation
+- Balanced same-day schedule adaptation
+- Caregiver sharing
+- Web Push alerts, quiet hours, and an in-app notification feed
 - Billing
 - Support
 - AI memory backfill
@@ -36,6 +38,7 @@ Current live product areas:
 | LLM | Gemini chat models |
 | Embeddings | `gemini-embedding-001` stored as `vector(768)` |
 | Billing | Stripe Checkout and Customer Portal |
+| Push delivery | Web Push with VAPID and a service worker |
 | Styling | App-level CSS and design tokens |
 
 ## System Principles
@@ -77,6 +80,7 @@ These are the current App Router Route Handlers under `src/app/api/**/route.ts`.
 | `/api/billing/portal` | POST | Create a Stripe Customer Portal session |
 | `/api/billing/webhook` | POST | Sync Stripe subscription state |
 | `/api/cron/memory-backfill` | GET | Run AI memory backfill with cron auth |
+| `/api/notifications/subscribe` | POST, DELETE | Save or remove the signed-in caregiver's browser push subscription |
 
 Current note:
 
@@ -108,6 +112,26 @@ Current note:
 3. Dashboard and score calculations read the recent 7-day sleep window.
 4. If Somni has fewer than 3 covered days, fewer than 4 logs, or only day-only/night-only
    coverage, it stays in a learning state instead of showing a numeric score.
+5. Accepted caregivers other than the actor receive an in-app notification; eligible browser
+   subscriptions also receive a push unless the recipient's quiet hours suppress it.
+
+### Balanced Schedule Rescue Flow
+
+1. A completed morning sleep log can arrive through the sleep UI or the chat logging tool.
+2. If the wake time differs from the durable baseline by at least 20 minutes, Somni calculates
+   damped shifts for later naps and bedtime, rounded to five minutes.
+3. The proposed targets are stored as pending rather than silently changing today's plan.
+4. The dashboard explains the proposed rescue and lets the parent accept or dismiss it.
+
+### Caregiver Notification Flow
+
+1. A caregiver enables browser notifications from profile settings; the authenticated API stores
+   the browser subscription against that caregiver's profile.
+2. Starting or completing a sleep session finds other accepted caregivers for the baby.
+3. Somni writes each recipient's in-app feed row when their feed is enabled.
+4. Somni checks the recipient's timezone and quiet-hours window before attempting Web Push.
+5. The service worker displays allowed pushes, while the dashboard bell shows unread feed rows
+   and supports marking them all read.
 
 ### Chat Flow
 
@@ -172,6 +196,9 @@ Core tables:
 - `daily_plans`
 - `sleep_plan_profiles`
 - `sleep_plan_change_events`
+- `baby_shares`
+- `push_subscriptions`
+- `notification_logs`
 
 Important data notes:
 
@@ -185,6 +212,10 @@ Important data notes:
 - `sleep_logs` has a unique partial index so each baby can only have one active session.
 - `usage_counters` resets by the user's timezone, defaulting to `Australia/Sydney`.
 - `corpus_chunks` stores retrieval text, metadata, and embeddings.
+- `baby_shares` records accepted and pending caregiver access to a baby.
+- `push_subscriptions` stores owner-scoped browser endpoints and encryption keys.
+- `notification_logs` stores the owner-readable in-app notification feed.
+- `profiles` stores push, feed, quiet-hours, and suppression-window preferences.
 
 ## Adaptive Plan Model
 
@@ -215,6 +246,8 @@ Current implementation note:
   - explicit parent-reported ongoing patterns update `sleep_plan_profiles`
   - each applied change writes an explainable `sleep_plan_change_events` row with scope,
     source, confidence, rationale, and before/after snapshots
+- Log- and chat-created morning wake entries can now propose a damped same-day rescue in
+  `daily_plans.pending_rescue_targets`. The parent must accept it before active targets change.
 
 ## Retrieval and AI
 
@@ -252,6 +285,9 @@ Main runtime variables:
 - `CRON_SECRET`
 - `AI_MEMORY_BACKFILL_BABY_LIMIT`
 - `AI_MEMORY_BACKFILL_MESSAGE_LIMIT`
+- `NEXT_PUBLIC_VAPID_PUBLIC_KEY`
+- `VAPID_PRIVATE_KEY`
+- `VAPID_SUBJECT`
 
 ## Quality Expectations
 
@@ -272,3 +308,5 @@ Main runtime variables:
 - `docs/somni_corpus_plan.md` for corpus rules
 - `docs/somni_implementation_plan_v4.md` for completed AI and RAG work
 - `docs/somni_implementation_plan_v7.md` for the next adaptive-plan execution plan
+- `docs/Implementation_Plan_Schedule_Adaptation.md` for the completed schedule-rescue rollout
+- `docs/Implementation_Plan_Notifications.md` for the completed notification rollout

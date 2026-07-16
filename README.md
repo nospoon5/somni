@@ -11,6 +11,9 @@ structured sleep logging, a daily plan, and a source-backed AI coach tailored to
 - Dashboard at `/dashboard`
 - AI coaching chat at `/chat`
 - Sleep logging at `/sleep`
+- Shared baby access for accepted caregivers
+- Balanced same-day schedule rescue after meaningful wake-time changes
+- Caregiver Web Push alerts, quiet hours, and an in-app notification feed
 - Profile settings at `/profile`
 - Billing at `/billing`
 - Support form at `/support`
@@ -23,6 +26,7 @@ structured sleep logging, a daily plan, and a source-backed AI coach tailored to
 - Supabase Auth and Postgres
 - Gemini for chat, embeddings, and AI memory extraction
 - Stripe for paid billing
+- Web Push using VAPID keys and the `web-push` package
 - Vercel cron for AI memory backfill
 
 ## Key API routes
@@ -34,6 +38,7 @@ structured sleep logging, a daily plan, and a source-backed AI coach tailored to
 - `/api/billing/portal`
 - `/api/billing/webhook`
 - `/api/cron/memory-backfill`
+- `/api/notifications/subscribe`
 
 Sleep logging, onboarding, and some profile updates are handled with Server Actions rather
 than route handlers.
@@ -51,6 +56,9 @@ Required for normal local development:
 - `STRIPE_PRICE_MONTHLY`
 - `STRIPE_PRICE_ANNUAL`
 - `STRIPE_WEBHOOK_SECRET`
+- `NEXT_PUBLIC_VAPID_PUBLIC_KEY`
+- `VAPID_PRIVATE_KEY`
+- `VAPID_SUBJECT`
 
 Common AI and background-job variables:
 
@@ -104,6 +112,7 @@ These checks currently give the clearest picture of repo health:
 
 ```bash
 npm test -- --run
+npx tsc --noEmit
 npm run build
 node scripts/verify-stage4-chat-e2e.mjs
 node scripts/verify-stage4-retrieval.mjs
@@ -119,6 +128,8 @@ Start here when orienting yourself:
 - `docs/somni_context.md`
 - `docs/somni_architecture.md`
 - `docs/somni_implementation_plan_v7.md`
+- `docs/Implementation_Plan_Schedule_Adaptation.md`
+- `docs/Implementation_Plan_Notifications.md`
 - `docs/somni_ai_quality_hardening.md`
 
 Historical planning and handoff files have been moved to `archive/`.
