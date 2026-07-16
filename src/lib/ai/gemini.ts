@@ -110,6 +110,37 @@ const CHAT_PLAN_TOOLS = [
           },
         },
       },
+      {
+        name: 'create_completed_sleep_log',
+        description:
+          'Record a completed sleep log for the baby when they have woken up from a nap or morning wake. Always invoke this tool when the parent tells you specific sleep start/end timings or wake times for today.',
+        parameters: {
+          type: 'object',
+          properties: {
+            started_at: {
+              type: 'string',
+              description:
+                'The start time of the sleep session, as an ISO-8601 string or time representation (e.g. 2026-07-16T09:00:00Z).',
+            },
+            ended_at: {
+              type: 'string',
+              description:
+                'The end time of the sleep session, as an ISO-8601 string or time representation (e.g. 2026-07-16T09:30:00Z).',
+            },
+            is_night: {
+              type: 'boolean',
+              description:
+                'Set to true if this was overnight/night sleep, or false if it was a daytime nap.',
+            },
+            notes: {
+              type: 'string',
+              description:
+                'Optional notes about the sleep (e.g. "woke up crying", "took a while to settle").',
+            },
+          },
+          required: ['started_at', 'ended_at', 'is_night'],
+        },
+      },
     ],
   },
 ]

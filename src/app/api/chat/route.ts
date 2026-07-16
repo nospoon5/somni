@@ -166,7 +166,9 @@ export async function POST(request: Request) {
         .maybeSingle(),
       supabase
         .from('daily_plans')
-        .select('id, baby_id, plan_date, sleep_targets, feed_targets, notes, updated_at')
+        .select(
+          'id, baby_id, plan_date, sleep_targets, feed_targets, notes, updated_at, pending_rescue_targets, rescue_dismissed'
+        )
         .eq('baby_id', baby.id)
         .eq('plan_date', localToday)
         .maybeSingle(),
@@ -487,6 +489,7 @@ export async function POST(request: Request) {
               babyId: baby.id,
               babyName: baby.name,
               planDate: localToday,
+              timezone,
               functionCalls: requiresYoungBabyLateFirstNapBoundary
                 ? []
                 : primaryGeminiResult.functionCalls,
@@ -497,6 +500,34 @@ export async function POST(request: Request) {
           if (savedPlanUpdates.assistantMessage) {
             primaryAssistantMessage = filterResponse(savedPlanUpdates.assistantMessage, message)
             replacePrimaryMessage = true
+          }
+
+          if (savedPlanUpdates.pendingRescuePlan) {
+            retryCount += 1
+            retryReasons.push('daily_rescue_alert')
+            const rewriteResult = await timing.time('retry_or_rewrite_pass', () =>
+              streamGeminiResponse(
+                [
+                  {
+                    role: 'user',
+                    parts: [
+                      {
+                        text: `${primaryPrompt}\n\nRewrite the parent-facing response one time. Confirm that the sleep log has been recorded, and warm-alert the parent that a recommended rescue schedule is pending on their dashboard banner. Ask them to check the dashboard to review and apply the shifts. Keep the response supportive, friendly, and concise (under 120 words).`,
+                      },
+                    ],
+                  },
+                ],
+                true,
+                sleepStyleLabel,
+                () => {}
+              )
+            )
+
+            const retriedMessage = filterResponse(rewriteResult.text, message)
+            if (retriedMessage) {
+              primaryAssistantMessage = retriedMessage
+              replacePrimaryMessage = true
+            }
           }
 
           if (requiresYoungBabyLateFirstNapBoundary) {

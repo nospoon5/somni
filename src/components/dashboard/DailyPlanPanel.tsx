@@ -10,6 +10,7 @@ import {
   type DailyPlanStreamPayload,
 } from '@/lib/daily-plan'
 import type { SleepPlanProfileRecord } from '@/lib/sleep-plan-profile'
+import { acceptDailyRescueAction, dismissDailyRescueAction } from '@/app/sleep/actions'
 import styles from './DailyPlanPanel.module.css'
 
 type DailyPlanPanelProps = {
@@ -234,6 +235,60 @@ export function DailyPlanPanel({
   todayPlanDate,
 }: DailyPlanPanelProps) {
   const [plan, setPlan] = useState(initialPlan)
+  const [isUpdating, setIsUpdating] = useState(false)
+  const [bannerError, setBannerError] = useState<string | null>(null)
+
+  const showBanner = Boolean(
+    plan &&
+    plan.pendingRescueTargets &&
+    !plan.rescueDismissed
+  )
+
+  async function handleAccept() {
+    if (!plan || !plan.pendingRescueTargets) return
+    setIsUpdating(true)
+    setBannerError(null)
+    try {
+      const res = await acceptDailyRescueAction(plan.babyId, plan.planDate)
+      if (res.error) {
+        setBannerError(res.error)
+      } else {
+        setPlan({
+          ...plan,
+          sleepTargets: plan.pendingRescueTargets.sleepTargets,
+          feedTargets: plan.pendingRescueTargets.feedTargets,
+          pendingRescueTargets: null,
+          rescueDismissed: false,
+        })
+      }
+    } catch (err) {
+      setBannerError('Something went wrong. Please try again.')
+    } finally {
+      setIsUpdating(false)
+    }
+  }
+
+  async function handleDismiss() {
+    if (!plan) return
+    setIsUpdating(true)
+    setBannerError(null)
+    try {
+      const res = await dismissDailyRescueAction(plan.babyId, plan.planDate)
+      if (res.error) {
+        setBannerError(res.error)
+      } else {
+        setPlan({
+          ...plan,
+          rescueDismissed: true,
+        })
+      }
+    } catch (err) {
+      setBannerError('Something went wrong. Please try again.')
+    } finally {
+      setIsUpdating(false)
+    }
+  }
+
   const planStateLabel = plan ? resolvePlanStateLabel(plan, sleepPlanProfile) : null
   const planReason = plan ? resolveReasonCopy(plan, sleepPlanProfile) : null
   const planConfidence = plan ? resolveConfidenceCopy(plan, sleepPlanProfile) : null
@@ -295,6 +350,33 @@ export function DailyPlanPanel({
 
       {plan ? (
         <>
+          {showBanner && plan.pendingRescueTargets && (
+            <div className={styles.rescueBanner} role="alert">
+              <h3 className={styles.rescueTitle}>Recommended Schedule Shift</h3>
+              <p className={styles.rescueText}>
+                {plan.pendingRescueTargets.rationale ||
+                  `Somni recommends adjusting today's schedule to keep ${babyName} on track after an intra-day wake or nap deviation.`}
+              </p>
+              {bannerError && <p className={styles.rescueError}>{bannerError}</p>}
+              <div className={styles.rescueActions}>
+                <button
+                  className={styles.rescueButtonPrimary}
+                  disabled={isUpdating}
+                  onClick={handleAccept}
+                >
+                  {isUpdating ? 'Updating...' : 'Update Schedule'}
+                </button>
+                <button
+                  className={styles.rescueButtonSecondary}
+                  disabled={isUpdating}
+                  onClick={handleDismiss}
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          )}
+
           <section className={styles.statePanel} aria-live="polite">
             <p className={`${styles.stateLabel} text-label`}>{planStateLabel}</p>
             <p className={styles.stateReason}>{planReason}</p>

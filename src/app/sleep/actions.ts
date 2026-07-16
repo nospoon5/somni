@@ -207,15 +207,15 @@ async function maybeApplyLogDrivenAdaptation(args: CurrentSleepContext & { now: 
   }
 
   if (evaluation.decision === 'apply_daily_rescue' && evaluation.nextPlan) {
+    const pendingPlan = (evaluation as any).pendingPlan
     const { data: savedPlanRow, error: savePlanError } = await args.supabase
       .from('daily_plans')
       .upsert(
         {
           baby_id: args.babyId,
           plan_date: evaluation.nextPlan.planDate,
-          sleep_targets: evaluation.nextPlan.sleepTargets,
-          feed_targets: evaluation.nextPlan.feedTargets,
-          notes: evaluation.nextPlan.notes,
+          pending_rescue_targets: pendingPlan || null,
+          rescue_dismissed: false,
         },
         {
           onConflict: 'baby_id,plan_date',
@@ -252,12 +252,110 @@ async function maybeApplyLogDrivenAdaptation(args: CurrentSleepContext & { now: 
     }
 
     revalidatePath('/dashboard')
+    revalidatePath('/sleep')
     return {
-      successMessage: "Sleep session saved. Somni adjusted today's plan after today's short naps.",
+      successMessage: "Sleep session saved. Somni calculated a daily rescue schedule. Check your dashboard to apply the shifts.",
     }
   }
 
   return null
+}
+
+export async function acceptDailyRescueAction(
+  babyId: string,
+  planDate: string
+): Promise<SleepActionState> {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) {
+    return { error: 'Unauthorized' }
+  }
+
+  // 1. Fetch current daily plan to get pending_rescue_targets
+  const { data: planRow, error: fetchError } = await supabase
+    .from('daily_plans')
+    .select('id, pending_rescue_targets')
+    .eq('baby_id', babyId)
+    .eq('plan_date', planDate)
+    .maybeSingle()
+
+  if (fetchError) {
+    return { error: fetchError.message }
+  }
+
+  if (!planRow || !planRow.pending_rescue_targets) {
+    return { error: 'No pending rescue schedule found for today.' }
+  }
+
+  const pending = planRow.pending_rescue_targets as any
+
+  // 2. Update the daily plan: copy sleepTargets and feedTargets, clear pending_rescue_targets
+  const { error: updateError } = await supabase
+    .from('daily_plans')
+    .update({
+      sleep_targets: pending.sleepTargets,
+      feed_targets: pending.feedTargets,
+      pending_rescue_targets: null,
+      rescue_dismissed: false,
+    })
+    .eq('id', planRow.id)
+
+  if (updateError) {
+    return { error: updateError.message }
+  }
+
+  // Write a change event for auditing
+  try {
+    await supabase.from('sleep_plan_change_events').insert({
+      baby_id: babyId,
+      plan_date: planDate,
+      change_scope: 'daily',
+      change_source: 'dashboard',
+      change_kind: 'daily_rescue_applied',
+      evidence_confidence: 'high',
+      summary: 'Daily rescue schedule applied by caregiver.',
+      rationale: pending.rationale || 'Caregiver accepted the calculated intra-day schedule shifts.',
+      before_snapshot: {},
+      after_snapshot: { sleep_targets: pending.sleepTargets, feed_targets: pending.feedTargets },
+    })
+  } catch (err) {
+    console.error('Failed to log change event for rescue acceptance:', err)
+  }
+
+  revalidatePath('/dashboard')
+  revalidatePath('/sleep')
+  return { success: 'Schedule updated successfully.' }
+}
+
+export async function dismissDailyRescueAction(
+  babyId: string,
+  planDate: string
+): Promise<SleepActionState> {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) {
+    return { error: 'Unauthorized' }
+  }
+
+  const { error: updateError } = await supabase
+    .from('daily_plans')
+    .update({
+      rescue_dismissed: true,
+    })
+    .eq('baby_id', babyId)
+    .eq('plan_date', planDate)
+
+  if (updateError) {
+    return { error: updateError.message }
+  }
+
+  revalidatePath('/dashboard')
+  revalidatePath('/sleep')
+  return { success: 'Rescue schedule suggestion dismissed.' }
 }
 
 export async function startSleepAction(): Promise<SleepActionState> {

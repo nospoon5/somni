@@ -101,7 +101,9 @@ export default async function DashboardPage() {
   const { data: dailyPlanRow, error: dailyPlanError } = baby
     ? await supabase
         .from('daily_plans')
-        .select('id, baby_id, plan_date, sleep_targets, feed_targets, notes, updated_at')
+        .select(
+          'id, baby_id, plan_date, sleep_targets, feed_targets, notes, updated_at, pending_rescue_targets, rescue_dismissed'
+        )
         .eq('baby_id', baby.id)
         .eq('plan_date', todayPlanDate)
         .maybeSingle()

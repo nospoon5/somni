@@ -41,6 +41,8 @@ export type DailyPlanRecord = {
   notes: string | null
   updatedAt: string | null
   metadata: DailyPlanMetadata | null
+  pendingRescueTargets?: any | null
+  rescueDismissed?: boolean
 }
 
 export type DailyPlanUpdateInput = {
@@ -66,6 +68,8 @@ type DailyPlanRow = {
   feed_targets: unknown
   notes: string | null
   updated_at?: string | null
+  pending_rescue_targets?: unknown
+  rescue_dismissed?: boolean
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -225,6 +229,8 @@ export function normalizeDailyPlanRow(row: DailyPlanRow | null | undefined): Dai
       confidence: 'high',
       reasonSummary: 'Using your saved plan for today.',
     },
+    pendingRescueTargets: row.pending_rescue_targets ?? null,
+    rescueDismissed: row.rescue_dismissed ?? false,
   }
 }
 

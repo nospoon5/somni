@@ -25,6 +25,8 @@ import {
   type SleepPlanProfileRecord,
 } from '@/lib/sleep-plan-profile'
 import type { GeminiFunctionCall } from '@/lib/ai/gemini'
+import { getSleepScoreLookbackStart } from '@/lib/scoring/sleep-score'
+import { maybeApplyLogDrivenAdaptation, type DailyRescuePendingPlan } from '@/lib/sleep-plan-log-adaptation'
 
 type ChatSupabaseClient = Awaited<ReturnType<typeof createClient>>
 
@@ -38,6 +40,7 @@ type SaveChatPlanUpdatesArgs = {
   babyId: string
   babyName: string
   planDate: string
+  timezone: string
   functionCalls: GeminiFunctionCall[]
   userMessage: string
 }
@@ -47,9 +50,90 @@ export async function saveChatPlanUpdates(args: SaveChatPlanUpdatesArgs) {
   let workingProfile = args.currentProfile
   let hasDailyToolChanges = false
   let hasProfileToolChanges = false
+  let hasLoggedSleep = false
+  let pendingRescuePlan: DailyRescuePendingPlan | null = null
   const signal = inferChatPlanUpdateSignal(args.userMessage)
 
   for (const functionCall of args.functionCalls) {
+    if (functionCall.name === 'create_completed_sleep_log') {
+      const args_ = functionCall.args as Record<string, any>
+      const startedAt = typeof args_.started_at === 'string' ? args_.started_at : (typeof args_.startedAt === 'string' ? args_.startedAt : null)
+      const endedAt = typeof args_.ended_at === 'string' ? args_.ended_at : (typeof args_.endedAt === 'string' ? args_.endedAt : null)
+      const isNight = typeof args_.is_night === 'boolean' ? args_.is_night : (typeof args_.isNight === 'boolean' ? args_.isNight : false)
+      const notes = typeof args_.notes === 'string' ? args_.notes : null
+
+      if (startedAt && endedAt) {
+        // Insert the completed log
+        const { error: insertError } = await args.supabase.from('sleep_logs').insert({
+          baby_id: args.babyId,
+          started_at: startedAt,
+          ended_at: endedAt,
+          is_night: isNight,
+          notes,
+          tags: [],
+        })
+
+        if (insertError) {
+          throw insertError
+        }
+
+        hasLoggedSleep = true
+
+        // Fetch recent sleep logs for today (needed by evaluateSleepPlanAdaptation/maybeApplyLogDrivenAdaptation)
+        const { data: recentLogs, error: logsError } = await args.supabase
+          .from('sleep_logs')
+          .select('started_at, ended_at, is_night, tags, notes')
+          .eq('baby_id', args.babyId)
+          .gte('started_at', getSleepScoreLookbackStart().toISOString())
+          .order('started_at', { ascending: false })
+
+        if (logsError) {
+          throw logsError
+        }
+
+        const adaptationLogs = (recentLogs ?? []).map((log) => ({
+          startedAt: log.started_at,
+          endedAt: log.ended_at,
+          isNight: log.is_night,
+          tags: log.tags ?? [],
+          notes: log.notes,
+        }))
+
+        // Run evaluation
+        if (args.currentProfile) {
+          const calculatedRescue = maybeApplyLogDrivenAdaptation({
+            profile: workingProfile ?? args.currentProfile,
+            currentPlan: workingPlan ?? args.currentPlan,
+            todayLogs: adaptationLogs,
+            timezone: args.timezone,
+          })
+
+          if (calculatedRescue) {
+            pendingRescuePlan = calculatedRescue
+            // Write to daily_plans.pending_rescue_targets
+            const { error: updatePlanError } = await args.supabase
+              .from('daily_plans')
+              .upsert(
+                {
+                  baby_id: args.babyId,
+                  plan_date: args.planDate,
+                  pending_rescue_targets: calculatedRescue,
+                  rescue_dismissed: false,
+                },
+                {
+                  onConflict: 'baby_id,plan_date',
+                }
+              )
+
+            if (updatePlanError) {
+              throw updatePlanError
+            }
+          }
+        }
+      }
+      continue
+    }
+
     if (functionCall.name === 'update_sleep_plan_profile') {
       if (!workingProfile || !shouldApplyDurableProfileUpdate(signal)) {
         continue
@@ -101,12 +185,14 @@ export async function saveChatPlanUpdates(args: SaveChatPlanUpdatesArgs) {
     hasDailyToolChanges = true
   }
 
-  if (!hasDailyToolChanges && !hasProfileToolChanges) {
+  if (!hasDailyToolChanges && !hasProfileToolChanges && !hasLoggedSleep) {
     return {
       plan: args.currentPlan,
       profile: args.currentProfile,
       assistantMessage: null,
       streamPayload: null,
+      hasLoggedSleep: false,
+      pendingRescuePlan: null,
     }
   }
 
@@ -251,6 +337,8 @@ export async function saveChatPlanUpdates(args: SaveChatPlanUpdatesArgs) {
             metadata: savedPlan.metadata,
           }
         : null,
+    hasLoggedSleep,
+    pendingRescuePlan,
   }
 }
 
