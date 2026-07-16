@@ -1,0 +1,12 @@
+.section { display: grid; gap: 16px; padding: 24px; margin-top: 24px; }
+.sectionTitle { margin: 0; font-size: 1.5rem; }
+.setting { display: flex; justify-content: space-between; gap: 18px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--color-border-subtle); cursor: pointer; }
+.setting span { display: grid; gap: 5px; }
+.setting strong { color: var(--color-text); }
+.setting small { color: var(--color-text-muted); line-height: 1.5; }
+.setting input { width: 20px; height: 20px; accent-color: var(--color-accent); flex: 0 0 auto; }
+.timeGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.timeGrid label { display: grid; gap: 7px; color: var(--color-text-muted); font-size: 0.9rem; }
+.timeGrid input { min-height: 44px; padding: 8px 12px; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); font: inherit; }
+.message { margin: 0; color: var(--color-text-muted); font-size: 0.9rem; }
+@media (max-width: 480px) { .timeGrid { grid-template-columns: 1fr; } }

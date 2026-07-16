@@ -9,6 +9,56 @@ export type InviteActionState = {
   success?: string
 }
 
+export type NotificationPreferencesInput = {
+  pushEnabled: boolean
+  inAppFeedEnabled: boolean
+  nightSuppressionEnabled: boolean
+  suppressionStart: string
+  suppressionEnd: string
+}
+
+const TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/
+
+export async function updateNotificationPreferencesAction(
+  input: NotificationPreferencesInput
+): Promise<{ error?: string }> {
+  if (
+    typeof input?.pushEnabled !== 'boolean' ||
+    typeof input.inAppFeedEnabled !== 'boolean' ||
+    typeof input.nightSuppressionEnabled !== 'boolean' ||
+    !TIME_PATTERN.test(input.suppressionStart) ||
+    !TIME_PATTERN.test(input.suppressionEnd)
+  ) {
+    return { error: 'Please use valid notification settings.' }
+  }
+
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) return { error: 'Please sign in again to update notifications.' }
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({
+      push_enabled: input.pushEnabled,
+      in_app_feed_enabled: input.inAppFeedEnabled,
+      night_suppression_enabled: input.nightSuppressionEnabled,
+      suppression_start: input.suppressionStart,
+      suppression_end: input.suppressionEnd,
+    })
+    .eq('id', user.id)
+
+  if (error) {
+    console.error('[profile] failed to update notification preferences', error)
+    return { error: 'Could not save your notification settings. Please try again.' }
+  }
+
+  revalidatePath('/profile')
+  return {}
+}
+
 export async function inviteCaregiverAction(
   _prevState: InviteActionState,
   formData: FormData

@@ -7,6 +7,13 @@
 
 const CACHE_NAME = 'somni-static-v1'
 const OFFLINE_URL = '/offline.html'
+const DEFAULT_NOTIFICATION = {
+  title: 'Somni Update',
+  body: 'New alert.',
+  icon: '/icons/icon-192.png',
+  badge: '/icons/icon-192.png',
+  url: '/',
+}
 
 function isLocalhost() {
   const host = self.location && self.location.hostname
@@ -75,4 +82,70 @@ self.addEventListener('fetch', (event) => {
     })()
   )
 })
+
+self.addEventListener('push', (event) => {
+  const data = readPushPayload(event)
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: data.icon,
+      badge: data.badge,
+      tag: data.tag,
+      renotify: Boolean(data.tag),
+      data: {
+        url: data.url,
+        receivedAt: Date.now(),
+      },
+    })
+  )
+})
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
+
+  const targetUrl = event.notification.data && event.notification.data.url
+  const url = typeof targetUrl === 'string' && targetUrl.startsWith('/') ? targetUrl : '/'
+
+  event.waitUntil(
+    (async () => {
+      const windowClients = await self.clients.matchAll({
+        type: 'window',
+        includeUncontrolled: true,
+      })
+
+      for (const client of windowClients) {
+        const clientUrl = new URL(client.url)
+        if (clientUrl.origin === self.location.origin && 'focus' in client) {
+          if (clientUrl.pathname !== url && 'navigate' in client) {
+            await client.navigate(url)
+          }
+          return client.focus()
+        }
+      }
+
+      if (self.clients.openWindow) {
+        return self.clients.openWindow(url)
+      }
+    })()
+  )
+})
+
+function readPushPayload(event) {
+  if (!event.data) return DEFAULT_NOTIFICATION
+
+  try {
+    const parsed = event.data.json()
+    return {
+      title: typeof parsed.title === 'string' ? parsed.title : DEFAULT_NOTIFICATION.title,
+      body: typeof parsed.body === 'string' ? parsed.body : DEFAULT_NOTIFICATION.body,
+      icon: typeof parsed.icon === 'string' ? parsed.icon : DEFAULT_NOTIFICATION.icon,
+      badge: typeof parsed.badge === 'string' ? parsed.badge : DEFAULT_NOTIFICATION.badge,
+      tag: typeof parsed.tag === 'string' ? parsed.tag : undefined,
+      url: typeof parsed.url === 'string' ? parsed.url : DEFAULT_NOTIFICATION.url,
+    }
+  } catch {
+    return DEFAULT_NOTIFICATION
+  }
+}
 

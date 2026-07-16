@@ -1,0 +1,18 @@
+.wrapper { position: relative; }
+.bell { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--color-border-glass); border-radius: var(--radius-full); background: var(--color-surface); color: var(--color-text); cursor: pointer; }
+.bell:hover { border-color: var(--color-accent); background: var(--color-accent-glow); }
+.bell svg { width: 21px; height: 21px; }
+.count { position: absolute; top: -5px; right: -6px; min-width: 19px; height: 19px; padding: 0 4px; display: grid; place-items: center; border: 2px solid var(--color-card); border-radius: var(--radius-full); background: var(--color-accent); color: var(--color-bg); font-size: 0.68rem; font-weight: 700; }
+.feed { position: absolute; z-index: 10; top: calc(100% + 10px); right: 0; width: min(360px, calc(100vw - 36px)); padding: 16px; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-card); box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28); }
+.feedHeader { display: flex; justify-content: space-between; gap: 14px; align-items: start; }
+.feedHeader p { margin: 0 0 4px; color: var(--color-accent); font-size: 0.72rem; }
+.feedHeader strong { color: var(--color-text); }
+.feedHeader button { border: 0; background: none; color: var(--color-accent); font: inherit; font-size: 0.8rem; cursor: pointer; padding: 2px 0; }
+.list { list-style: none; padding: 0; margin: 14px 0 0; max-height: 310px; overflow: auto; }
+.list li { display: grid; gap: 4px; padding: 12px 10px; border-top: 1px solid var(--color-border-subtle); color: var(--color-text-muted); }
+.list li.unread { background: var(--color-accent-glow); border-radius: var(--radius-sm); color: var(--color-text); }
+.list strong { color: var(--color-text); font-size: 0.9rem; }
+.list span { font-size: 0.85rem; line-height: 1.45; }
+.list time { color: var(--color-text-muted); font-size: 0.75rem; }
+.empty, .error { margin: 16px 0 0; color: var(--color-text-muted); font-size: 0.9rem; }
+.error { color: var(--color-error); }

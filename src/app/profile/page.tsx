@@ -4,6 +4,7 @@ import { logoutAction } from '@/app/auth-actions'
 import { createClient } from '@/lib/supabase/server'
 import { ensureSubscriptionRecord, hasPremiumAccess } from '@/lib/billing/subscriptions'
 import { CaregiverSettings } from '@/components/profile/CaregiverSettings'
+import { NotificationSettings } from '@/components/profile/NotificationSettings'
 import styles from './page.module.css'
 
 export default async function ProfilePage() {
@@ -18,7 +19,9 @@ export default async function ProfilePage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name, onboarding_completed')
+    .select(
+      'full_name, onboarding_completed, push_enabled, in_app_feed_enabled, night_suppression_enabled, suppression_start, suppression_end'
+    )
     .eq('id', user.id)
     .maybeSingle()
 
@@ -108,6 +111,16 @@ export default async function ProfilePage() {
             </Link>
           </div>
         </article>
+
+        <NotificationSettings
+          initialPreferences={{
+            pushEnabled: profile.push_enabled,
+            inAppFeedEnabled: profile.in_app_feed_enabled,
+            nightSuppressionEnabled: profile.night_suppression_enabled,
+            suppressionStart: profile.suppression_start,
+            suppressionEnd: profile.suppression_end,
+          }}
+        />
 
         {ownedBaby ? (
           <CaregiverSettings

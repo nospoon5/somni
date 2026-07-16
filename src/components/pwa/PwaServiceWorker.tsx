@@ -9,9 +9,14 @@ export function PwaServiceWorker() {
     // Service workers in dev can be confusing because they "stick" in the browser.
     // We still register it (so install can be tested), but the worker itself
     // is written to be effectively no-op on localhost.
-    navigator.serviceWorker.register('/sw.js').catch(() => {
-      // Silent fail: PWA is a progressive enhancement, not a core feature.
-    })
+    navigator.serviceWorker
+      .register('/sw.js', {
+        scope: '/',
+        updateViaCache: 'none',
+      })
+      .catch(() => {
+        // Silent fail: PWA is a progressive enhancement, not a core feature.
+      })
   }, [])
 
   return null

@@ -25,6 +25,7 @@ import {
   getSleepScoreLookbackStart,
   SLEEP_SCORE_FETCH_LIMIT,
 } from '@/lib/scoring/sleep-score'
+import { sendNotificationToUser } from '@/lib/notifications/sender'
 import { createClient } from '@/lib/supabase/server'
 
 export type SleepActionState = {
@@ -49,13 +50,72 @@ function isNightTime(date: Date) {
   return hour >= 19 || hour < 6
 }
 
+function getSleepNotificationBody(
+  actorDisplayName: string,
+  babyName: string,
+  updateKind: SleepUpdateKind
+) {
+  const normalizedActorName = actorDisplayName.trim() || 'A caregiver'
+  const actionText = updateKind === 'started' ? 'started' : 'completed'
+  return `${normalizedActorName} ${actionText} ${babyName}'s sleep session.`
+}
+
+async function notifyOtherCaregiversOfSleepUpdate(
+  context: CurrentSleepContext,
+  updateKind: SleepUpdateKind
+) {
+  const [{ data: babyOwner }, { data: acceptedShares, error: sharesError }] = await Promise.all([
+    context.supabase.from('babies').select('profile_id').eq('id', context.babyId).maybeSingle(),
+    context.supabase
+      .from('baby_shares')
+      .select('profile_id')
+      .eq('baby_id', context.babyId)
+      .eq('status', 'accepted'),
+  ])
+
+  if (sharesError) {
+    throw sharesError
+  }
+
+  const recipientIds = new Set<string>()
+
+  if (babyOwner?.profile_id && babyOwner.profile_id !== context.currentProfileId) {
+    recipientIds.add(babyOwner.profile_id)
+  }
+
+  for (const share of acceptedShares ?? []) {
+    if (share.profile_id && share.profile_id !== context.currentProfileId) {
+      recipientIds.add(share.profile_id)
+    }
+  }
+
+  if (recipientIds.size === 0) {
+    return
+  }
+
+  const title = 'Sleep Session Update'
+  const body = getSleepNotificationBody(
+    context.currentUserDisplayName,
+    context.babyName,
+    updateKind
+  )
+
+  await Promise.allSettled(
+    [...recipientIds].map((profileId) => sendNotificationToUser(profileId, title, body))
+  )
+}
+
 type CurrentSleepContext = {
   supabase: Awaited<ReturnType<typeof createClient>>
   babyId: string
   babyName: string
   babyDateOfBirth: string
+  currentProfileId: string
+  currentUserDisplayName: string
   timezone: string
 }
+
+type SleepUpdateKind = 'started' | 'completed'
 
 async function getCurrentUserSleepContext(): Promise<CurrentSleepContext> {
   const supabase = await createClient()
@@ -69,7 +129,7 @@ async function getCurrentUserSleepContext(): Promise<CurrentSleepContext> {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('onboarding_completed, timezone')
+    .select('onboarding_completed, timezone, full_name')
     .eq('id', user.id)
     .maybeSingle()
 
@@ -93,6 +153,8 @@ async function getCurrentUserSleepContext(): Promise<CurrentSleepContext> {
     babyId: baby.id,
     babyName: baby.name,
     babyDateOfBirth: baby.date_of_birth,
+    currentProfileId: user.id,
+    currentUserDisplayName: profile.full_name?.trim() || user.email?.trim() || 'A caregiver',
     timezone: sanitizeTimezone(profile.timezone),
   }
 }
@@ -359,7 +421,8 @@ export async function dismissDailyRescueAction(
 }
 
 export async function startSleepAction(): Promise<SleepActionState> {
-  const { supabase, babyId } = await getCurrentUserSleepContext()
+  const context = await getCurrentUserSleepContext()
+  const { supabase, babyId } = context
 
   const { data: activeLog } = await supabase
     .from('sleep_logs')
@@ -382,6 +445,12 @@ export async function startSleepAction(): Promise<SleepActionState> {
 
   if (error) {
     return { error: error.message ?? 'We could not start sleep logging.' }
+  }
+
+  try {
+    await notifyOtherCaregiversOfSleepUpdate(context, 'started')
+  } catch (notificationError) {
+    console.error('[sleep] failed to notify caregivers about a started sleep session', notificationError)
   }
 
   return { success: 'Sleep tracking has started.' }
@@ -418,6 +487,15 @@ export async function endSleepAction(
 
   if (error) {
     return { error: error.message ?? 'We could not end this sleep session.' }
+  }
+
+  try {
+    await notifyOtherCaregiversOfSleepUpdate(context, 'completed')
+  } catch (notificationError) {
+    console.error(
+      '[sleep] failed to notify caregivers about a completed sleep session',
+      notificationError
+    )
   }
 
   try {

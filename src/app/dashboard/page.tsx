@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { DailyPlanPanel } from '@/components/dashboard/DailyPlanPanel'
+import { NotificationBell } from '@/components/dashboard/NotificationBell'
 import { SleepScorePanel } from '@/components/dashboard/SleepScorePanel'
 import { selectDailyPlanForDashboard } from '@/lib/daily-plan-derivation'
 import { normalizeDailyPlanRow } from '@/lib/daily-plan'
@@ -201,6 +202,26 @@ export default async function DashboardPage() {
 
   const firstName = profile.full_name?.trim().split(/\s+/)[0]
   const dashboardTitle = firstName ? `Hi, ${firstName}.` : 'Hi there.'
+  const [{ data: notificationRows }, { count: unreadNotificationCount }] = await Promise.all([
+    supabase
+      .from('notification_logs')
+      .select('id, title, body, is_read, created_at')
+      .eq('profile_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(12),
+    supabase
+      .from('notification_logs')
+      .select('id', { count: 'exact', head: true })
+      .eq('profile_id', user.id)
+      .eq('is_read', false),
+  ])
+  const notifications = (notificationRows ?? []).map((notification) => ({
+    id: notification.id,
+    title: notification.title,
+    body: notification.body,
+    isRead: notification.is_read,
+    createdAt: notification.created_at,
+  }))
 
   return (
     <main className={styles.page}>
@@ -218,6 +239,10 @@ export default async function DashboardPage() {
               </Link>
             </div>
           </div>
+          <NotificationBell
+            initialNotifications={notifications}
+            initialUnreadCount={unreadNotificationCount ?? 0}
+          />
         </div>
 
         <SleepScorePanel
