@@ -41,7 +41,7 @@ export type DailyPlanRecord = {
   notes: string | null
   updatedAt: string | null
   metadata: DailyPlanMetadata | null
-  pendingRescueTargets?: any | null
+  pendingRescueTargets?: { sleepTargets?: DailyPlanSleepTarget[]; feedTargets?: DailyPlanFeedTarget[]; rationale?: string } | null
   rescueDismissed?: boolean
 }
 

@@ -36,7 +36,38 @@ export default async function AcceptInvitePage(props: PageProps) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Fetch invitation details
+  // If user is not authenticated, show instructions with a sign-in redirect
+  if (!user) {
+    // We cannot query the share yet because RLS prevents unauthenticated users from reading baby_shares.
+    // Instead, we show a generic sign-in prompt and preserve the redirect.
+    const redirectUrl = `/login?redirectTo=${encodeURIComponent(`/invite/accept?id=${shareId}`)}`
+    const signupUrl = `/signup?redirectTo=${encodeURIComponent(`/invite/accept?id=${shareId}`)}`
+    
+    return (
+      <main className={styles.page}>
+        <section className={`${styles.card} card`}>
+          <p className={`${styles.eyebrow} text-label`}>Invitation</p>
+          <h1 className={`${styles.title} text-display`}>Join a care team</h1>
+          <p className={`${styles.body} text-body`}>
+            You have been invited to help manage sleep plans and logs on Somni.
+          </p>
+          <p className={`${styles.body} text-body`}>
+            To accept this invitation, please sign in or create an account.
+          </p>
+          <div className={styles.actions}>
+            <Link className="btn-primary" href={redirectUrl}>
+              Sign in to accept
+            </Link>
+            <Link className="btn-secondary" href={signupUrl}>
+              Create an account
+            </Link>
+          </div>
+        </section>
+      </main>
+    )
+  }
+
+  // Fetch invitation details now that the user is authenticated
   const { data: share, error: shareError } = await supabase
     .from('baby_shares')
     .select('id, email, status, baby_id, babies(name, profiles(full_name))')
@@ -68,33 +99,6 @@ export default async function AcceptInvitePage(props: PageProps) {
   } | null
   const inviterName = baby?.profiles?.full_name || 'A parent'
   const babyName = baby?.name || 'their baby'
-
-  // If user is not authenticated, show instructions with a sign-in redirect
-  if (!user) {
-    const redirectUrl = `/login?redirectTo=/invite/accept?id=${shareId}`
-    return (
-      <main className={styles.page}>
-        <section className={`${styles.card} card`}>
-          <p className={`${styles.eyebrow} text-label`}>Invitation</p>
-          <h1 className={`${styles.title} text-display`}>Join {babyName}&apos;s care team</h1>
-          <p className={`${styles.body} text-body`}>
-            {inviterName} has invited you to help manage sleep plans and logs for <strong>{babyName}</strong> on Somni.
-          </p>
-          <p className={`${styles.body} text-body`}>
-            To accept this invitation, please sign in or create an account using your invited email address: <strong>{share.email}</strong>.
-          </p>
-          <div className={styles.actions}>
-            <Link className="btn-primary" href={redirectUrl}>
-              Sign in to accept
-            </Link>
-            <Link className="btn-secondary" href={`/signup?redirectTo=/invite/accept?id=${shareId}`}>
-              Create an account
-            </Link>
-          </div>
-        </section>
-      </main>
-    )
-  }
 
   if (share.status === 'accepted') {
     redirect('/dashboard')

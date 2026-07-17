@@ -10,7 +10,7 @@ type SupportCategory = 'bug' | 'feedback' | 'billing' | 'other'
 type SubmitState =
   | { status: 'idle' }
   | { status: 'submitting' }
-  | { status: 'success'; id: string }
+  | { status: 'success' }
   | { status: 'error'; message: string }
 
 const categoryOptions: Array<{ value: SupportCategory; label: string }> = [
@@ -70,16 +70,16 @@ export function SupportForm() {
       })
 
       const payload = (await response.json().catch(() => null)) as
-        | { id?: unknown; error?: unknown }
+        | { success?: boolean; error?: unknown }
         | null
 
-      if (!response.ok || typeof payload?.id !== 'string') {
+      if (!response.ok) {
         throw new Error(
           typeof payload?.error === 'string' ? payload.error : 'Unable to send this right now.'
         )
       }
 
-      setState({ status: 'success', id: payload.id })
+      setState({ status: 'success' })
       setMessage('')
     } catch (caughtError) {
       const messageText =
@@ -136,7 +136,7 @@ export function SupportForm() {
 
       {state.status === 'success' ? (
         <p className={styles.success}>
-          Thanks, we&apos;ve got it. Your reference ID is <strong>{state.id}</strong>.
+          Thanks, we&apos;ve got it. We will review your request shortly.
         </p>
       ) : null}
 

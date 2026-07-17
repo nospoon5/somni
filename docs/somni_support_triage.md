@@ -4,14 +4,20 @@
 
 When users experience issues, they can submit reports via the `/support` page form in the application.
 
+> **Known Alpha 1.2 blocker:** At the 17 July 2026 review, normal-user submission returned HTTP
+> 500 because the insert requested a returned row that RLS did not allow the user to select. Do
+> not assume the inbox is receiving tickets until Alpha 1.2 S0.1 is complete and the submission
+> smoke check passes.
+
 ### 1. Where do tickets go?
-As of Beta Readiness (Section 5), support requests are stored directly in the `support_tickets` database table.
-There is **no email forwarding** at this stage. You must proactively query this table to review user feedback or bug reports.
+Support requests are stored directly in the `support_tickets` database table. There is **no email
+forwarding** at this stage. An authorised admin can use `/admin/support`; the Supabase Table
+Editor remains a diagnostic fallback.
 
 ### 2. How to review incoming tickets
-1. Log in to your Supabase project dashboard and navigate to the **Table Editor**.
-2. Select the `support_tickets` table.
-3. Filter by `status = 'open'`.
+1. Sign in with an authorised admin profile and open `/admin/support`.
+2. If the admin page is unavailable, use Supabase **Table Editor** and select `support_tickets`.
+3. Start with tickets whose status is `open`.
 4. Review the details provided:
    - `category`: e.g., 'bug', 'feedback', 'billing', 'other'
    - `message`: The user's detailed description of the issue.
@@ -41,4 +47,5 @@ To ensure beta users have a smooth experience, regularly review the following po
    - Check Stripe dashboard for `failed` webhook deliveries under Developer -> Webhooks.
    - If user accounts exist in Somni but not in Stripe, ensure they finished the checkout flow.
 
-*Note: As Somni scales, a formal error monitoring service like Sentry and an email ticketing system like Resend should be implemented to replace manual log-checking.*
+*Alpha 1.2 Stage 6 must replace informal monitoring assumptions with an approved operational
+setup, response targets, escalation ownership, and a fallback contact path.*

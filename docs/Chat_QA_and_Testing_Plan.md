@@ -1,5 +1,10 @@
 # Chat Quality Assurance & Testing Plan
-*This plan establishes the framework for testing, validating, and iteratively improving the conversational coaching performance of Somni, ensuring it outperforms generic models like ChatGPT.*
+*This is the specialist QA companion to Alpha 1.2 Stages 2, 4, and 7. It validates Somni's
+conversational coaching and supports a fair comparison with current generic assistants.*
+
+**Status:** Living specialist test plan; not a separate implementation sequence.
+
+**Execution source:** `docs/Somni_Implementation_Plan_Alpha_1.2.md`
 
 ---
 
@@ -21,7 +26,9 @@ By systematically checking Somni's responses against a standard question bank, w
 
 ## 2. Automated Regression Testing (The 110-Question Suite)
 
-We maintain a repeatable batch testing harness under the [somni_eval](file:///c:/AI%20Projects/01_Apps/Somni/somni_eval) folder.
+We maintain a repeatable batch testing harness under the [somni_eval](../somni_eval/) folder. Its
+configured persona accounts must use approved pre-created test identities; do not create users
+for a routine evaluation run.
 
 ### Run Commands
 1. **Quick Smoke Test (5 Questions):**
@@ -42,7 +49,7 @@ Our custom scoring script automatically grades responses on a 0-10 scale and fla
 
 1. **Banned Phrases (Hedge Control):**
    - *Rule:* Zero occurrences of `"sounds like"` or `"it sounds like"` are allowed.
-   - *Penalty:* `-2.0` score drop if found. Banned phrases are replaced at the API gateway level by [response-filter.ts](file:///c:/AI%20Projects/01_Apps/Somni/src/lib/ai/response-filter.ts).
+   - *Penalty:* `-2.0` score drop if found. Banned phrases are replaced at the API gateway level by [response-filter.ts](../src/lib/ai/response-filter.ts).
 2. **Artificial Openers:**
    - *Rule:* Zero instances of `"Oh,"` or `"Oh "` at the start of a response (e.g. *"Oh, I hear you"*).
    - *Penalty:* `-1.0` score drop if found.
@@ -109,12 +116,18 @@ For running evaluation tests or debugging LLM output issues:
     - Use `Gemini 3.5 Flash (Medium)` for running local eval batches.
     - Use `Claude Sonnet 4.6` for detailed manual analysis of low-scoring chat answers (it has excellent nuance when auditing copy formatting and empathetic boundary tone).
 *   **Codex:**
-    - Use `5.3` (Reasoning: `Medium` or `High`) for troubleshooting prompt adjustments.
+    - Use `5.6 Terra` (Reasoning: `High`) for prompt/pipeline implementation and regression fixes.
+    - Use `5.6 Luna` (Reasoning: `Medium`) for bounded scorer, fixture, and result-analysis work.
     - Use `5.6 Sol` (Reasoning: `Extra High`) only if RAG retrieval calculations or tool-calling structures are failing tests.
 
 ---
 
 ## 5. Session Summary — Chat QA Execution and Hardening (15 July 2026)
+
+This section preserves the 15 July benchmark evidence. It is not the current launch decision.
+The broader 17 July review found 141 Vitest tests passing but also launch blockers outside this
+chat-quality run. Alpha 1.2 Stage 4 must re-baseline latency, tokens, model-call count, and quality;
+Stage 7 must independently verify the final result.
 
 ### What We Achieved
 
@@ -179,9 +192,9 @@ Keep the built-in `gemini-2.5-flash` model as the launch default. The release-ca
 
 ### Suggested Next Steps
 
-1. Fix the unrelated invitation form-action TypeScript error, then rerun `npm run build` to restore a fully green production build.
-2. Have a human reviewer read the eight remaining formulaic-opening rows, especially Q079, and decide whether a final deterministic copy normaliser is worthwhile. These rows pass the current gate and are not release blockers.
-3. Run a small real-parent beta and review anonymised feedback for warmth, clarity, usefulness, and perceived restrictiveness.
-4. Track production latency percentiles rather than only the average; investigate if repeated responses exceed 10 seconds.
-5. Re-run the 110-question benchmark after any prompt, corpus, model, retrieval, or safety-filter change and compare it with this release candidate.
-6. Keep the scored release-candidate CSV as the baseline for future regression comparisons.
+1. Complete Alpha 1.2 Stage 0 before treating any chat result as launch evidence.
+2. In Stage 2, add current-state and Next Best Action cases, including the logged short-nap benchmark.
+3. In Stage 4, track production-like latency percentiles, prompt/completion tokens, model-call count, rewrite rate, cost, and cancellation behaviour.
+4. Re-run the 110-question benchmark after any prompt, corpus, model, retrieval, tool, memory, or safety-filter change and compare it with this release candidate.
+5. Keep the scored release-candidate CSV as a historical baseline; do not overwrite it.
+6. In Stage 7, run a blinded human review and a fair comparison against current ChatGPT with equivalent supplied context.

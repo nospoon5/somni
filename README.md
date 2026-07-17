@@ -108,28 +108,34 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Verification
 
-These checks currently give the clearest picture of repo health:
+The Alpha 1.2 review found a working core but also launch blockers. Start with the live plan
+before treating the repository as release-ready. The safe core checks are:
 
 ```bash
+npm run lint
 npm test -- --run
 npx tsc --noEmit
 npm run build
-node scripts/verify-stage4-chat-e2e.mjs
+node scripts/verify-stage7-adaptive-plans.mjs
 node scripts/verify-stage4-retrieval.mjs
-npm run verify:stage5:usage
-npm run verify:stage5:stripe
 ```
+
+At the 17 July 2026 baseline, build, TypeScript, 141 Vitest tests, adaptive-plan checks,
+retrieval checks, chat E2E, and database lint passed. Lint, the support smoke flow, production
+dependency audit, and several launch-critical browser journeys still required work. Some older
+E2E scripts create temporary users and must not be used as routine verification until Stage 0
+converts them to the pre-created accounts in `docs/TEST_ACCOUNTS.md`.
 
 ## Docs
 
 Start here when orienting yourself:
 
 - `docs/README.md`
+- `docs/Somni_Implementation_Plan_Alpha_1.2.md` — the live sequential execution plan
 - `docs/somni_context.md`
 - `docs/somni_architecture.md`
-- `docs/somni_implementation_plan_v7.md`
-- `docs/Implementation_Plan_Schedule_Adaptation.md`
-- `docs/Implementation_Plan_Notifications.md`
-- `docs/somni_ai_quality_hardening.md`
+- `docs/somni_verification_checklist.md`
+- `docs/somni_release_checklist.md`
 
-Historical planning and handoff files have been moved to `archive/`.
+Completed and superseded plans, reviews, and handoffs are in `archive/`. They provide history
+but do not override the live Alpha 1.2 plan or current architecture.

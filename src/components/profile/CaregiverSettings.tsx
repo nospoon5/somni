@@ -59,7 +59,6 @@ export function CaregiverSettings({
               <div className={styles.shareMeta}>
                 <strong>{share.fullName || 'Caregiver'}</strong>
                 <span className="text-body">{share.email}</span>
-                <span className={styles.roleBadge}>{share.access_role}</span>
               </div>
               <form action={revokeFormAction}>
                 <input type="hidden" name="babyId" value={babyId} />
@@ -124,10 +123,6 @@ export function CaregiverSettings({
               required
               disabled={invitePending}
             />
-            <select name="accessRole" defaultValue="caregiver" disabled={invitePending}>
-              <option value="caregiver">Caregiver (Editor)</option>
-              <option value="admin">Admin (Full access)</option>
-            </select>
           </div>
 
           <button className="btn-primary" type="submit" disabled={invitePending}>

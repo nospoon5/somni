@@ -269,7 +269,7 @@ async function maybeApplyLogDrivenAdaptation(args: CurrentSleepContext & { now: 
   }
 
   if (evaluation.decision === 'apply_daily_rescue' && evaluation.nextPlan) {
-    const pendingPlan = (evaluation as any).pendingPlan
+    const pendingPlan = (evaluation as { pendingPlan?: unknown }).pendingPlan
     const { data: savedPlanRow, error: savePlanError } = await args.supabase
       .from('daily_plans')
       .upsert(
@@ -351,7 +351,7 @@ export async function acceptDailyRescueAction(
     return { error: 'No pending rescue schedule found for today.' }
   }
 
-  const pending = planRow.pending_rescue_targets as any
+  const pending = planRow.pending_rescue_targets as { sleepTargets?: unknown[]; feedTargets?: unknown[]; rationale?: string }
 
   // 2. Update the daily plan: copy sleepTargets and feedTargets, clear pending_rescue_targets
   const { error: updateError } = await supabase
@@ -474,7 +474,7 @@ export async function endSleepAction(
 
   const now = new Date()
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('sleep_logs')
     .update({
       ended_at: now.toISOString(),
@@ -484,9 +484,15 @@ export async function endSleepAction(
     .eq('id', activeLogId)
     .eq('baby_id', babyId)
     .is('ended_at', null)
+    .select('id')
 
   if (error) {
     return { error: error.message ?? 'We could not end this sleep session.' }
+  }
+
+  // If the log was already ended (0 rows returned), skip adaptation and notifications.
+  if (!data || data.length === 0) {
+    return { success: 'This sleep session was already completed.' }
   }
 
   try {

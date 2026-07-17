@@ -1,88 +1,100 @@
-# Somni vs. ChatGPT: Why a Specialized Sleep Coach Wins
+# Somni vs ChatGPT: The Honest Competitive Benchmark
 
-For tired parents, search engine fatigue and conflicting online advice are overwhelming. While generic AI models like **ChatGPT** can generate human-like text, they lack the specific guardrails, local context, and integrations required for safe, effective, and stress-free pediatric sleep coaching.
+**Last reviewed:** 17 July 2026
 
-Here is how **Somni** compares to and outperforms generic LLMs:
+**Purpose:** Define the product advantage Somni must prove, without understating current ChatGPT.
 
----
+Somni should not claim that ChatGPT has no memory, cannot use files, cannot search trusted
+sources, or is always single-user. Current ChatGPT can use memories and chat history, Projects
+can hold files and instructions with project memory and sharing, Search can return linked
+sources, and ChatGPT Health introduces health-specific context and memory in supported access.
 
-## The Parent's Journey: Side-by-Side Flow
+Official capability references:
 
-The diagram below shows how a parent's query is processed in both systems. Notice how Somni wraps the LLM with database context, safety fences, and tone validation to ensure a safe, concise, and helpful response.
+- [OpenAI Memory FAQ](https://help.openai.com/en/articles/8590148-memory-faq)
+- [Projects in ChatGPT](https://help.openai.com/en/articles/10169521-projects-in-chatgpt)
+- [ChatGPT Search](https://help.openai.com/en/articles/9237897-conducting-your-searches-on-search)
+- [What is ChatGPT Health?](https://help.openai.com/en/articles/20001036-what-is-chatgpt-health)
+
+Those features make ChatGPT a serious benchmark. A parent who deliberately creates a project,
+uploads a routine, maintains context, and asks a detailed question can receive strong sleep
+guidance. Somni must therefore win through less parent effort, safer product constraints, and a
+closed workflow tied to live family state—not merely through friendlier prose.
+
+## The advantage Somni must build
 
 ```mermaid
-graph TD
-    %% ChatGPT Path
-    Parent1[Parent Query] -->|Direct to LLM| GPT[ChatGPT]
-    GPT -->|No Context / No Safety| Wall[Generic Wall of Text]
-    Wall -->|Result| Confused[Overwhelmed & Confused Parent]
-
-    %% Somni Path
-    Parent2[Parent Query] -->|1. Safety Filters| Safety{Safety & Crisis Fence}
-
-    %% Safety splits
-    Safety -->|Medication or Crisis| Direct[Deterministic Redirection / Boundary]
-    Safety -->|Safe Pass| RAG[2. Curated RAG Retrieval]
-
-    %% Context & Processing
-    RAG -->|Trusted AU Sources| Context[3. Context Integration]
-    Context -->|Baby Profile, Logs & Memory| Gemini[Gemini Engine]
-    Gemini -->|Draft Response| Voice{4. Premium Voice Filter}
-
-    %% Output
-    Voice -->|Fails Length/Hedges| Rewrite[Deterministic Rewrite]
-    Voice -->|Passes| Out[5. Actionable Sleep Coach Response]
-    Rewrite --> Out
-
-    style Parent1 fill:#f9f,stroke:#333,stroke-width:2px
-    style Parent2 fill:#bbf,stroke:#333,stroke-width:2px
-    style Direct fill:#f99,stroke:#333,stroke-width:1px
-    style Out fill:#9f9,stroke:#333,stroke-width:2px
+flowchart LR
+    A["Observe real sleep"] --> B["Understand current state"]
+    B --> C["Recommend one next action"]
+    C --> D["Help the caregiver act"]
+    D --> E["Keep caregivers aligned"]
+    E --> F["Measure what happened"]
+    F --> B
 ```
 
----
+This loop is Somni's intended moat. ChatGPT can advise; Somni should know the current sleep
+session, today's accepted plan, pending changes, real constraints, caregiver activity, and the
+outcome of the previous action without asking an exhausted parent to reconstruct everything in
+a prompt.
 
-## Comparison Matrix: Somni vs. ChatGPT
+## Fair comparison
 
-| Feature Area | Generic ChatGPT (GPT-4o / GPT-3.5) | Somni (Specialized Infant Sleep Coach) |
-| :--- | :--- | :--- |
-| **Primary Focus** | General-purpose assistant across all topics. | **Sleep-first coaching** for babies and young children. |
-| **Knowledge Base** | General web scrape; includes outdated, conflicting, or unsafe advice. | **Curated pediatric corpus** (Red Nose, Tresillian, Karitane, Raising Children Network). |
-| **Pediatric Safety** | No hard boundaries; might suggest unsafe sleep items or diagnose issues. | **Deterministic safety fences** for medication, safe sleep hazards, and medical crises. |
-| **Baby Context** | None. Forgets details once the session ends unless manually re-typed. | **Persistent baby profile**, sleep logs, sleep score, and daily plan integration. |
-| **Empathetic Pacing** | Often uses repetitive, superficial empathy boilerplate. | **Empathetic but concise** voice (under 160 words, single actionable starting point). |
-| **Real-time Sync** | Single-user only. | **Caregiver sharing** allowing co-parents and nannies to log and sync in real-time. |
+| Area | Current ChatGPT benchmark | Somni today | Alpha 1.2 target |
+| --- | --- | --- | --- |
+| General reasoning and writing | Broad, strong general-purpose capability | Focused Gemini-based coach with concise voice controls | Do not compete on prose alone |
+| Persistent context | Memory, chat history, files, connected apps, and project context depending on plan/settings | Structured baby profile, logs, plans, messages, and AI memory | Make structured state visibly improve each action |
+| Source-backed answers | Web Search can provide current links and citations | Curated Australian sleep corpus with retrieval | Keep trusted sleep sources inspectable and safety-aligned |
+| Health context | Health-specific memory/context is available as access rolls out; some connected health data is region/device limited | Sleep-specific fields and Australian product rules | Be precise about scope; never imply clinical care |
+| Collaboration | Shared Projects can combine chats, files, and instructions | Shared baby records, sleep logs, plans, feed, and push alerts | Enforce roles and make caregiver handoffs dependable |
+| Live sleep state | Parent generally has to supply or connect the relevant data and maintain it | Direct sleep logging and active-session state | Turn current state into a concrete Next Best Action |
+| Acting on advice | Primarily conversational unless a tool/integration is configured | Can start/end logs and update bounded daily/durable plan state | Revalidate actions, prevent duplicates, and measure outcomes |
+| Safety | Platform safeguards plus model behaviour; configuration is general-purpose | Deterministic Somni boundaries plus curated prompting/retrieval | Prove boundaries through regression and adversarial tests |
+| Parent effort | Can be excellent with a well-maintained project and detailed prompts | Product captures recurring sleep data and preferences | Require less re-explanation and less prompt skill |
 
----
+## Where Somni is genuinely differentiated today
 
-## Key Superiority Pillars
+- Sleep logs, a single active sleep session, daily plans, durable plan profiles, and plan-change
+  events are structured product state rather than prose in a conversation.
+- Same-day schedule rescue can calculate a damped change and ask a parent to accept it without
+  silently rewriting the durable baseline.
+- Caregivers can share the same baby record and receive in-app or Web Push sleep-session alerts.
+- Australian sources, language, emergency direction, and specific sleep-safety boundaries are
+  built into the product design.
+- The sleep score can admit when data is too sparse rather than inventing certainty.
 
-### 🛡️ 1. Deterministic Pediatric Safety Fences
-Generic LLMs are prone to "hallucinations" and will often confidently answer medical queries. Somni implements strict, deterministic code boundaries before the query ever reaches the AI:
-*   **Medication Boundary:** If a parent asks about dosing or medication safety (e.g., Panadol, Nurofen, melatonin), Somni halts the AI and outputs a strict refusal to prescribe, directing the parent to a GP or pharmacist.
-*   **Safe Sleep Filter:** Any recommendation involving hazardous items in the crib (loose blankets, bumpers, pillows, toys, heat packs) is caught and flagged to maintain Australian SIDS safety alignment.
-*   **Urgent Medical Escalation:** Clinical red flags (lethargy, high fever, difficulty breathing) bypass sleep coaching entirely, showing a prominent redirect to **000** or emergency services.
+## Where Somni does not yet win reliably
 
-### 📚 2. Australia-First Curated Knowledge (RAG)
-Instead of sourcing answers from unregulated blogs, Somni retrieves context from a vetted vector database of trusted Australian health resources:
-*   Red Nose Australia (SIDS prevention authority)
-*   Tresillian and Karitane (Early parenting services)
-*   Raising Children Network & Royal Children's Hospital (RCH) Melbourne
-*   *Result:* Australian English terminology, metric units, and evidence-based methods.
+- In the July 2026 live review, a short-nap question received a generic wake-window adjustment
+  rather than referencing the actual logged duration, current plan, current time, and a concrete
+  next target.
+- Chat may spend roughly 4,000 prompt tokens and two generation calls on an ordinary response,
+  making a generic chat experience competitive on speed and cost.
+- Invitation, role, navigation, support, concurrency, and mobile-recovery defects weaken the
+  operational advantage of a dedicated product.
+- The app does not yet consistently show one obvious Next Best Action as soon as the parent
+  opens it.
 
-### 🧠 3. Persistent Memory & Context Integration
-To get a good recommendation from ChatGPT, you would need to paste your baby's age, sleep schedule, feeding habits, daycare rules, and your parenting philosophy into every prompt. Somni automates this:
-*   **Durable Learned Profile:** Stores baseline settings like normal wake times, target bedtime, and parenting style (Gentle, Balanced, Fast Track).
-*   **Sleep Score & Logging:** Tracks actual sleep logs over a 7-day window. The AI knows exactly when your baby slept today and adjusts advice based on real data.
-*   **Durable Memory:** A background cron job runs nightly to summarize the day's conversations and update the baby's `ai_memory` column, maintaining context over months.
+These are product gaps, not copy problems. They are addressed by Alpha 1.2 Stages 0–5.
 
-### 🎙️ 4. Premium Voice & Cognitive Pacing
-Tired parents do not want to read a 500-word essay with 10 bulleted options.
-*   **Length & Hedge Restrictions:** Response filters eliminate robotic boilerplate ("sounds like...", "Oh, I hear you...") and enforce an average length under 160 words.
-*   **Single Starting Point:** Somni is trained to recommend **exactly one** clear, low-friction next step to prevent decision fatigue.
-*   **Query-Aware Structure:** Simple factual questions get direct, short answers, while complex situations receive a structured compromise plan.
+## Benchmark method
 
-### 👥 5. Co-Parenting and Caregiver Handoffs
-Unlike a private ChatGPT account, Somni is built for families:
-*   **Baby Join Table (`baby_shares`):** Easily invite co-parents, grandparents, or nannies to a baby's profile via email.
-*   **Real-time Synchronization:** All caregivers see the same sleep logs, daily plans, and chat context. Updates made by Mum at work are instantly visible to Dad at home.
+Use a current, well-configured ChatGPT comparison rather than an empty chat with no context.
+
+1. Give both systems the same baby details, recent logs, plan, constraints, and parent question.
+2. Let the ChatGPT comparison use an appropriate Project, memory, and Search where available.
+3. Do not count setup effort as zero; record what the parent had to enter, upload, or maintain.
+4. Blind-score correctness, safety, specificity, uncertainty, effort, and immediate usefulness.
+5. Then test what happens after the advice: logging, plan updates, caregiver visibility, conflict
+   handling, reminders, and outcome measurement.
+6. Record where ChatGPT is equal or better. Do not rewrite the criteria after seeing results.
+
+## Success standard
+
+Somni wins when a tired parent can open the app and receive a safe, specific, explainable action
+based on current shared data, act on it with one low-friction step, and have the product update the
+family's state and learn from the outcome. If Somni only produces a similar answer in a dedicated
+chat screen, generic ChatGPT remains the stronger value benchmark.
+
+The implementation and evidence requirements for this advantage are in
+`docs/Somni_Implementation_Plan_Alpha_1.2.md`, especially Stages 2, 4, and 7.

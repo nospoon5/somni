@@ -13,7 +13,7 @@ When testing Somni app features (especially via browser subagents), use the foll
 - **Email:** `balancedtester@test.com`
 - **Password:** `balancedtester123`
 - **Name:** Balanced Tester
-- **Baby Name:** BT (DOB: 28 - 02 - 2026)
+- **Baby Name:** Aria (DOB: 28 - 02 - 2026)
 - **Settings:** Feeding: Breast | Typical Bedtime: Varies | Biggest Issue: Something Else
 
 ## Profile 3 - Fast Track
@@ -25,5 +25,10 @@ When testing Somni app features (especially via browser subagents), use the foll
 
 **Notes on usage:**
 - These accounts are persisted in the Supabase instance.
-- Feel free to create new baby profiles, log sleep, or perform any actions necessary during tests.
+- Test sleep logs, plans, invitations, notification state, and usage counters are shared mutable
+  state and may differ from the descriptive snapshot above.
+- Prefer resetting only the minimum fixture data required for the scenario. Do not create new
+  auth users or extra baby profiles during routine testing.
+- Use separate browser contexts for multi-caregiver tests; never paste credentials into logs,
+  screenshots, commits, or handoff documents.
 - Do not change the passwords.

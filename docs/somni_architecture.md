@@ -75,7 +75,7 @@ These are the current App Router Route Handlers under `src/app/api/**/route.ts`.
 | --- | --- | --- |
 | `/api/chat` | POST | Enforce quota, retrieve corpus, generate reply, persist messages, and apply bounded daily-plan or durable-profile updates |
 | `/api/score` | GET | Return the current sleep score summary |
-| `/api/support` | POST | Validate and log support requests |
+| `/api/support` | POST | Validate and store support requests in `support_tickets` |
 | `/api/billing/checkout` | POST | Create a Stripe Checkout session |
 | `/api/billing/portal` | POST | Create a Stripe Customer Portal session |
 | `/api/billing/webhook` | POST | Sync Stripe subscription state |
@@ -162,18 +162,21 @@ Current note:
 2. Client logic stores the last in-app page and prefills it as support origin context.
 3. User submits a support request from `/support`.
 4. Route handler validates the payload.
-5. Request is written to runtime logs as structured JSON.
+5. Request is inserted into the `support_tickets` table.
+6. An authorised admin reviews and updates the ticket through `/admin/support`.
 
-Support logs include:
+Ticket context includes:
 
 - `origin_page` for the issue page
 - `support_page` for the form URL
 - `page_url` as a compatibility alias for `origin_page`
 
-Current tradeoff:
+Current launch blocker:
 
-- This avoids adding a support table or email dependency for now.
-- It is simple, but not yet a full support inbox.
+- The route currently requests the inserted ticket id after writing it, while normal users have
+  INSERT but not SELECT permission. RLS therefore rejects the successful path. Alpha 1.2 S0.1
+  must repair the contract without broadening user access to support tickets.
+- There is no automatic email forwarding; the admin inbox must be checked operationally.
 
 ### Background Flow
 
@@ -199,6 +202,7 @@ Core tables:
 - `baby_shares`
 - `push_subscriptions`
 - `notification_logs`
+- `support_tickets`
 
 Important data notes:
 
@@ -215,6 +219,8 @@ Important data notes:
 - `baby_shares` records accepted and pending caregiver access to a baby.
 - `push_subscriptions` stores owner-scoped browser endpoints and encryption keys.
 - `notification_logs` stores the owner-readable in-app notification feed.
+- `support_tickets` stores authenticated support submissions for admin triage; normal users must
+  not be able to list other tickets.
 - `profiles` stores push, feed, quiet-hours, and suppression-window preferences.
 
 ## Adaptive Plan Model
@@ -298,15 +304,21 @@ Main runtime variables:
 
 ## Known Architecture Gaps
 
-- Support is runtime-log based rather than inbox based.
+- Support storage and the admin inbox exist, but the normal-user submission path has an RLS/
+  returning-row defect tracked by Alpha 1.2 S0.1.
+- Invitation return flow, caregiver-role enforcement, concurrent sleep completion, route
+  boundaries, and navigation discoverability require Stage 0 hardening.
+- Large chat, sleep-action, and adaptation modules need Stage 1 decomposition.
 - Retrieval ranking is now inspectable, but the heuristics should stay narrow and be reviewed
   whenever the corpus changes materially.
 
 ## Companion Docs
 
 - `docs/somni_context.md` for product intent
+- `docs/Somni_Implementation_Plan_Alpha_1.2.md` for the live sequential execution plan
 - `docs/somni_corpus_plan.md` for corpus rules
-- `docs/somni_implementation_plan_v4.md` for completed AI and RAG work
-- `docs/somni_implementation_plan_v7.md` for the next adaptive-plan execution plan
-- `docs/Implementation_Plan_Schedule_Adaptation.md` for the completed schedule-rescue rollout
-- `docs/Implementation_Plan_Notifications.md` for the completed notification rollout
+- `docs/Chat_QA_and_Testing_Plan.md` for the current chat evaluation framework
+- `archive/somni_implementation_plan_v4.md` for completed historical AI and RAG work
+- `archive/somni_implementation_plan_v7.md` for the completed historical adaptive-plan plan
+- `archive/Implementation_Plan_Schedule_Adaptation.md` for the completed schedule-rescue rollout
+- `archive/Implementation_Plan_Notifications.md` for the completed notification rollout

@@ -193,9 +193,9 @@ async function main() {
   const appUrl = normalizeBaseUrl(process.env.SOMNI_APP_URL ?? "http://127.0.0.1:3000");
   const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
 
-  const email = `phase6-onboarding-${Date.now()}@somni.test`;
-  const password = `SomniOnboarding!${Math.floor(Math.random() * 100000)}`;
-  const fullName = "Phase 6 Smoke";
+  const email = "fasttester@test.com";
+  const password = "fasttester123";
+  const fullName = "Fast Tester";
   const cookieJar = new Map();
   let createdUserId = null;
 
@@ -203,30 +203,34 @@ async function main() {
     console.log(`Step 1: Waiting for the running dev server at ${appUrl}...`);
     await waitForServer(urlFor(appUrl, "/signup"));
 
-    console.log("Step 2: Loading the live signup form...");
-    const signupPageResponse = await fetch(urlFor(appUrl, "/signup"));
+    const { data: users } = await supabaseAdmin.auth.admin.listUsers();
+    const testUser = users.users.find(u => u.email === email);
+    createdUserId = testUser.id;
+    await supabaseAdmin.from("babies").delete().eq("profile_id", createdUserId);
+    await supabaseAdmin.from("profiles").update({ onboarding_completed: false }).eq("id", createdUserId);
+
+    console.log("Step 2: Loading the live login form...");
+    const signupPageResponse = await fetch(urlFor(appUrl, "/login"));
     const signupPageHtml = await signupPageResponse.text();
     const signupForm = createFormData(extractHiddenInputs(signupPageHtml), {
-      fullName,
       email,
       password,
     });
 
-    console.log("Step 3: Creating a fresh temporary account through /signup...");
-    const signupResponse = await fetch(urlFor(appUrl, "/signup"), {
+    console.log("Step 3: Authenticating temporary account through /login...");
+    const signupResponse = await fetch(urlFor(appUrl, "/login"), {
       method: "POST",
       headers: {
         Origin: appUrl,
-        Referer: urlFor(appUrl, "/signup"),
+        Referer: urlFor(appUrl, "/login"),
       },
       body: signupForm,
       redirect: "manual",
     });
 
-    await expectRedirect(signupResponse, "/onboarding", "Signup");
+    await expectRedirect(signupResponse, "/dashboard", "Login");
     applySetCookies(signupResponse, cookieJar);
-    createdUserId = getUserIdFromAuthCookie(getAuthCookieValue(cookieJar));
-
+    
     console.log("Step 4: Loading the onboarding form with the authenticated session...");
     const onboardingPageResponse = await fetch(urlFor(appUrl, "/onboarding"), {
       headers: {
@@ -244,8 +248,8 @@ async function main() {
     }
 
     const onboardingForm = createFormData(extractHiddenInputs(onboardingPageHtml), {
-      babyName: "Phase Baby",
-      dateOfBirth: "2025-12-01",
+      babyName: "FT",
+      dateOfBirth: "2025-12-30",
       biggestIssue: "night_waking",
       feedingType: "mixed",
       bedtimeRange: "7-8pm",
@@ -352,9 +356,7 @@ async function main() {
   } finally {
     console.log("Final step: Cleaning up the temporary smoke-test account...");
 
-    if (createdUserId) {
-      await supabaseAdmin.auth.admin.deleteUser(createdUserId).catch(() => {});
-    }
+    // Do not delete test user
   }
 }
 

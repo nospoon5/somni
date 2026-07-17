@@ -415,9 +415,7 @@ async function main() {
       await stopProcessTree(serverProcess);
     }
 
-    if (createdUserId) {
-      await supabaseAdmin.auth.admin.deleteUser(createdUserId).catch(() => {});
-    }
+    // Do not delete test user
   }
 }
 

@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  padding: 24px 18px 108px;
+  padding: 24px 18px calc(env(safe-area-inset-bottom) + 108px);
   background: var(--color-bg);
 }
 
@@ -102,7 +102,7 @@
   line-height: 1.7;
 }
 
-.scoreFocus .text-label {
+.scoreFocus :global(.text-label) {
   display: block;
   margin-bottom: 8px;
 }

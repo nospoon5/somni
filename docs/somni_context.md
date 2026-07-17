@@ -6,6 +6,8 @@
 - Current branch target: `main`
 - Product state: usable first cut across auth, onboarding, dashboard, sleep logging, chat,
   billing, support, adaptive daily plans, caregiver sharing, push notifications, and AI memory
+- Launch state: not ready to launch; Alpha 1.2 Stage 0 contains confirmed blockers
+- Live execution source: `docs/Somni_Implementation_Plan_Alpha_1.2.md`
 
 ## What Somni Is
 
@@ -65,7 +67,7 @@ Core promise:
 - AI chat with RAG over the curated corpus
 - Free-tier message limits
 - Stripe checkout and billing portal
-- Support form that logs requests to runtime logs
+- Support form backed by the `support_tickets` table and an admin support view
 - AI memory stored on the baby record and refreshed by cron
 - Accepted caregivers can share one baby record and receive sleep-session alerts
 - Meaningful early or late wakes can produce a damped same-day schedule suggestion for parent approval
@@ -73,7 +75,8 @@ Core promise:
 
 ## Current Product Strengths
 
-- Personalisation is stronger than the generic chatbot baseline
+- Somni has structured baby, sleep, plan, caregiver, and notification state that a generic
+  conversation does not automatically maintain as an operational workflow
 - Tone is warm and on-brand
 - The AI is much better than before at concise, practical answers
 - Retrieval coverage improved meaningfully in Stages 12 to 14
@@ -81,8 +84,22 @@ Core promise:
 
 ## Current Product Risks
 
-- Retrieval is better, but still has a few weak spots in edge-case scenarios
+- Support submission currently fails for normal users because the successful insert requests a
+  row that RLS does not allow them to select.
+- Signed-out caregiver invitation handoff and role enforcement are not launch-safe.
+- Settings and sign-out are hard to discover from the main mobile navigation.
+- Lint and the production dependency audit are not green.
+- Concurrent sleep completion can trigger duplicate downstream work.
+- Mobile loading, failure, accessibility, and bottom-navigation behaviour need hardening.
+- Chat can spend roughly 4,000 prompt tokens and two model generations on an ordinary message.
+- Retrieval is better, but edge cases and the complete AI safety baseline still require
+  regression testing after every material change.
+- Current Next Best Action advice is not yet consistently concrete enough to demonstrate a
+  meaningful advantage over a well-configured current ChatGPT experience.
 
 ## Current Strategic Focus
 
-The adaptive-plan, caregiver-sharing, and notification foundations are now implemented. Future work should be selected from current living plans and validated against `docs/somni_release_checklist.md` before production rollout.
+Execute `docs/Somni_Implementation_Plan_Alpha_1.2.md` sequentially. The strategic product goal
+is a closed loop: observe real sleep, recommend one concrete next action, help the family act,
+keep caregivers aligned, and measure what happened. No production launch should proceed until
+Stage 7 issues a formal Go or approved Conditional Go decision.

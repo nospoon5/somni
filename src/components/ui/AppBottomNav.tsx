@@ -22,7 +22,7 @@ export function AppBottomNav() {
   const pathname = usePathname() ?? '/'
 
   // Only show on the core signed-in experience routes.
-  const allowed = ['/dashboard', '/sleep', '/chat']
+  const allowed = ['/dashboard', '/sleep', '/chat', '/profile']
   if (!allowed.some((route) => isActivePath(pathname, route))) return null
 
   const dashboardActive = isActivePath(pathname, '/dashboard')
@@ -97,6 +97,34 @@ export function AppBottomNav() {
             </svg>
           </Icon>
           <span className={styles.label}>Chat</span>
+        </Link>
+
+        <Link
+          className={`${styles.link} ${pathname === '/profile' ? styles.active : ''}`}
+          href="/profile"
+          aria-current={pathname === '/profile' ? 'page' : undefined}
+        >
+          <Icon>
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
+              <path
+                d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle
+                cx="12"
+                cy="7"
+                r="4"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </Icon>
+          <span className={styles.label}>Settings</span>
         </Link>
       </div>
     </div>

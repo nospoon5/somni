@@ -56,7 +56,7 @@ export async function saveChatPlanUpdates(args: SaveChatPlanUpdatesArgs) {
 
   for (const functionCall of args.functionCalls) {
     if (functionCall.name === 'create_completed_sleep_log') {
-      const args_ = functionCall.args as Record<string, any>
+      const args_ = functionCall.args as Record<string, unknown>
       const startedAt = typeof args_.started_at === 'string' ? args_.started_at : (typeof args_.startedAt === 'string' ? args_.startedAt : null)
       const endedAt = typeof args_.ended_at === 'string' ? args_.ended_at : (typeof args_.endedAt === 'string' ? args_.endedAt : null)
       const isNight = typeof args_.is_night === 'boolean' ? args_.is_night : (typeof args_.isNight === 'boolean' ? args_.isNight : false)

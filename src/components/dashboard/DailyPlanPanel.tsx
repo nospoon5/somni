@@ -255,13 +255,13 @@ export function DailyPlanPanel({
       } else {
         setPlan({
           ...plan,
-          sleepTargets: plan.pendingRescueTargets.sleepTargets,
-          feedTargets: plan.pendingRescueTargets.feedTargets,
+          sleepTargets: plan.pendingRescueTargets.sleepTargets || [],
+          feedTargets: plan.pendingRescueTargets.feedTargets || [],
           pendingRescueTargets: null,
           rescueDismissed: false,
         })
       }
-    } catch (err) {
+    } catch (_err) {
       setBannerError('Something went wrong. Please try again.')
     } finally {
       setIsUpdating(false)
@@ -282,7 +282,7 @@ export function DailyPlanPanel({
           rescueDismissed: true,
         })
       }
-    } catch (err) {
+    } catch (_err) {
       setBannerError('Something went wrong. Please try again.')
     } finally {
       setIsUpdating(false)
