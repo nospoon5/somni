@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import {
-  DAILY_PLAN_STORAGE_KEY,
+  getDailyPlanStorageKey,
   formatDailyPlanTime,
   type DailyPlanFeedTarget,
   type DailyPlanRecord,
@@ -14,6 +14,8 @@ import { acceptDailyRescueAction, dismissDailyRescueAction } from '@/app/sleep/a
 import styles from './DailyPlanPanel.module.css'
 
 type DailyPlanPanelProps = {
+  profileId: string
+  babyId: string | null
   babyName: string
   initialPlan: DailyPlanRecord | null
   sleepPlanProfile: SleepPlanProfileRecord | null
@@ -229,6 +231,8 @@ function TargetList<T extends DailyPlanSleepTarget | DailyPlanFeedTarget>({
 }
 
 export function DailyPlanPanel({
+  profileId,
+  babyId,
   babyName,
   initialPlan,
   sleepPlanProfile,
@@ -261,7 +265,7 @@ export function DailyPlanPanel({
           rescueDismissed: false,
         })
       }
-    } catch (_err) {
+    } catch {
       setBannerError('Something went wrong. Please try again.')
     } finally {
       setIsUpdating(false)
@@ -282,7 +286,7 @@ export function DailyPlanPanel({
           rescueDismissed: true,
         })
       }
-    } catch (_err) {
+    } catch {
       setBannerError('Something went wrong. Please try again.')
     } finally {
       setIsUpdating(false)
@@ -295,6 +299,9 @@ export function DailyPlanPanel({
   const planChangedAt = plan ? resolveChangedAt(plan, sleepPlanProfile) : null
 
   useEffect(() => {
+    if (!babyId) return
+    const storageKey = getDailyPlanStorageKey(profileId, babyId)
+
     function applyPayload(rawValue: string | null) {
       if (!rawValue) {
         return
@@ -320,10 +327,10 @@ export function DailyPlanPanel({
       }
     }
 
-    applyPayload(window.localStorage.getItem(DAILY_PLAN_STORAGE_KEY))
+    applyPayload(window.localStorage.getItem(storageKey))
 
     function handleStorage(event: StorageEvent) {
-      if (event.key !== DAILY_PLAN_STORAGE_KEY) {
+      if (event.key !== storageKey) {
         return
       }
 
@@ -335,7 +342,7 @@ export function DailyPlanPanel({
     return () => {
       window.removeEventListener('storage', handleStorage)
     }
-  }, [todayPlanDate])
+  }, [babyId, profileId, todayPlanDate])
 
   return (
     <section className={`${styles.shell} card card-glass animate-fade-up`}>

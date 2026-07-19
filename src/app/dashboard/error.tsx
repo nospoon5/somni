@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect } from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 export default function ErrorBoundary({
   error,
@@ -9,6 +11,8 @@ export default function ErrorBoundary({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  const pathname = usePathname()
+
   useEffect(() => {
     console.error(error)
   }, [error])
@@ -20,13 +24,20 @@ export default function ErrorBoundary({
         <p className="text-body" style={{ marginTop: '12px' }}>
           We encountered an error loading this page.
         </p>
-        <button
-          className="btn-primary"
-          style={{ marginTop: '24px' }}
-          onClick={() => reset()}
-        >
-          Try again
-        </button>
+        <div style={{ display: 'flex', gap: '12px', marginTop: '24px', flexWrap: 'wrap' }}>
+          <button
+            className="btn-primary"
+            onClick={() => reset()}
+          >
+            Try again
+          </button>
+          <Link
+            className="btn-secondary"
+            href={`/support?originPage=${encodeURIComponent(pathname)}`}
+          >
+            Contact Support
+          </Link>
+        </div>
       </section>
     </main>
   )

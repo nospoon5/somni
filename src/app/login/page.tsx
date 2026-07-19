@@ -2,8 +2,18 @@ import Link from 'next/link'
 import { AuthForm } from '@/components/auth/AuthForm'
 import { loginAction } from '@/app/auth-actions'
 import styles from '../auth-page.module.css'
+import { sanitizeInviteRedirect } from '@/lib/auth/redirect'
 
-export default function LoginPage() {
+type LoginPageProps = {
+  searchParams: Promise<{ redirectTo?: string }>
+}
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const redirectTo = sanitizeInviteRedirect((await searchParams).redirectTo)
+  const signupHref = redirectTo
+    ? `/signup?redirectTo=${encodeURIComponent(redirectTo)}`
+    : '/signup'
+
   return (
     <main className={styles.page}>
       <section className={styles.panel}>
@@ -15,7 +25,7 @@ export default function LoginPage() {
             tonight&apos;s plan grounded in your baby&apos;s real data.
           </p>
           <p className={styles.meta}>
-            New here? <Link href="/signup">Create your account</Link>
+            New here? <Link href={signupHref}>Create your account</Link>
           </p>
         </div>
 
@@ -25,6 +35,7 @@ export default function LoginPage() {
           subtitle="A calm place to track sleep and get grounded guidance."
           submitLabel="Sign in"
           mode="login"
+          redirectTo={redirectTo}
         />
       </section>
     </main>

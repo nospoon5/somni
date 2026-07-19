@@ -1,13 +1,13 @@
 'use client'
 
 import { useActionState } from 'react'
-import { inviteCaregiverAction, revokeCaregiverAction } from '@/app/profile/actions'
+import { inviteCaregiverAction, revokeCaregiverAction, rotateInviteTokenAction } from '@/app/profile/actions'
 import styles from './CaregiverSettings.module.css'
 
 export type BabyShare = {
   id: string
   email: string
-  access_role: 'admin' | 'caregiver'
+  access_role: 'caregiver'
   status: 'pending' | 'accepted'
   profile_id: string | null
   fullName?: string | null
@@ -34,14 +34,18 @@ export function CaregiverSettings({
     revokeCaregiverAction,
     {}
   )
+  const [rotateState, rotateFormAction, rotatePending] = useActionState(
+    rotateInviteTokenAction,
+    {}
+  )
 
   const pendingShares = shares.filter((share) => share.status === 'pending')
   const acceptedShares = shares.filter((share) => share.status === 'accepted')
 
-  function handleCopyInviteLink(shareId: string) {
-    const inviteUrl = `${appUrl}/invite/accept?id=${shareId}`
+  function handleCopyInviteLink(linkPath: string) {
+    const inviteUrl = `${appUrl}${linkPath}`
     navigator.clipboard.writeText(inviteUrl)
-    alert('Invitation link copied! Send this link to your caregiver so they can accept.')
+    alert('Invitation link copied! Send this link to your caregiver so they can accept. This link will not be shown again.')
   }
 
   return (
@@ -49,6 +53,7 @@ export function CaregiverSettings({
       <h2 className={`${styles.sectionTitle} text-display`}>Caregivers ({babyName})</h2>
       <p className="text-body">
         Add co-parents or nannies so they can view and update sleep plans, daily scorecards, and logs in real-time.
+        Note: The creator of the baby profile is the permanent owner. Ownership transfer is not currently supported.
       </p>
 
       {acceptedShares.length > 0 ? (
@@ -86,13 +91,17 @@ export function CaregiverSettings({
                 <span className={styles.pendingBadge}>Waiting for accept</span>
               </div>
               <div className={styles.inviteActions}>
-                <button
-                  className="btn-secondary"
-                  type="button"
-                  onClick={() => handleCopyInviteLink(share.id)}
-                >
-                  Copy invite link
-                </button>
+                <form action={rotateFormAction}>
+                  <input type="hidden" name="babyId" value={babyId} />
+                  <input type="hidden" name="shareId" value={share.id} />
+                  <button
+                    className="btn-secondary"
+                    type="submit"
+                    disabled={rotatePending}
+                  >
+                    Generate new link
+                  </button>
+                </form>
                 <form action={revokeFormAction}>
                   <input type="hidden" name="babyId" value={babyId} />
                   <input type="hidden" name="shareId" value={share.id} />
@@ -131,7 +140,27 @@ export function CaregiverSettings({
         </form>
 
         {inviteState.error ? <p className={styles.error}>{inviteState.error}</p> : null}
-        {inviteState.success ? <p className={styles.success}>{inviteState.success}</p> : null}
+        {inviteState.success && !inviteState.inviteLink ? <p className={styles.success}>{inviteState.success}</p> : null}
+        {inviteState.inviteLink ? (
+          <div className={styles.success} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <p><strong>Invitation link generated:</strong></p>
+            <p className="text-body" style={{ wordBreak: 'break-all', padding: '8px', background: 'var(--color-surface-sunken)', borderRadius: '4px' }}>{appUrl}{inviteState.inviteLink}</p>
+            <button type="button" className="btn-secondary" style={{ alignSelf: 'flex-start' }} onClick={() => handleCopyInviteLink(inviteState.inviteLink!)}>Copy Link</button>
+            <p className="text-body" style={{ fontSize: '0.875rem' }}>Make sure to copy this now, it won&apos;t be shown again.</p>
+          </div>
+        ) : null}
+
+        {rotateState.error ? <p className={styles.error}>{rotateState.error}</p> : null}
+        {rotateState.success && !rotateState.inviteLink ? <p className={styles.success}>{rotateState.success}</p> : null}
+        {rotateState.inviteLink ? (
+          <div className={styles.success} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <p><strong>New invitation link generated:</strong></p>
+            <p className="text-body" style={{ wordBreak: 'break-all', padding: '8px', background: 'var(--color-surface-sunken)', borderRadius: '4px' }}>{appUrl}{rotateState.inviteLink}</p>
+            <button type="button" className="btn-secondary" style={{ alignSelf: 'flex-start' }} onClick={() => handleCopyInviteLink(rotateState.inviteLink!)}>Copy Link</button>
+            <p className="text-body" style={{ fontSize: '0.875rem' }}>Make sure to copy this now, it won&apos;t be shown again.</p>
+          </div>
+        ) : null}
+
         {revokeState.error ? <p className={styles.error}>{revokeState.error}</p> : null}
         {revokeState.success ? <p className={styles.success}>{revokeState.success}</p> : null}
       </div>

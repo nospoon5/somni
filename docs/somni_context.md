@@ -1,12 +1,15 @@
 # Somni - Product Context Summary
 
-## Current Delivery Status (2026-07-17)
+## Current Delivery Status (2026-07-19)
 
-- Recently completed work: caregiver sharing, balanced schedule adaptation, and caregiver notifications
+- Stage 7 is complete with a formal No-Go; Stage 6 is reopened as Blocked because launch
+  operations and rehearsals are not yet operable
 - Current branch target: `main`
-- Product state: usable first cut across auth, onboarding, dashboard, sleep logging, chat,
-  billing, support, adaptive daily plans, caregiver sharing, push notifications, and AI memory
-- Launch state: not ready to launch; Alpha 1.2 Stage 0 contains confirmed blockers
+- Product state: launch-candidate engineering across auth, onboarding, active-baby selection,
+  dashboard, sleep logging, chat, billing, support, adaptive plans, caregiver sharing,
+  notifications, privacy controls, and AI memory
+- Launch state: external deployment/cohort remains blocked by the conditions in
+  `docs/Somni_Launch_Readiness_Report_Alpha_1.2.md`
 - Live execution source: `docs/Somni_Implementation_Plan_Alpha_1.2.md`
 
 ## What Somni Is
@@ -59,7 +62,7 @@ Core promise:
 ## What Is Live Today
 
 - Email/password sign-up and sign-in
-- One-baby onboarding flow
+- Baby onboarding plus active-baby switching for owned and shared babies
 - Sleep style questionnaire
 - Sleep logging with single active sleep-session protection
 - Dashboard sleep score and summaries
@@ -68,10 +71,12 @@ Core promise:
 - Free-tier message limits
 - Stripe checkout and billing portal
 - Support form backed by the `support_tickets` table and an admin support view
+- Profile data export, owner-only baby deletion, and confirmed account deletion with Stripe cleanup
 - AI memory stored on the baby record and refreshed by cron
 - Accepted caregivers can share one baby record and receive sleep-session alerts
 - Meaningful early or late wakes can produce a damped same-day schedule suggestion for parent approval
 - Web Push alerts respect each caregiver's quiet hours while the in-app feed remains available
+- Next Best Action guidance and a caregiver handoff timeline on the dashboard
 
 ## Current Product Strengths
 
@@ -79,23 +84,37 @@ Core promise:
   conversation does not automatically maintain as an operational workflow
 - Tone is warm and on-brand
 - The AI is much better than before at concise, practical answers
-- Retrieval coverage improved meaningfully in Stages 12 to 14
+- Retrieval coverage, source attribution, and edge-case ranking improved meaningfully
 - The sleep score now stays honest for sparse data instead of grading a parent too early
+- Caregiver invitations now use expiring hashed tokens and atomic, email-bound acceptance
+- Structured data export and account deletion give parents direct privacy controls
 
-## Current Product Risks
+## Resolved Alpha 1.2 Engineering Gaps
 
-- Support submission currently fails for normal users because the successful insert requests a
-  row that RLS does not allow them to select.
-- Signed-out caregiver invitation handoff and role enforcement are not launch-safe.
-- Settings and sign-out are hard to discover from the main mobile navigation.
-- Lint and the production dependency audit are not green.
-- Concurrent sleep completion can trigger duplicate downstream work.
-- Mobile loading, failure, accessibility, and bottom-navigation behaviour need hardening.
-- Chat can spend roughly 4,000 prompt tokens and two model generations on an ordinary message.
-- Retrieval is better, but edge cases and the complete AI safety baseline still require
-  regression testing after every material change.
-- Current Next Best Action advice is not yet consistently concrete enough to demonstrate a
-  meaningful advantage over a well-configured current ChatGPT experience.
+- Normal-user support submission no longer depends on forbidden RLS read-back, while support
+  ticket listing remains admin-only.
+- Signed-out invite return, token/expiry/email validation, caregiver-only roles, and permanent
+  baby ownership are enforced in both application code and the linked database.
+- Sleep logs preserve caregiver attribution, protect history older than 48 hours, and reject
+  duplicate completed intervals at the database layer.
+- Navigation exposes profile, billing, support, active-baby switching, and sign-out on mobile.
+- CSP, privacy export/deletion, browser-storage cleanup, logging redaction, fixture safety, and
+  accessibility coverage were added during Stages 0-7.
+- Static checks, unit tests, the production dependency audit, and the guarded browser matrix are
+  now the maintained gates; removed temporary-user scripts are not part of the release process.
+
+## Remaining Stage 7 Launch Blockers
+
+- The full AI safety and quality benchmark, including adversarial and multi-turn extensions,
+  must be completed and graded against the approved thresholds.
+- Performance evidence must quantify the deliberate dynamic-rendering cost of per-request CSP
+  nonces and the linked-database latency of authenticated routes.
+- Backup/restore and deployment rollback procedures must be rehearsed with timestamped evidence,
+  named owners, and verified recovery outcomes.
+- Pre-created test credentials must be confirmed as non-production-only and rotated before launch
+  if there is any production access or credential-reuse risk.
+- Stage 7 must publish the formal Go, Conditional Go, or No-Go recommendation. Resolved code gaps
+  are not, by themselves, launch approval.
 
 ## Current Strategic Focus
 

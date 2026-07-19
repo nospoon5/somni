@@ -70,7 +70,11 @@ def load_expected_output_headers(template_path: Path) -> list[str]:
     return cleaned_headers
 
 
-def load_questions(question_path: Path, max_questions: int | None = None) -> list[QuestionRow]:
+def load_questions(
+    question_path: Path,
+    max_questions: int | None = None,
+    question_set: str = "core",
+) -> list[QuestionRow]:
     if not question_path.exists():
         raise ConfigError(f"Questions CSV not found: {question_path}")
 
@@ -89,10 +93,13 @@ def load_questions(question_path: Path, max_questions: int | None = None) -> lis
             benchmark_set = (raw_row.get("benchmark_set") or "").strip().lower()
             sequence_id = (raw_row.get("sequence_id") or "").strip()
 
-            # The master CSV contains 117 rows, but the comparable benchmark set is the
-            # 110 core questions only. The extra rows are follow-up or adversarial items
-            # that should not be mixed into the overnight benchmark run.
-            if benchmark_set != "core" or sequence_id:
+            # The master CSV contains a comparable 110-question core plus seven
+            # multi-turn/adversarial extensions. Keep the historical core benchmark
+            # stable while allowing Stage 7 to run the extensions explicitly.
+            is_comparable_core = benchmark_set == "core" and not sequence_id
+            if question_set == "core" and not is_comparable_core:
+                continue
+            if question_set == "extensions" and is_comparable_core:
                 continue
 
             if not question_id:

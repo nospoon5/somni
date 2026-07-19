@@ -29,7 +29,6 @@
     "base_url": "http://127.0.0.1:3000",
     "supabase_url": "",
     "supabase_anon_key": "",
-    "supabase_service_role_key": "",
     "send_eval_mode_header": true,
     "persona_accounts": {
       "gentle": {

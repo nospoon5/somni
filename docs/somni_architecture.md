@@ -14,7 +14,7 @@ Somni is a mobile-first web app and installable PWA for baby sleep coaching.
 Current live product areas:
 
 - Auth
-- Onboarding
+- Onboarding and active-baby selection
 - Sleep logging
 - Sleep score
 - AI chat with retrieval
@@ -25,6 +25,8 @@ Current live product areas:
 - Billing
 - Support
 - AI memory backfill
+- Privacy export and deletion
+- Next Best Action and caregiver handoff context
 
 ## Technical Stack
 
@@ -56,6 +58,7 @@ Current live product areas:
 | `/` | Landing page | Public |
 | `/login` | Sign in | Public |
 | `/signup` | Sign up | Public |
+| `/invite/accept` | Validate and accept a caregiver invitation after sign-in | Public handoff; authenticated acceptance |
 | `/onboarding` | Baby setup and sleep style questions | Authenticated |
 | `/dashboard` | Score, plan, and quick actions | Authenticated |
 | `/chat` | AI coaching chat | Authenticated |
@@ -63,6 +66,7 @@ Current live product areas:
 | `/profile` | Profile and baby settings | Authenticated |
 | `/billing` | Upgrade and billing management | Authenticated |
 | `/support` | Support form | Public (submission requires auth) |
+| `/admin/support` | Support triage inbox | Authenticated administrator only |
 | `/privacy` | Privacy policy | Public |
 | `/terms` | Terms of service | Public |
 | `/disclaimer` | Medical and product disclaimer | Public |
@@ -93,13 +97,17 @@ Current note:
 - Session refresh is handled in `src/proxy.ts`.
 - `src/proxy.ts` is session maintenance, not the main security boundary.
 - Real authorization still happens in server-side code and Row Level Security policies.
+- The selected baby id is stored in an HTTP-only, same-site cookie. Server-side access helpers
+  validate that the signed-in profile owns the baby or has an accepted caregiver share before
+  any route reads or writes baby-scoped data.
 
 ## High-Level Flows
 
 ### Onboarding Flow
 
-1. User signs up or signs in.
-2. User creates a baby profile.
+1. User signs up or signs in, or returns from a valid caregiver invitation.
+2. A new primary user creates a baby profile. Existing owners and accepted caregivers can switch
+   among babies they are authorised to access.
 3. User answers the sleep style questionnaire plus practical planning questions such as
    wake time, day shape, naps, night feeds, and preferred schedule feel.
 4. App stores the onboarding preferences, creates one recommended starting
@@ -114,6 +122,22 @@ Current note:
    coverage, it stays in a learning state instead of showing a numeric score.
 5. Accepted caregivers other than the actor receive an in-app notification; eligible browser
    subscriptions also receive a push unless the recipient's quiet hours suppress it.
+6. Database triggers preserve the actor in `logged_by`, keep the baby and creation timestamp
+   immutable, and restrict edits/deletes to sleep started within the last 48 hours.
+7. A unique completed-interval index makes retries for the same baby/start/end idempotent.
+
+### Caregiver Invitation Flow
+
+1. The permanent baby owner creates a pending caregiver share for one email address.
+2. Somni generates a 32-byte random token, stores only its SHA-256 hash, and returns the raw token
+   once in the invitation link. Pending links expire after seven days.
+3. A signed-out recipient is sent through login or signup and returned only to a validated internal
+   invitation path; pending family data is not exposed before acceptance.
+4. The `accept_baby_invite` database function atomically verifies the authenticated JWT email,
+   raw token, pending status, and expiry, then clears the token and grants the single supported
+   `caregiver` role.
+5. Direct authenticated updates to `baby_shares` are denied. Owners rotate pending tokens through
+   `rotate_baby_invite`, and `babies.profile_id` is immutable; ownership transfer is not supported.
 
 ### Balanced Schedule Rescue Flow
 
@@ -171,12 +195,23 @@ Ticket context includes:
 - `support_page` for the form URL
 - `page_url` as a compatibility alias for `origin_page`
 
-Current launch blocker:
+Current operational note:
 
-- The route currently requests the inserted ticket id after writing it, while normal users have
-  INSERT but not SELECT permission. RLS therefore rejects the successful path. Alpha 1.2 S0.1
-  must repair the contract without broadening user access to support tickets.
+- The former returning-row/RLS failure is resolved: normal-user insertion does not request a
+  returned row. The server-only recent-ticket count fails closed if the admin query is unavailable.
 - There is no automatic email forwarding; the admin inbox must be checked operationally.
+
+### Privacy Flow
+
+1. A signed-in profile can request a paginated, allowlisted JSON export from Profile. Secrets,
+   invite token hashes, push credentials, Stripe identifiers, and other caregivers' identifiers
+   are excluded.
+2. Only the permanent owner can delete a baby. One parent-row deletion atomically cascades through
+   baby-owned tables.
+3. Account deletion requires the server-checked phrase `DELETE ACCOUNT`, removes pending invites
+   addressed to the user, cancels/deletes Stripe customer state when present, then uses the
+   server-only Supabase Admin API to delete the auth user and cascading profile data.
+4. Logout and successful deletion clear Somni-prefixed local and session storage in the browser.
 
 ### Background Flow
 
@@ -214,6 +249,10 @@ Important data notes:
 - `sleep_plan_change_events` stores append-only explainability history for profile and
   daily-plan changes.
 - `sleep_logs` has a unique partial index so each baby can only have one active session.
+- `sleep_logs.logged_by` is database-attributed to the authenticated actor. Audit fields are
+  immutable and history older than 48 hours cannot be edited or deleted by caregivers.
+- A second unique partial index prevents duplicate completed rows for an identical
+  `(baby_id, started_at, ended_at)` interval.
 - `usage_counters` resets by the user's timezone, defaulting to `Australia/Sydney`.
 - `corpus_chunks` stores retrieval text, metadata, and embeddings.
 - `baby_shares` records accepted and pending caregiver access to a baby.
@@ -267,9 +306,13 @@ Current implementation note:
   - nap transitions
   - vague reset-plan queries
 - Safety-relevant guidance must still surface even when methodology differs.
-- Retrieval diagnostics can be logged with `SOMNI_LOG_RETRIEVAL=true`.
-- Retrieval diagnostics can be returned in chat debug flows with
-  `SOMNI_INCLUDE_RETRIEVAL_DEBUG=true`, eval mode, or `?retrieval_debug=1`.
+- Retrieval diagnostics can be logged by server configuration with
+  `SOMNI_LOG_RETRIEVAL=true` and returned only when the server enables
+  `SOMNI_INCLUDE_RETRIEVAL_DEBUG=true` or a request passes authorised evaluation mode.
+- Browser-controlled debug query parameters and unauthenticated evaluation headers do not enable
+  diagnostics. Evaluation requests require `SOMNI_EVAL_SECRET` (at least 32 characters), use
+  constant-time comparison, and remain read-only: no quota consumption, message persistence,
+  memory writes, or plan changes.
 
 ## Environment Variables
 
@@ -284,7 +327,6 @@ Main runtime variables:
 - `GEMINI_EMBEDDING_MODEL`
 - `GEMINI_MEMORY_MODEL`
 - `STRIPE_SECRET_KEY`
-- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
 - `STRIPE_PRICE_MONTHLY`
 - `STRIPE_PRICE_ANNUAL`
 - `STRIPE_WEBHOOK_SECRET`
@@ -294,23 +336,53 @@ Main runtime variables:
 - `NEXT_PUBLIC_VAPID_PUBLIC_KEY`
 - `VAPID_PRIVATE_KEY`
 - `VAPID_SUBJECT`
+- `SOMNI_LOG_LATENCY` (server-side diagnostics)
+- `SOMNI_LOG_RETRIEVAL` (server-side diagnostics)
+- `SOMNI_INCLUDE_RETRIEVAL_DEBUG` (server-controlled response diagnostics; keep disabled in production)
+- `SOMNI_EVAL_SECRET` (untracked evaluation-only secret, minimum 32 characters)
+
+`SOMNI_FORCE_BILLING_FAILURE` is a local failure-injection switch, not a production setting.
+
+## Linked Database Hardening State
+
+On 19 July 2026, `npx supabase migration list --linked` showed local and linked history aligned
+through `20260719130000`. The final hardening sequence is:
+
+- `202607181751_secure_invite_tokens.sql`: hashed, expiring caregiver invitation tokens.
+- `202607182300_sleep_logs_attribution.sql`: caregiver attribution for sleep logs.
+- `20260719090000_authorization_hardening.sql`: atomic invite acceptance/rotation, caregiver-only
+  delegation, hidden pending shares, and immutable permanent ownership.
+- `20260719120000_sleep_log_audit_hardening.sql`: database-owned attribution/audit fields and the
+  48-hour history-integrity boundary.
+- `20260719130000_sleep_log_idempotency.sql`: duplicate completed-interval protection.
 
 ## Quality Expectations
 
-- `npm test -- --run` should stay green.
-- `npm run build` should stay green.
-- Retrieval and chat verification scripts should stay usable after AI-related changes.
+- `npm run lint`, `npx tsc --noEmit`, `npx vitest run`, `npm run build`, and
+  `npm audit --omit=dev` should stay green.
+- `npm run verify:stage7:adaptive`, `node scripts/verify-stage4-retrieval.mjs`, and
+  `npm run verify:links` are the maintained deterministic verification commands.
+- Release candidates run `npx playwright test` serially against a production build and the
+  approved non-production accounts; the suite must not create or delete auth users.
+- AI changes also run the Python evaluation tests/dry run and, for launch evidence, the authorised
+  read-only benchmark described in `somni_eval/README.md`.
 - Docs should be updated when routes, environment variables, or architecture decisions change.
 
 ## Known Architecture Gaps
 
-- Support storage and the admin inbox exist, but the normal-user submission path has an RLS/
-  returning-row defect tracked by Alpha 1.2 S0.1.
-- Invitation return flow, caregiver-role enforcement, concurrent sleep completion, route
-  boundaries, and navigation discoverability require Stage 0 hardening.
-- Large chat, sleep-action, and adaptation modules need Stage 1 decomposition.
+- Per-request CSP nonces deliberately make HTML routes dynamic. Stage 7 must measure the latency
+  and caching cost; production script and style-element policy must not be weakened to recover it.
+- React still emits a small number of inline style attributes, so production CSP retains the
+  narrower `style-src-attr 'unsafe-inline'` exception while blocking inline scripts and script
+  attributes.
+- Account export is complete and paginated at the data-source layer but assembled in memory; a
+  streaming/background export is a future scale improvement, not an Alpha launch blocker.
+- Support has no email forwarding, so operational coverage of `/admin/support` remains required.
 - Retrieval ranking is now inspectable, but the heuristics should stay narrow and be reviewed
   whenever the corpus changes materially.
+- Launch readiness still depends on the Stage 7 AI benchmark, performance evidence, rehearsed
+  backup/restore and rollback, and the formal decision; these are evidence/operations gaps rather
+  than unresolved Stage 0 engineering defects.
 
 ## Companion Docs
 
@@ -318,6 +390,11 @@ Main runtime variables:
 - `docs/Somni_Implementation_Plan_Alpha_1.2.md` for the live sequential execution plan
 - `docs/somni_corpus_plan.md` for corpus rules
 - `docs/Chat_QA_and_Testing_Plan.md` for the current chat evaluation framework
+- `docs/security_model.md` for security boundaries and residual risk
+- `docs/privacy_operations.md` for export, deletion, and retention behavior
+- `docs/backup_restore_runbook.md` and `docs/deployment_runbook.md` for recovery and release
+- `docs/incident_response.md`, `docs/billing_reconciliation.md`, and
+  `docs/analytics_and_launch.md` for launch operations
 - `archive/somni_implementation_plan_v4.md` for completed historical AI and RAG work
 - `archive/somni_implementation_plan_v7.md` for the completed historical adaptive-plan plan
 - `archive/Implementation_Plan_Schedule_Adaptation.md` for the completed schedule-rescue rollout

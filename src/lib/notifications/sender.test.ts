@@ -87,6 +87,7 @@ describe('sendNotificationToUser', () => {
       error: null,
     })
     mocks.insertLog.mockResolvedValue({ error: null })
+    mocks.sendNotification.mockResolvedValue(undefined)
     mocks.selectSubscriptions.mockReturnValue({ eq: mocks.subscriptionWhere })
     mocks.subscriptionWhere.mockResolvedValue({
       data: [
@@ -109,7 +110,8 @@ describe('sendNotificationToUser', () => {
       'caregiver-profile',
       'Sleep Session Update',
       'A sleep session started.',
-      new Date('2026-07-15T02:00:00.000Z')
+      '/sleep',
+      { now: new Date('2026-07-15T02:00:00.000Z') }
     )
 
     expect(result).toEqual({
@@ -128,5 +130,35 @@ describe('sendNotificationToUser', () => {
       'endpoint',
       'https://push.example.test/expired-browser'
     )
+  })
+
+  it('can persist the durable feed entry without waiting for browser push delivery', async () => {
+    const result = await sendNotificationToUser(
+      'caregiver-profile',
+      'Sleep Session Update',
+      'A sleep session started.',
+      '/sleep',
+      { includePush: false }
+    )
+
+    expect(result.feedLogged).toBe(true)
+    expect(mocks.insertLog).toHaveBeenCalledOnce()
+    expect(mocks.selectSubscriptions).not.toHaveBeenCalled()
+    expect(mocks.sendNotification).not.toHaveBeenCalled()
+  })
+
+  it('can deliver browser push without duplicating the durable feed entry', async () => {
+    const result = await sendNotificationToUser(
+      'caregiver-profile',
+      'Sleep Session Update',
+      'A sleep session started.',
+      '/sleep',
+      { includeFeed: false }
+    )
+
+    expect(result.feedLogged).toBe(false)
+    expect(result.sentSubscriptions).toBe(1)
+    expect(mocks.insertLog).not.toHaveBeenCalled()
+    expect(mocks.sendNotification).toHaveBeenCalledOnce()
   })
 })

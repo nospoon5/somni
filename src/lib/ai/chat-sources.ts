@@ -56,27 +56,25 @@ export function createSseEvent(event: string, data: unknown) {
   return `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`
 }
 
-export function shouldIncludeRetrievalDiagnostics(request: Request, isEvalMode: boolean) {
-  const url = new URL(request.url)
-  return (
-    process.env.SOMNI_INCLUDE_RETRIEVAL_DEBUG === 'true' ||
-    isEvalMode ||
-    request.headers.get('x-retrieval-debug') === 'true' ||
-    url.searchParams.get('retrieval_debug') === '1'
-  )
+export function shouldIncludeRetrievalDiagnostics(isEvalMode: boolean) {
+  return process.env.SOMNI_INCLUDE_RETRIEVAL_DEBUG === 'true' || isEvalMode
 }
 
-export function shouldLogRetrievalDiagnostics(request: Request, isEvalMode: boolean) {
+export function shouldLogRetrievalDiagnostics(isEvalMode: boolean) {
   return (
-    shouldIncludeRetrievalDiagnostics(request, isEvalMode) ||
+    shouldIncludeRetrievalDiagnostics(isEvalMode) ||
     process.env.SOMNI_LOG_RETRIEVAL === 'true'
   )
 }
 
-export function buildRetrievalLogPayload(diagnostics: RetrievalDiagnostics, conversationId: string) {
+export function buildRetrievalLogPayload(
+  diagnostics: RetrievalDiagnostics,
+  conversationId: string,
+  options: { includeQueryPreview?: boolean } = {}
+) {
   return {
     conversationId,
-    queryPreview: diagnostics.queryPreview,
+    ...(options.includeQueryPreview ? { queryPreview: diagnostics.queryPreview } : {}),
     strategy: diagnostics.strategy,
     ageBand: diagnostics.ageBand,
     methodology: diagnostics.methodology,

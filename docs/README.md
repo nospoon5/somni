@@ -9,6 +9,9 @@ plans, legacy reviews, and superseded handoffs are kept in [`archive/`](../archi
   The sequential Stage 0–7 plan for launch blockers, efficiency, Next Best Action, mobile UX,
   chat optimisation, caregiver hardening, launch operations, and the final launch decision.
 
+- [Somni_Launch_Readiness_Report_Alpha_1.2.md](Somni_Launch_Readiness_Report_Alpha_1.2.md)
+  The Stage 7 evidence pack and formal Alpha 1.2 No-Go launch recommendation.
+
 An agent taking a stage should read the root README and this plan in full, then follow the
 stage-specific required reading, gates, and handoff instructions.
 
@@ -49,6 +52,27 @@ stage-specific required reading, gates, and handoff instructions.
 
 - [somni_support_triage.md](somni_support_triage.md)
   Triage guidelines for handling database-backed support requests.
+
+- [security_model.md](security_model.md)
+  Current security boundaries, threat mitigations, linked hardening migrations, and residual risk.
+
+- [privacy_operations.md](privacy_operations.md)
+  Data export, baby deletion, account deletion, retention, and browser-storage handling.
+
+- [backup_restore_runbook.md](backup_restore_runbook.md)
+  Backup ownership, restore procedure, verification, and evidence requirements.
+
+- [deployment_runbook.md](deployment_runbook.md)
+  Staged deployment, observation, rollback, and stop-condition procedure.
+
+- [incident_response.md](incident_response.md)
+  Severity model, containment steps, escalation, and incident communication.
+
+- [billing_reconciliation.md](billing_reconciliation.md)
+  Stripe-to-Somni reconciliation and exception handling.
+
+- [analytics_and_launch.md](analytics_and_launch.md)
+  Privacy-safe launch analytics, monitoring, and prohibited data collection.
 
 ## Document Precedence
 

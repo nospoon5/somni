@@ -234,7 +234,6 @@
     display: none;
   }
 }
-
 @media (min-width: 980px) {
   .layout {
     grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.8fr);
@@ -248,5 +247,134 @@
 
   .tagGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.correctButton {
+  background: transparent;
+  color: var(--color-accent);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  min-height: 36px;
+  transition: background-color 0.15s ease;
+}
+
+.correctButton:hover {
+  background-color: var(--color-accent-glow);
+  border-color: var(--color-accent);
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(4, 6, 15, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modalCard {
+  width: min(520px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-glass);
+  border-radius: var(--radius-lg);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--color-text);
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+.closeButton:hover {
+  color: var(--color-text);
+}
+
+.modalForm {
+  display: grid;
+  gap: 16px;
+}
+
+.fieldLabel {
+  display: grid;
+  gap: 8px;
+}
+
+.fieldLabel span {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.dateTimeInput {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-card);
+  color: var(--color-text);
+  font-family: inherit;
+  outline: none;
+}
+
+.dateTimeInput:focus {
+  border-color: var(--color-accent);
+}
+
+.tagLabel {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.modalTagGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.modalActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.modalActions button {
+  flex: 1;
+}
+
+@media (max-width: 480px) {
+  .modalTagGrid {
+    grid-template-columns: 1fr;
   }
 }

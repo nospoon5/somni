@@ -1,6 +1,8 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { after } from 'next/server'
+import { createRequestLogger } from '@/lib/observability/logger'
 import { redirect } from 'next/navigation'
 import { sanitizeTimezone } from '@/lib/billing/usage'
 import { getDateStringForTimezone, normalizeDailyPlanRow } from '@/lib/daily-plan'
@@ -25,8 +27,13 @@ import {
   getSleepScoreLookbackStart,
   SLEEP_SCORE_FETCH_LIMIT,
 } from '@/lib/scoring/sleep-score'
-import { sendNotificationToUser } from '@/lib/notifications/sender'
+import {
+  sendNotificationToUser,
+  type NotificationSendOptions,
+} from '@/lib/notifications/sender'
 import { createClient } from '@/lib/supabase/server'
+import type { Json } from '@/types/database.types'
+import { readActiveBabyId, resolveStrictActiveBaby } from '@/lib/babies/active-baby'
 
 export type SleepActionState = {
   error?: string
@@ -50,6 +57,10 @@ function isNightTime(date: Date) {
   return hour >= 19 || hour < 6
 }
 
+function toJson(value: unknown): Json {
+  return value as Json
+}
+
 function getSleepNotificationBody(
   actorDisplayName: string,
   babyName: string,
@@ -62,7 +73,8 @@ function getSleepNotificationBody(
 
 async function notifyOtherCaregiversOfSleepUpdate(
   context: CurrentSleepContext,
-  updateKind: SleepUpdateKind
+  updateKind: SleepUpdateKind,
+  options: NotificationSendOptions = {}
 ) {
   const [{ data: babyOwner }, { data: acceptedShares, error: sharesError }] = await Promise.all([
     context.supabase.from('babies').select('profile_id').eq('id', context.babyId).maybeSingle(),
@@ -101,7 +113,9 @@ async function notifyOtherCaregiversOfSleepUpdate(
   )
 
   await Promise.allSettled(
-    [...recipientIds].map((profileId) => sendNotificationToUser(profileId, title, body))
+    [...recipientIds].map((profileId) =>
+      sendNotificationToUser(profileId, title, body, '/sleep', options)
+    )
   )
 }
 
@@ -116,6 +130,14 @@ type CurrentSleepContext = {
 }
 
 type SleepUpdateKind = 'started' | 'completed'
+
+class ActiveBabyAccessError extends Error {}
+
+function activeBabyAccessFailure(error: unknown): SleepActionState | null {
+  return error instanceof ActiveBabyAccessError
+    ? { error: 'You no longer have access to this baby.' }
+    : null
+}
 
 async function getCurrentUserSleepContext(): Promise<CurrentSleepContext> {
   const supabase = await createClient()
@@ -137,14 +159,17 @@ async function getCurrentUserSleepContext(): Promise<CurrentSleepContext> {
     redirect('/onboarding')
   }
 
-  const { data: baby } = await supabase
+  const preferredBabyId = await readActiveBabyId()
+  const { data: babies } = await supabase
     .from('babies')
     .select('id, name, date_of_birth')
     .order('created_at', { ascending: true })
-    .limit(1)
-    .maybeSingle()
+  const baby = resolveStrictActiveBaby(babies ?? [], preferredBabyId)
 
   if (!baby) {
+    if (preferredBabyId) {
+      throw new ActiveBabyAccessError('Selected baby is no longer accessible')
+    }
     redirect('/onboarding')
   }
 
@@ -179,6 +204,10 @@ async function maybeApplyLogDrivenAdaptation(args: CurrentSleepContext & { now: 
     nightFeeds: parseNightFeeds(preferencesRow?.night_feeds),
     schedulePreference: normalizeSchedulePreference(preferencesRow?.schedule_preference),
   })
+
+  if (!currentProfile) {
+    throw new Error('Sleep plan profile could not be loaded')
+  }
 
   const planDate = getDateStringForTimezone(args.timezone, args.now)
   const { data: currentDailyPlanRow } = await args.supabase
@@ -226,11 +255,11 @@ async function maybeApplyLogDrivenAdaptation(args: CurrentSleepContext & { now: 
         day_structure: evaluation.nextProfile.dayStructure,
         adaptation_confidence: evaluation.nextProfile.adaptationConfidence,
         learning_state: evaluation.nextProfile.learningState,
-        last_auto_adjusted_at: evaluation.nextProfile.lastAutoAdjustedAt,
+        last_auto_adjusted_at: evaluation.nextProfile.lastAutoAdjustedAt ?? undefined,
         last_evidence_summary: evaluation.summary,
-        updated_at: evaluation.nextProfile.updatedAt,
+        updated_at: evaluation.nextProfile.updatedAt ?? undefined,
       })
-      .eq('id', currentProfile.id)
+      .eq('id', currentProfile!.id)
       .eq('baby_id', args.babyId)
       .select(SLEEP_PLAN_PROFILE_SELECT)
       .single()
@@ -276,7 +305,9 @@ async function maybeApplyLogDrivenAdaptation(args: CurrentSleepContext & { now: 
         {
           baby_id: args.babyId,
           plan_date: evaluation.nextPlan.planDate,
-          pending_rescue_targets: pendingPlan || null,
+          sleep_targets: toJson(evaluation.nextPlan.sleepTargets),
+          feed_targets: toJson(evaluation.nextPlan.feedTargets),
+          pending_rescue_targets: pendingPlan == null ? undefined : toJson(pendingPlan),
           rescue_dismissed: false,
         },
         {
@@ -297,7 +328,7 @@ async function maybeApplyLogDrivenAdaptation(args: CurrentSleepContext & { now: 
 
     const { error: eventError } = await args.supabase.from('sleep_plan_change_events').insert({
       baby_id: args.babyId,
-      sleep_plan_profile_id: currentProfile.id,
+      sleep_plan_profile_id: currentProfile!.id,
       plan_date: evaluation.nextPlan.planDate,
       change_scope: 'daily',
       change_source: 'logs',
@@ -327,6 +358,7 @@ export async function acceptDailyRescueAction(
   babyId: string,
   planDate: string
 ): Promise<SleepActionState> {
+  const actionLogger = createRequestLogger({ action: 'acceptDailyRescueAction' })
   const supabase = await createClient()
   const {
     data: { user },
@@ -354,18 +386,20 @@ export async function acceptDailyRescueAction(
   const pending = planRow.pending_rescue_targets as { sleepTargets?: unknown[]; feedTargets?: unknown[]; rationale?: string }
 
   // 2. Update the daily plan: copy sleepTargets and feedTargets, clear pending_rescue_targets
-  const { error: updateError } = await supabase
+  const { data: updateData, error: updateError } = await supabase
     .from('daily_plans')
     .update({
-      sleep_targets: pending.sleepTargets,
-      feed_targets: pending.feedTargets,
+      sleep_targets: toJson(pending.sleepTargets),
+      feed_targets: toJson(pending.feedTargets),
       pending_rescue_targets: null,
       rescue_dismissed: false,
     })
     .eq('id', planRow.id)
+    .not('pending_rescue_targets', 'is', null)
+    .select('id')
 
-  if (updateError) {
-    return { error: updateError.message }
+  if (updateError || !updateData || updateData.length === 0) {
+    return { error: 'Failed to accept schedule. It may have already been accepted or dismissed.' }
   }
 
   // Write a change event for auditing
@@ -374,16 +408,19 @@ export async function acceptDailyRescueAction(
       baby_id: babyId,
       plan_date: planDate,
       change_scope: 'daily',
-      change_source: 'dashboard',
-      change_kind: 'daily_rescue_applied',
+      change_source: 'user',
+      change_kind: 'apply_rescue',
       evidence_confidence: 'high',
       summary: 'Daily rescue schedule applied by caregiver.',
       rationale: pending.rationale || 'Caregiver accepted the calculated intra-day schedule shifts.',
       before_snapshot: {},
-      after_snapshot: { sleep_targets: pending.sleepTargets, feed_targets: pending.feedTargets },
+      after_snapshot: toJson({
+        sleep_targets: pending.sleepTargets,
+        feed_targets: pending.feedTargets,
+      }),
     })
   } catch (err) {
-    console.error('Failed to log change event for rescue acceptance:', err)
+    actionLogger.error('Failed to log change event for rescue acceptance:', {}, err instanceof Error ? err : new Error(String(err)))
   }
 
   revalidatePath('/dashboard')
@@ -421,7 +458,15 @@ export async function dismissDailyRescueAction(
 }
 
 export async function startSleepAction(): Promise<SleepActionState> {
-  const context = await getCurrentUserSleepContext()
+  const reqLogger = createRequestLogger({ action: 'startSleepAction' })
+  let context: CurrentSleepContext
+  try {
+    context = await getCurrentUserSleepContext()
+  } catch (error) {
+    const accessFailure = activeBabyAccessFailure(error)
+    if (accessFailure) return accessFailure
+    throw error
+  }
   const { supabase, babyId } = context
 
   const { data: activeLog } = await supabase
@@ -437,21 +482,41 @@ export async function startSleepAction(): Promise<SleepActionState> {
 
   const now = new Date()
 
-  const { error } = await supabase.from('sleep_logs').insert({
+  const { error } = await reqLogger.timeStage('sleep_writes', async () => await supabase.from('sleep_logs').insert({
     baby_id: babyId,
     started_at: now.toISOString(),
     is_night: isNightTime(now),
-  })
+    tags: [],
+    logged_by: context.currentProfileId,
+  }))
 
   if (error) {
     return { error: error.message ?? 'We could not start sleep logging.' }
   }
 
   try {
-    await notifyOtherCaregiversOfSleepUpdate(context, 'started')
+    await reqLogger.timeStage('notification_feed_persistence', () =>
+      notifyOtherCaregiversOfSleepUpdate(context, 'started', { includePush: false })
+    )
   } catch (notificationError) {
-    console.error('[sleep] failed to notify caregivers about a started sleep session', notificationError)
+    reqLogger.error('[sleep] failed to persist caregiver feed for a started sleep session', {}, notificationError instanceof Error ? notificationError : new Error(String(notificationError)))
   }
+
+  after(async () => {
+    try {
+      await reqLogger.timeStage('notification_push_delivery', () =>
+        notifyOtherCaregiversOfSleepUpdate(context, 'started', { includeFeed: false })
+      )
+    } catch (notificationError) {
+      reqLogger.error(
+        '[sleep] failed to deliver caregiver push for a started sleep session',
+        {},
+        notificationError instanceof Error
+          ? notificationError
+          : new Error(String(notificationError))
+      )
+    }
+  })
 
   return { success: 'Sleep tracking has started.' }
 }
@@ -460,7 +525,15 @@ export async function endSleepAction(
   _previousState: SleepActionState,
   formData: FormData
 ): Promise<SleepActionState> {
-  const context = await getCurrentUserSleepContext()
+  const reqLogger = createRequestLogger({ action: 'endSleepAction' })
+  let context: CurrentSleepContext
+  try {
+    context = await getCurrentUserSleepContext()
+  } catch (error) {
+    const accessFailure = activeBabyAccessFailure(error)
+    if (accessFailure) return accessFailure
+    throw error
+  }
   const { supabase, babyId } = context
   const activeLogId = getString(formData, 'activeLogId')
   const notes = getString(formData, 'notes')
@@ -474,17 +547,18 @@ export async function endSleepAction(
 
   const now = new Date()
 
-  const { data, error } = await supabase
+  const { data, error } = await reqLogger.timeStage('sleep_writes', async () => await supabase
     .from('sleep_logs')
     .update({
       ended_at: now.toISOString(),
-      notes: notes || null,
+      notes: notes || undefined,
       tags,
     })
     .eq('id', activeLogId)
     .eq('baby_id', babyId)
     .is('ended_at', null)
     .select('id')
+  )
 
   if (error) {
     return { error: error.message ?? 'We could not end this sleep session.' }
@@ -496,26 +570,118 @@ export async function endSleepAction(
   }
 
   try {
-    await notifyOtherCaregiversOfSleepUpdate(context, 'completed')
+    await reqLogger.timeStage('notification_feed_persistence', () =>
+      notifyOtherCaregiversOfSleepUpdate(context, 'completed', { includePush: false })
+    )
   } catch (notificationError) {
-    console.error(
-      '[sleep] failed to notify caregivers about a completed sleep session',
-      notificationError
+    reqLogger.error(
+      '[sleep] failed to persist caregiver feed for a completed sleep session',
+      {},
+      notificationError instanceof Error ? notificationError : new Error(String(notificationError))
     )
   }
 
+  after(async () => {
+    try {
+      await reqLogger.timeStage('notification_push_delivery', () =>
+        notifyOtherCaregiversOfSleepUpdate(context, 'completed', { includeFeed: false })
+      )
+    } catch (notificationError) {
+      reqLogger.error(
+        '[sleep] failed to deliver caregiver push for a completed sleep session',
+        {},
+        notificationError instanceof Error
+          ? notificationError
+          : new Error(String(notificationError))
+      )
+    }
+  })
+
   try {
-    const adaptationResult = await maybeApplyLogDrivenAdaptation({
+    const adaptationResult = await reqLogger.timeStage('log_driven_adaptation', () => maybeApplyLogDrivenAdaptation({
       ...context,
       now,
-    })
+    }))
 
     if (adaptationResult?.successMessage) {
       return { success: adaptationResult.successMessage }
     }
   } catch (adaptationError) {
-    console.error('[sleep] failed to apply log-driven adaptation', adaptationError)
+    reqLogger.error('[sleep] failed to apply log-driven adaptation', {}, adaptationError instanceof Error ? adaptationError : new Error(String(adaptationError)))
   }
 
   return { success: 'Sleep session saved.' }
+}
+
+export async function updateSleepLogAction(
+  logId: string,
+  startedAt: string,
+  endedAt: string | null,
+  tags: string[],
+  notes: string | null
+): Promise<SleepActionState> {
+  const reqLogger = createRequestLogger({ action: 'updateSleepLogAction' })
+  let context: CurrentSleepContext
+  try {
+    context = await getCurrentUserSleepContext()
+  } catch (error) {
+    const accessFailure = activeBabyAccessFailure(error)
+    if (accessFailure) return accessFailure
+    throw error
+  }
+  const { supabase, babyId } = context
+
+  if (!logId) {
+    return { error: 'Invalid log selection.' }
+  }
+
+  const start = new Date(startedAt)
+  const end = endedAt ? new Date(endedAt) : null
+
+  if (Number.isNaN(start.getTime()) || (end && Number.isNaN(end.getTime()))) {
+    return { error: 'Please enter valid timestamps.' }
+  }
+
+  if (end && start.getTime() >= end.getTime()) {
+    return { error: 'Start time must be before end time.' }
+  }
+
+  // Prevent editing logs from more than 48 hours ago to protect baseline integrity.
+  const limitTime = Date.now() - 48 * 60 * 60 * 1000
+  if (start.getTime() < limitTime) {
+    return { error: 'For baseline integrity, logs older than 48 hours cannot be modified.' }
+  }
+
+  const { error } = await supabase
+    .from('sleep_logs')
+    .update({
+      started_at: startedAt,
+      ended_at: endedAt || undefined,
+      tags,
+      notes: notes || undefined,
+    })
+    .eq('id', logId)
+    .eq('baby_id', babyId)
+
+  if (error) {
+    reqLogger.error('[sleep] failed to update sleep log', { logId }, error)
+    return { error: error.message || 'Could not update sleep log.' }
+  }
+
+  // Trigger adaptation check when log is updated.
+  try {
+    const adaptationResult = await maybeApplyLogDrivenAdaptation({
+      ...context,
+      now: new Date(),
+    })
+    if (adaptationResult?.successMessage) {
+      return { success: `Log updated. ${adaptationResult.successMessage}` }
+    }
+  } catch (adaptationError) {
+    reqLogger.error('[sleep] failed to apply log-driven adaptation after update', {}, adaptationError instanceof Error ? adaptationError : new Error(String(adaptationError)))
+  }
+
+  revalidatePath('/sleep')
+  revalidatePath('/dashboard')
+  return { success: 'Sleep log updated successfully.' }
 }

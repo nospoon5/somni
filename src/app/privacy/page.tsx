@@ -86,7 +86,8 @@ export default function PrivacyPage() {
 
           <h2>Your choices</h2>
           <ul>
-            <li>Request access to or deletion of your account data.</li>
+            <li>Download a JSON copy of your account data from your Profile.</li>
+            <li>Delete a baby profile or your full account from your Profile.</li>
             <li>Opt out of optional communications if added later.</li>
           </ul>
 

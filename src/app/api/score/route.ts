@@ -4,6 +4,7 @@ import {
   getSleepScoreLookbackStart,
   SLEEP_SCORE_FETCH_LIMIT,
 } from '@/lib/scoring/sleep-score'
+import { readActiveBabyId, resolveActiveBaby } from '@/lib/babies/active-baby'
 
 export async function GET() {
   const supabase = await createClient()
@@ -25,12 +26,12 @@ export async function GET() {
     return Response.json({ error: 'Onboarding incomplete' }, { status: 409 })
   }
 
-  const { data: baby } = await supabase
+  const preferredBabyId = await readActiveBabyId()
+  const { data: babies } = await supabase
     .from('babies')
     .select('id, date_of_birth')
     .order('created_at', { ascending: true })
-    .limit(1)
-    .maybeSingle()
+  const baby = resolveActiveBaby(babies ?? [], preferredBabyId)
 
   if (!baby) {
     return Response.json({ error: 'Baby profile missing' }, { status: 404 })

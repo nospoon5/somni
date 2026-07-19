@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-07-17T14:05:57.387Z",
+  "target": "http://localhost:3000",
+  "metrics": {
+    "landingPage": {
+      "requestsPerSecond": 18,
+      "latencyMsAvg": 1035.07,
+      "latencyMsP99": 1479,
+      "errors": 0,
+      "timeouts": 0
+    },
+    "chatApiUnauthorized": {
+      "requestsPerSecond": 70,
+      "latencyMsAvg": 283.45,
+      "latencyMsP99": 1009,
+      "errors": 0,
+      "timeouts": 0
+    }
+  }
+}

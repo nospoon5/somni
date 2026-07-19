@@ -268,6 +268,10 @@
     padding-top: 0.4rem;
   }
 
+  :global(body:has(input:focus, textarea:focus)) .form {
+    bottom: 0 !important;
+  }
+
   .assistantBubble,
   .userBubble {
     max-width: 92%;
@@ -281,4 +285,36 @@
     padding: 0.4rem;
     border-radius: 24px;
   }
+}
+
+.startersWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 1rem;
+  padding: 0 0.5rem;
+}
+
+.starterChip {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-glass);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  text-align: left;
+  cursor: pointer;
+  line-height: 1.4;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.starterChip:hover {
+  border-color: var(--color-accent);
+  background: var(--color-accent-glow);
+  color: var(--color-text);
+}
+
+.starterChip strong {
+  color: var(--color-accent);
+  font-weight: 600;
 }

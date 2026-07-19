@@ -71,6 +71,8 @@ Common AI and background-job variables:
 
 Evaluation-only variables:
 
+- `SOMNI_EVAL_SECRET` (minimum 32 characters; server and harness must match)
+- `SOMNI_EVAL_BASE_URL`
 - `EVAL_DEV_PORT`
 - `EVAL_CHAT_COOLDOWN_MS`
 - `EVAL_JUDGE_MODEL`
@@ -108,23 +110,27 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Verification
 
-The Alpha 1.2 review found a working core but also launch blockers. Start with the live plan
-before treating the repository as release-ready. The safe core checks are:
+The safe core checks are:
 
 ```bash
 npm run lint
-npm test -- --run
 npx tsc --noEmit
+npx vitest run
+python -m unittest discover -s somni_eval -p 'test_*.py'
 npm run build
-node scripts/verify-stage7-adaptive-plans.mjs
+npm run verify:stage7:adaptive
 node scripts/verify-stage4-retrieval.mjs
+npm run verify:links
 ```
 
-At the 17 July 2026 baseline, build, TypeScript, 141 Vitest tests, adaptive-plan checks,
-retrieval checks, chat E2E, and database lint passed. Lint, the support smoke flow, production
-dependency audit, and several launch-critical browser journeys still required work. Some older
-E2E scripts create temporary users and must not be used as routine verification until Stage 0
-converts them to the pre-created accounts in `docs/TEST_ACCOUNTS.md`.
+Stage 7 completed on 19 July 2026 with these code gates green, including 224 Vitest tests,
+15 Python tests, a production build, and zero known npm vulnerabilities. The formal launch
+recommendation is **No-Go** because deployment/schema coordination, operational drills and
+controls, cross-browser/resilience evidence, and professional reviews remain incomplete. This
+is a launch-readiness decision, not a claim that the green engineering checks failed.
+
+Use only the pre-created accounts in `docs/TEST_ACCOUNTS.md` for browser verification; do not
+create temporary test users.
 
 ## Docs
 
@@ -132,6 +138,7 @@ Start here when orienting yourself:
 
 - `docs/README.md`
 - `docs/Somni_Implementation_Plan_Alpha_1.2.md` — the live sequential execution plan
+- `docs/Somni_Launch_Readiness_Report_Alpha_1.2.md` — Stage 7 evidence and No-Go decision
 - `docs/somni_context.md`
 - `docs/somni_architecture.md`
 - `docs/somni_verification_checklist.md`

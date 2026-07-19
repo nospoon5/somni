@@ -7,9 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "verify:links": "node scripts/check-doc-links.mjs",
     "verify:stage7:adaptive": "node scripts/verify-stage7-adaptive-plans.mjs",
-    "verify:stage5:usage": "node scripts/verify-stage5-usage-limit.mjs",
-    "verify:stage5:stripe": "node scripts/verify-stage5-stripe.mjs",
     "test": "vitest"
   },
   "dependencies": {
@@ -23,11 +22,13 @@
     "ws": "^8.21.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/web-push": "^3.6.4",
+    "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "^16.2.10",
     "jsdom": "^29.0.2",

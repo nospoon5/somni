@@ -259,7 +259,8 @@ export async function streamGeminiResponse(
   contents: GeminiContentsItem[],
   isEvalMode: boolean,
   persona: ChatPersona,
-  onToken: (token: string) => void
+  onToken: (token: string) => void,
+  signal?: AbortSignal
 ) {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
@@ -288,6 +289,7 @@ export async function streamGeminiResponse(
           },
         },
       }),
+      signal,
     }
   )
 

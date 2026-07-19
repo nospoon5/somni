@@ -29,6 +29,12 @@ export type NotificationSendResult = {
   failedSubscriptions: number
 }
 
+export type NotificationSendOptions = {
+  includeFeed?: boolean
+  includePush?: boolean
+  now?: Date
+}
+
 function sanitizeTimezone(value: string | null | undefined) {
   const candidate = value?.trim()
   if (!candidate) return DEFAULT_PROFILE_TIMEZONE
@@ -109,8 +115,10 @@ export async function sendNotificationToUser(
   profileId: string,
   title: string,
   body: string,
-  now = new Date()
+  url: string = '/',
+  options: NotificationSendOptions = {}
 ): Promise<NotificationSendResult> {
+  const now = options.now ?? new Date()
   const admin = createAdminClient()
   const result: NotificationSendResult = {
     feedLogged: false,
@@ -136,7 +144,7 @@ export async function sendNotificationToUser(
   if (!preferences) return result
 
   const profilePreferences = preferences as NotificationPreferences
-  if (profilePreferences.in_app_feed_enabled) {
+  if (options.includeFeed !== false && profilePreferences.in_app_feed_enabled) {
     const { error: logError } = await admin.from('notification_logs').insert({
       profile_id: profileId,
       title,
@@ -160,7 +168,12 @@ export async function sendNotificationToUser(
       profilePreferences.suppression_end
     )
 
-  if (!profilePreferences.push_enabled || result.pushSuppressed || !isWebPushConfigured()) {
+  if (
+    options.includePush === false ||
+    !profilePreferences.push_enabled ||
+    result.pushSuppressed ||
+    !isWebPushConfigured()
+  ) {
     return result
   }
 
@@ -174,7 +187,7 @@ export async function sendNotificationToUser(
     return result
   }
 
-  const payload = JSON.stringify({ title, body, url: '/' })
+  const payload = JSON.stringify({ title, body, url })
   const sendResults = await Promise.allSettled(
     ((subscriptions ?? []) as PushSubscription[]).map(async (subscription) => {
       try {

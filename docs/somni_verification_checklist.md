@@ -11,42 +11,65 @@ launch readiness.
 Run from project root:
 
 ```bash
-node scripts/verify-stage7-adaptive-plans.mjs
 npm run lint
 npx tsc --noEmit
-npm test -- --run
+npx vitest run
 npm run build
+npm audit --omit=dev
+npm run verify:stage7:adaptive
 node scripts/verify-stage4-retrieval.mjs
+npm run verify:links
 ```
 
 Expected result:
 
-- All six commands pass with no errors or unexplained warnings.
+- All eight commands pass with no errors or unexplained warnings.
 - Stage 7 adaptive verification covers:
   - onboarding/profile bootstrap anchors and confidence behavior
   - dashboard source selection (saved vs profile-derived vs age fallback)
   - chat daily rescue vs durable baseline signals
   - log-driven hold vs baseline-shift decisions (including rough-patch holds)
 
-AI-focused follow-up when retrieval or prompt logic changed, after confirming the script uses
-approved pre-created test state:
+AI-focused follow-up when retrieval, prompt, response filtering, or the evaluation transport
+changed:
 
 ```bash
-node scripts/verify-stage4-chat-e2e.mjs
+npx vitest run src/lib/ai src/app/api/chat
+python -m unittest discover -s somni_eval -p "test_*.py"
+python somni_eval/run_eval.py --dry-run --max-questions 5
 ```
 
 Expected result:
 
-- Normal chat still includes source attribution.
-- Emergency prompts still trigger the safety redirect.
-- Retrieval diagnostics are available in debug mode.
-- Same-day rescue chat changes stay framed as today's plan only.
-- Explicit ongoing parent statements can update the learned baseline without pretending sparse logs are proof.
+- Unit tests cover source attribution, urgent and emergency redirects, response filtering,
+  prompt injection boundaries, evaluation authorization, and chat-plan persistence.
+- The dry run verifies the evaluation CSV, adapter, and resume pipeline without calling the app.
+- A real evaluation run additionally requires the same untracked `SOMNI_EVAL_SECRET` (at least
+  32 characters) in the app and runner environments. Evaluation mode is read-only and does not
+  consume quota or persist benchmark messages.
 
-The repository rule is stricter than several legacy scripts. Until Alpha 1.2 S0.10/S1.5 updates
-them, do not routinely run scripts that create temporary auth users. Known affected scripts
-include evaluation sheet/rerun utilities, onboarding smoke, chat E2E, Stage 5 smoke, Stripe,
-usage-limit, and caregiver-sharing verification.
+The old onboarding, chat, Stripe, usage-limit, caregiver-sharing, and evaluation rerun scripts
+were removed because they created temporary auth users or changed linked fixtures too broadly.
+Do not restore or run copies of them. Browser coverage now lives in `tests/e2e/` and uses only the
+approved accounts from `docs/TEST_ACCOUNTS.md`, guarded fixture lookup, and exact row cleanup.
+
+For a release candidate, build and start the production server in one terminal:
+
+```powershell
+npm run build
+npm run start
+```
+
+Then run the serial browser matrix in another PowerShell terminal:
+
+```powershell
+$env:CI = '1'
+$env:SOMNI_APP_URL = 'http://127.0.0.1:3000'
+npx playwright test
+```
+
+Run this only against the approved non-production Supabase test project. Expect no auth-user
+creation or deletion; the suite may create narrowly tagged rows and must remove those exact rows.
 
 Notification-focused follow-up when sleep actions, caregiver access, profile settings, or the service worker changed:
 
@@ -68,8 +91,10 @@ Use the pre-created account in `docs/TEST_ACCOUNTS.md` (do not create a new user
    - the expected signed-in profile relationship.
 5. Confirm a normal user cannot list or read support tickets.
 
-At the 17 July 2026 review this support scenario failed with HTTP 500 because the insert requested
-a returned row blocked by RLS. Alpha 1.2 S0.1 must be complete before this check can pass.
+The 17 July returning-row defect is resolved. The insert no longer requests a row that normal-user
+RLS cannot read, and the five-per-hour rate check uses a server-only admin client and fails closed
+when it cannot establish the count. Keep the checks above because they prove the repair without
+broadening normal-user ticket access.
 
 ## 3) Docs drift check
 
@@ -80,3 +105,5 @@ Quickly confirm:
 - `vercel.json` cron schedule and docs agree.
 - Superseded notes stay in `archive/` instead of current docs.
 - Current Markdown links resolve and no current doc points to an archived plan as live work.
+- The linked migration list matches local files through
+  `20260719130000_sleep_log_idempotency.sql`.

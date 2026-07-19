@@ -1,0 +1,119 @@
+.section {
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.toggleBtn {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-accent);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 550;
+  cursor: pointer;
+  min-height: 36px;
+}
+
+.toggleBtn:hover {
+  background: var(--color-accent-glow);
+}
+
+.form {
+  margin-top: 24px;
+  display: grid;
+  gap: 24px;
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: 24px;
+}
+
+.group {
+  display: grid;
+  gap: 16px;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.groupTitle {
+  color: var(--color-accent);
+  margin-bottom: 8px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field span {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.field input[type="text"],
+.field input[type="date"],
+.field input[type="time"],
+.field select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: inherit;
+  outline: none;
+  min-height: 44px;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: var(--color-accent);
+}
+
+.styleCard {
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  display: grid;
+  gap: 6px;
+}
+
+.styleExplanation {
+  margin: 4px 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.error {
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-error) 15%, transparent);
+  color: var(--color-error);
+}
+
+.success {
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-success) 15%, transparent);
+  color: var(--color-success);
+}

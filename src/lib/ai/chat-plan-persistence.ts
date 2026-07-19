@@ -35,6 +35,7 @@ const SLEEP_PLAN_PROFILE_SELECT =
 
 type SaveChatPlanUpdatesArgs = {
   supabase: ChatSupabaseClient
+  userId: string
   currentPlan: DailyPlanRecord | null
   currentProfile: SleepPlanProfileRecord | null
   babyId: string
@@ -45,7 +46,57 @@ type SaveChatPlanUpdatesArgs = {
   userMessage: string
 }
 
-export async function saveChatPlanUpdates(args: SaveChatPlanUpdatesArgs) {
+const MIN_COMPLETED_SLEEP_MS = 60 * 1000
+const MAX_COMPLETED_SLEEP_MS = 24 * 60 * 60 * 1000
+const MAX_SLEEP_LOG_AGE_MS = 48 * 60 * 60 * 1000
+const MAX_FUTURE_CLOCK_SKEW_MS = 5 * 60 * 1000
+
+export function normalizeCompletedSleepLogArgs(
+  input: Record<string, unknown>,
+  now = new Date()
+) {
+  const startedAt =
+    typeof input.started_at === 'string'
+      ? input.started_at
+      : typeof input.startedAt === 'string'
+        ? input.startedAt
+        : null
+  const endedAt =
+    typeof input.ended_at === 'string'
+      ? input.ended_at
+      : typeof input.endedAt === 'string'
+        ? input.endedAt
+        : null
+  const startedTime = startedAt ? Date.parse(startedAt) : Number.NaN
+  const endedTime = endedAt ? Date.parse(endedAt) : Number.NaN
+  const nowTime = now.getTime()
+  const duration = endedTime - startedTime
+
+  if (
+    !Number.isFinite(startedTime) ||
+    !Number.isFinite(endedTime) ||
+    startedTime < nowTime - MAX_SLEEP_LOG_AGE_MS ||
+    endedTime > nowTime + MAX_FUTURE_CLOCK_SKEW_MS ||
+    duration < MIN_COMPLETED_SLEEP_MS ||
+    duration > MAX_COMPLETED_SLEEP_MS
+  ) {
+    return null
+  }
+
+  return {
+    startedAt: new Date(startedTime).toISOString(),
+    endedAt: new Date(endedTime).toISOString(),
+    isNight:
+      typeof input.is_night === 'boolean'
+        ? input.is_night
+        : typeof input.isNight === 'boolean'
+          ? input.isNight
+          : false,
+    notes: typeof input.notes === 'string' ? input.notes.trim().slice(0, 500) || null : null,
+  }
+}
+
+export async function calculateChatPlanUpdates(args: SaveChatPlanUpdatesArgs) {
   let workingPlan = args.currentPlan
   let workingProfile = args.currentProfile
   let hasDailyToolChanges = false
@@ -53,43 +104,68 @@ export async function saveChatPlanUpdates(args: SaveChatPlanUpdatesArgs) {
   let hasLoggedSleep = false
   let pendingRescuePlan: DailyRescuePendingPlan | null = null
   const signal = inferChatPlanUpdateSignal(args.userMessage)
+  const completedSleepLogs = new Map<
+    GeminiFunctionCall,
+    NonNullable<ReturnType<typeof normalizeCompletedSleepLogArgs>>
+  >()
+
+  const mutationPayloads: {
+    sleepLog: Record<string, any> | null
+    profileUpdate: Record<string, any> | null
+    dailyPlanUpsert: Record<string, any> | null
+    changeEvents: Record<string, any>[]
+  } = {
+    sleepLog: null,
+    profileUpdate: null,
+    dailyPlanUpsert: null,
+    changeEvents: [],
+  }
+
+  for (const functionCall of args.functionCalls) {
+    if (functionCall.name !== 'create_completed_sleep_log') continue
+    const normalized = normalizeCompletedSleepLogArgs(
+      functionCall.args as Record<string, unknown>
+    )
+    if (!normalized) {
+      return {
+        plan: args.currentPlan,
+        profile: args.currentProfile,
+        assistantMessage:
+          "I couldn't save that sleep log because the times were missing or outside the safe 48-hour range. Please add it in Sleep so you can review the start and end times before saving.",
+        streamPayload: null,
+        hasLoggedSleep: false,
+        pendingRescuePlan: null,
+        mutationPayloads,
+      }
+    }
+    completedSleepLogs.set(functionCall, normalized)
+  }
+
+  // Fetch recent sleep logs for today (needed by evaluateSleepPlanAdaptation/maybeApplyLogDrivenAdaptation)
+  const { data: recentLogs, error: logsError } = await args.supabase
+    .from('sleep_logs')
+    .select('started_at, ended_at, is_night, tags, notes')
+    .eq('baby_id', args.babyId)
+    .gte('started_at', getSleepScoreLookbackStart().toISOString())
+    .order('started_at', { ascending: false })
+
+  if (logsError) throw logsError
 
   for (const functionCall of args.functionCalls) {
     if (functionCall.name === 'create_completed_sleep_log') {
-      const args_ = functionCall.args as Record<string, unknown>
-      const startedAt = typeof args_.started_at === 'string' ? args_.started_at : (typeof args_.startedAt === 'string' ? args_.startedAt : null)
-      const endedAt = typeof args_.ended_at === 'string' ? args_.ended_at : (typeof args_.endedAt === 'string' ? args_.endedAt : null)
-      const isNight = typeof args_.is_night === 'boolean' ? args_.is_night : (typeof args_.isNight === 'boolean' ? args_.isNight : false)
-      const notes = typeof args_.notes === 'string' ? args_.notes : null
+      const normalizedLog = completedSleepLogs.get(functionCall)
 
-      if (startedAt && endedAt) {
-        // Insert the completed log
-        const { error: insertError } = await args.supabase.from('sleep_logs').insert({
+      if (normalizedLog) {
+        mutationPayloads.sleepLog = {
           baby_id: args.babyId,
-          started_at: startedAt,
-          ended_at: endedAt,
-          is_night: isNight,
-          notes,
+          started_at: normalizedLog.startedAt,
+          ended_at: normalizedLog.endedAt,
+          is_night: normalizedLog.isNight,
+          notes: normalizedLog.notes ?? undefined,
           tags: [],
-        })
-
-        if (insertError) {
-          throw insertError
+          logged_by: args.userId,
         }
-
         hasLoggedSleep = true
-
-        // Fetch recent sleep logs for today (needed by evaluateSleepPlanAdaptation/maybeApplyLogDrivenAdaptation)
-        const { data: recentLogs, error: logsError } = await args.supabase
-          .from('sleep_logs')
-          .select('started_at, ended_at, is_night, tags, notes')
-          .eq('baby_id', args.babyId)
-          .gte('started_at', getSleepScoreLookbackStart().toISOString())
-          .order('started_at', { ascending: false })
-
-        if (logsError) {
-          throw logsError
-        }
 
         const adaptationLogs = (recentLogs ?? []).map((log) => ({
           startedAt: log.started_at,
@@ -99,253 +175,16 @@ export async function saveChatPlanUpdates(args: SaveChatPlanUpdatesArgs) {
           notes: log.notes,
         }))
 
-        // Run evaluation
-        if (args.currentProfile) {
-          const calculatedRescue = maybeApplyLogDrivenAdaptation({
-            profile: workingProfile ?? args.currentProfile,
-            currentPlan: workingPlan ?? args.currentPlan,
-            todayLogs: adaptationLogs,
-            timezone: args.timezone,
-          })
-
-          if (calculatedRescue) {
-            pendingRescuePlan = calculatedRescue
-            // Write to daily_plans.pending_rescue_targets
-            const { error: updatePlanError } = await args.supabase
-              .from('daily_plans')
-              .upsert(
-                {
-                  baby_id: args.babyId,
-                  plan_date: args.planDate,
-                  pending_rescue_targets: calculatedRescue,
-                  rescue_dismissed: false,
-                },
-                {
-                  onConflict: 'baby_id,plan_date',
-                }
-              )
-
-            if (updatePlanError) {
-              throw updatePlanError
-            }
-          }
-        }
-      }
-      continue
-    }
-
-    if (functionCall.name === 'update_sleep_plan_profile') {
-      if (!workingProfile || !shouldApplyDurableProfileUpdate(signal)) {
-        continue
-      }
-
-      const updates = normalizeSleepPlanProfileUpdateInput(functionCall.args)
-      if (!updates || !hasSleepPlanProfileChanges(updates)) {
-        continue
-      }
-
-      const nextProfile = mergeSleepPlanProfile(workingProfile, updates, {
-        updatedAt: new Date().toISOString(),
-      })
-
-      const beforeSnapshot = buildSleepPlanProfileSnapshot(workingProfile)
-      const afterSnapshot = buildSleepPlanProfileSnapshot(nextProfile)
-      if (JSON.stringify(beforeSnapshot) === JSON.stringify(afterSnapshot)) {
-        continue
-      }
-
-      workingProfile = nextProfile
-      hasProfileToolChanges = true
-      continue
-    }
-
-    if (functionCall.name !== 'update_daily_plan') {
-      continue
-    }
-
-    const updates = normalizeDailyPlanUpdateInput(functionCall.args)
-    if (!updates || !hasDailyPlanChanges(updates)) {
-      continue
-    }
-
-    const nextPlan = mergeDailyPlan(workingPlan, updates, {
-      babyId: args.babyId,
-      planDate: args.planDate,
-      id: workingPlan?.id,
-      updatedAt: new Date().toISOString(),
-    })
-
-    const beforeSnapshot = buildDailyPlanSnapshot(workingPlan) ?? {}
-    const afterSnapshot = buildDailyPlanSnapshot(nextPlan) ?? {}
-    if (JSON.stringify(beforeSnapshot) === JSON.stringify(afterSnapshot)) {
-      continue
-    }
-
-    workingPlan = nextPlan
-    hasDailyToolChanges = true
-  }
-
-  if (!hasDailyToolChanges && !hasProfileToolChanges && !hasLoggedSleep) {
-    return {
-      plan: args.currentPlan,
-      profile: args.currentProfile,
-      assistantMessage: null,
-      streamPayload: null,
-      hasLoggedSleep: false,
-      pendingRescuePlan: null,
-    }
-  }
-
-  let savedProfile = args.currentProfile
-  if (hasProfileToolChanges && args.currentProfile && workingProfile) {
-    const profileChangeEvent = buildProfileChangeEvent({
-      message: args.userMessage,
-      beforeProfile: args.currentProfile,
-      afterProfile: workingProfile,
-    })
-
-    const { data: savedProfileRow, error: saveProfileError } = await args.supabase
-      .from('sleep_plan_profiles')
-      .update({
-        usual_wake_time: workingProfile.usualWakeTime,
-        target_bedtime: workingProfile.targetBedtime,
-        target_nap_count: workingProfile.targetNapCount,
-        wake_window_profile: workingProfile.wakeWindowProfile,
-        feed_anchor_profile: workingProfile.feedAnchorProfile,
-        schedule_preference: workingProfile.schedulePreference,
-        day_structure: workingProfile.dayStructure,
-        adaptation_confidence: profileChangeEvent.evidenceConfidence,
-        learning_state: workingProfile.learningState,
-        last_evidence_summary: profileChangeEvent.summary,
-      })
-      .eq('id', workingProfile.id)
-      .eq('baby_id', args.babyId)
-      .select(SLEEP_PLAN_PROFILE_SELECT)
-      .single()
-
-    if (saveProfileError) {
-      throw saveProfileError
-    }
-
-    savedProfile = normalizeSleepPlanProfileRow(savedProfileRow)
-    if (!savedProfile) {
-      throw new Error('Sleep plan profile save returned an empty payload')
-    }
-
-    const { error: profileEventError } = await args.supabase.from('sleep_plan_change_events').insert({
-      baby_id: args.babyId,
-      sleep_plan_profile_id: savedProfile.id,
-      change_scope: 'profile',
-      change_source: 'chat',
-      change_kind: profileChangeEvent.changeKind,
-      evidence_confidence: profileChangeEvent.evidenceConfidence,
-      summary: profileChangeEvent.summary,
-      rationale: profileChangeEvent.rationale,
-      before_snapshot: profileChangeEvent.beforeSnapshot,
-      after_snapshot: profileChangeEvent.afterSnapshot,
-    })
-
-    if (profileEventError) {
-      throw profileEventError
-    }
-  }
-
-  let savedPlan = args.currentPlan
-  if (hasDailyToolChanges && workingPlan) {
-    const dailyChangeEvent = buildDailyPlanChangeEvent({
-      message: args.userMessage,
-      beforePlan: args.currentPlan,
-      afterPlan: workingPlan,
-    })
-
-    const { data: savedPlanRow, error: savePlanError } = await args.supabase
-      .from('daily_plans')
-      .upsert(
-        {
-          baby_id: args.babyId,
-          plan_date: args.planDate,
-          sleep_targets: workingPlan.sleepTargets,
-          feed_targets: workingPlan.feedTargets,
-          notes: workingPlan.notes,
-        },
-        {
-          onConflict: 'baby_id,plan_date',
-        }
-      )
-      .select('id, baby_id, plan_date, sleep_targets, feed_targets, notes, updated_at')
-      .single()
-
-    if (savePlanError) {
-      throw savePlanError
-    }
-
-    savedPlan = normalizeDailyPlanRow(savedPlanRow)
-    if (!savedPlan) {
-      throw new Error('Daily plan save returned an empty payload')
-    }
-
-    const { error: dailyEventError } = await args.supabase.from('sleep_plan_change_events').insert({
-      baby_id: args.babyId,
-      sleep_plan_profile_id: savedProfile?.id ?? args.currentProfile?.id ?? null,
-      plan_date: args.planDate,
-      change_scope: 'daily',
-      change_source: 'chat',
-      change_kind: dailyChangeEvent.changeKind,
-      evidence_confidence: dailyChangeEvent.evidenceConfidence,
-      summary: dailyChangeEvent.summary,
-      rationale: dailyChangeEvent.rationale,
-      before_snapshot: dailyChangeEvent.beforeSnapshot,
-      after_snapshot: dailyChangeEvent.afterSnapshot,
-    })
-
-    if (dailyEventError) {
-      throw dailyEventError
-    }
-
-    savedPlan = {
-      ...savedPlan,
-      metadata: {
-        origin: 'saved_daily_plan',
-        confidence: dailyChangeEvent.evidenceConfidence,
-        reasonSummary: dailyChangeEvent.summary,
-      },
-    }
-  }
-
-  revalidatePath('/dashboard')
-
-  const assistantMessage = buildChatPlanUpdateConfirmation({
-    babyName: args.babyName,
-    beforePlan: args.currentPlan,
-    afterPlan: hasDailyToolChanges ? savedPlan : args.currentPlan,
-    beforeProfile: args.currentProfile,
-    afterProfile: hasProfileToolChanges ? savedProfile : args.currentProfile,
-  })
-
-  return {
-    plan: savedPlan,
-    profile: savedProfile,
-    assistantMessage,
-    streamPayload:
-      hasDailyToolChanges && savedPlan
-        ? {
-            planDate: savedPlan.planDate,
-            sleepTargets: savedPlan.sleepTargets,
-            feedTargets: savedPlan.feedTargets,
-            notes: savedPlan.notes,
-            updatedAt: savedPlan.updatedAt,
-            metadata: savedPlan.metadata,
-          }
-        : null,
-    hasLoggedSleep,
-    pendingRescuePlan,
-  }
-}
-
-type PersistAiMemoryArgs = {
-  supabase: ChatSupabaseClient
-  profileId: string
-  babyId: string
+        // Prepend the new log if it doesn't already exist in the recent logs
+        const isNew = !adaptationLogs.some(
+          (l) => l.startedAt === normalizedLog.startedAt && l.endedAt === normalizedLog.endedAt
+        )
+        if (isNew) {
+          adaptationLogs.unshift({
+            startedAt: normalizedLog.startedAt,
+            endedAt: normalizedLog.endedAt,
+            isNight: normalizedLog.isNight,
+            tags: [],
   babyName: string
   conversationId: string
   fallbackUserMessage: string

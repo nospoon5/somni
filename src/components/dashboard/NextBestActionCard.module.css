@@ -1,0 +1,188 @@
+.card {
+  margin-top: 26px;
+  padding: 24px;
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: 4px 0 0 4px;
+}
+
+.state_do_this_next::before {
+  background: #10b981; /* green */
+}
+
+.state_watch_for_this::before {
+  background: #3b82f6; /* blue */
+}
+
+.state_log_or_confirm::before {
+  background: #f59e0b; /* amber */
+}
+
+.state_safety_redirect::before {
+  background: #ef4444; /* red */
+}
+
+.header {
+  margin-bottom: 12px;
+}
+
+.kicker {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.content {
+  margin-bottom: 20px;
+}
+
+.actionTitle {
+  margin: 0 0 8px;
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.3;
+}
+
+.timeEmphasis {
+  color: var(--color-accent);
+}
+
+.window {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.rationale {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  background: var(--color-accent);
+  color: #0a0c1a;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: opacity 0.2s ease;
+}
+
+.primaryButton:hover {
+  opacity: 0.9;
+}
+
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  font-weight: 550;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: background-color 0.2s ease;
+}
+
+.secondaryButton:hover {
+  background: var(--color-accent-glow);
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.rescueActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.rescueButtonPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  background: var(--color-accent);
+  color: #0a0c1a;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.rescueButtonPrimary:hover {
+  opacity: 0.9;
+}
+
+.rescueButtonPrimary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.rescueButtonSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  font-weight: 550;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.rescueButtonSecondary:hover {
+  background: var(--color-accent-glow);
+}
+
+.rescueButtonSecondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  margin: 10px 0 0;
+  color: var(--color-error);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 20px;
+  }
+}

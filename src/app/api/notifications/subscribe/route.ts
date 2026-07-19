@@ -71,7 +71,7 @@ export async function POST(request: Request) {
       endpoint,
       p256dh,
       auth,
-      user_agent: request.headers.get('user-agent')?.slice(0, 500) ?? null,
+      user_agent: request.headers.get('user-agent')?.slice(0, 500) ?? undefined,
     },
     { onConflict: 'endpoint' }
   )

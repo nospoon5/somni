@@ -6,6 +6,8 @@ import { formatResetTime, formatText } from './chat-formatters'
 import styles from './ChatCoach.module.css'
 
 type ChatCoachProps = {
+  profileId: string
+  babyId: string
   babyName: string
   pageEyebrow: string
   pageTitle: string
@@ -14,9 +16,17 @@ type ChatCoachProps = {
   hasPremiumAccess: boolean
   isReadOnly?: boolean
   billingDegradedReason?: string | null
+  currentState?: {
+    sleepStyle: string
+    hasPendingRescue: boolean
+    activeSleep: { id: string; startedAt: string } | null
+    lastCompletedSleep: { startedAt: string; endedAt: string; isNight: boolean } | null
+  }
 }
 
 export function ChatCoach({
+  profileId,
+  babyId,
   babyName,
   pageEyebrow,
   pageTitle,
@@ -25,6 +35,7 @@ export function ChatCoach({
   hasPremiumAccess,
   isReadOnly = false,
   billingDegradedReason = null,
+  currentState,
 }: ChatCoachProps) {
   const {
     messages,
@@ -38,6 +49,8 @@ export function ChatCoach({
     openCheckout,
     submitMessage,
   } = useChatSession({
+    profileId,
+    babyId,
     babyName,
     billingEnabled,
     isReadOnly,
@@ -153,6 +166,68 @@ export function ChatCoach({
           </article>
         ))}
       </div>
+
+      {currentState && !isSending && !isReadOnly && (() => {
+        const promptStarters = []
+        const { sleepStyle, hasPendingRescue, activeSleep, lastCompletedSleep } = currentState
+        if (activeSleep) {
+          promptStarters.push({
+            label: 'Extend current nap',
+            text: `How can I help ${babyName} extend this nap?`
+          })
+          promptStarters.push({
+            label: 'Wind down timing',
+            text: `When should we start the wind-down after ${babyName} wakes up?`
+          })
+        } else if (hasPendingRescue) {
+          promptStarters.push({
+            label: 'Schedule rescue help',
+            text: `How does today's schedule rescue help ${babyName}?`
+          })
+          promptStarters.push({
+            label: 'Dismiss rescue effect',
+            text: `What happens if I dismiss the schedule rescue proposal?`
+          })
+        } else if (lastCompletedSleep) {
+          const durationMs = new Date(lastCompletedSleep.endedAt).getTime() - new Date(lastCompletedSleep.startedAt).getTime()
+          const durationMins = Math.floor(durationMs / 60000)
+          if (durationMins <= 30 && !lastCompletedSleep.isNight) {
+            promptStarters.push({
+              label: 'Adjust after short nap',
+              text: `Why was ${babyName}'s last nap only ${durationMins} mins? How should I adjust the next nap?`
+            })
+          }
+        }
+
+        // Always include default starters up to a limit of 3 total.
+        if (promptStarters.length < 3) {
+          promptStarters.push({
+            label: `Sleep style details`,
+            text: `What does the '${sleepStyle}' sleep style mean for ${babyName}?`
+          })
+        }
+        if (promptStarters.length < 3) {
+          promptStarters.push({
+            label: 'Bedtime adjustments',
+            text: `Help me adjust tonight's bedtime for ${babyName}.`
+          })
+        }
+
+        return (
+          <div className={styles.startersWrap} aria-label="Prompt starters">
+            {promptStarters.map((starter, index) => (
+              <button
+                key={index}
+                className={styles.starterChip}
+                type="button"
+                onClick={() => setDraft(starter.text)}
+              >
+                <strong>{starter.label}:</strong> {starter.text}
+              </button>
+            ))}
+          </div>
+        )
+      })()}
 
       <form className={styles.form} onSubmit={submitMessage}>
         <label className="sr-only" htmlFor="chat-message">

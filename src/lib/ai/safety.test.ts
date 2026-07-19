@@ -23,6 +23,16 @@ describe('safety routing', () => {
     const { checkEmergencyRisk } = await import('./safety')
 
     expect(checkEmergencyRisk('My 8 week old has a fever.').route).toBe('urgent_medical')
+    expect(checkEmergencyRisk('She has a fever.', { babyAgeWeeks: 8 }).route).toBe(
+      'urgent_medical'
+    )
+    expect(checkEmergencyRisk('She has a fever.', { babyAgeWeeks: 30 }).route).toBe('none')
+  })
+
+  it('does not treat an outfit question as a seizure because fit is only a whole word', async () => {
+    const { checkEmergencyRisk } = await import('./safety')
+
+    expect(checkEmergencyRisk('Is this sleep outfit warm enough?').route).toBe('none')
   })
 
   it('keeps parent crisis routing separate from urgent illness routing', async () => {

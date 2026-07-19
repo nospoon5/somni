@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { SleepTracker } from '@/components/sleep/SleepTracker'
 import { DaySleepProgress } from '@/components/sleep/DaySleepProgress'
+import { BabySwitcher } from '@/components/babies/BabySwitcher'
+import { readActiveBabyId, resolveActiveBaby } from '@/lib/babies/active-baby'
 import { createClient } from '@/lib/supabase/server'
 import { getAgeBand, getTargetsForAgeBand } from '@/lib/scoring/sleep-score'
 import { getTimeZoneParts, zonedTimeToUtc } from '@/lib/billing/usage'
@@ -27,12 +29,12 @@ export default async function SleepPage() {
     redirect('/onboarding')
   }
 
-  const { data: baby } = await supabase
+  const preferredBabyId = await readActiveBabyId()
+  const { data: babies } = await supabase
     .from('babies')
     .select('id, name, date_of_birth')
     .order('created_at', { ascending: true })
-    .limit(1)
-    .maybeSingle()
+  const baby = resolveActiveBaby(babies ?? [], preferredBabyId)
 
   if (!baby) {
     redirect('/onboarding')
@@ -119,6 +121,11 @@ export default async function SleepPage() {
         >
           &larr; Back to Dashboard
         </Link>
+        <BabySwitcher
+          babies={babies ?? []}
+          activeBabyId={baby.id}
+          returnTo="/sleep"
+        />
       </section>
 
       <DaySleepProgress

@@ -11,6 +11,37 @@ import {
 } from './response-filter'
 
 describe('filterResponse', () => {
+  it('repairs contradictory rolling-direction wording before display', () => {
+    expect(
+      filterResponse(
+        "You don't need to flip her back to her tummy. Instead, gently roll her onto her back."
+      )
+    ).toBe(
+      'If your baby wakes crying and cannot roll back independently, gently return them to their back. Instead, gently roll her onto her back.'
+    )
+  })
+
+  it('does not treat one-way rolling as permission to remain face-down', () => {
+    const output = filterResponse(
+      "Once babies can roll independently from back to tummy, it's safe for them to sleep in that position. Give her tummy time during the day.",
+      'My 5-month-old rolls onto her tummy and cries.'
+    )
+
+    expect(output).toContain('Always place your baby on their back to sleep')
+    expect(output).toContain('confidently roll both ways')
+    expect(output).toContain('cannot roll back independently')
+    expect(output).toContain('Give her tummy time during the day.')
+    expect(output).not.toContain("it's safe for them to sleep in that position")
+  })
+
+  it('catches broader medication names and recommendation wording', () => {
+    expect(
+      containsUnsafeMedicationPermission(
+        'I recommend giving Tylenol before bed.',
+        'Could acetaminophen help with sleep?'
+      )
+    ).toBe(true)
+  })
   it('removes artificial leading Oh openers', () => {
     expect(filterResponse('Oh, ari is ready for a reset.')).toBe('Ari is ready for a reset.')
   })

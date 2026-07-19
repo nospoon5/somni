@@ -1,9 +1,26 @@
+'use client'
+
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import styles from './SiteFooter.module.css'
 
 export function SiteFooter() {
+  const pathname = usePathname()
+
+  // Hide footer on core app routes.
+  const appRoutes = ['/dashboard', '/sleep', '/chat', '/profile']
+  if (pathname && appRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`))) {
+    return null
+  }
+
   return (
-    <footer className={styles.footer} aria-label="Site footer">
+    <>
+      {process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true' && (
+        <div className={styles.maintenanceBanner} role="alert">
+          Somni is currently undergoing scheduled maintenance. Some features may be temporarily unavailable.
+        </div>
+      )}
+      <footer className={styles.footer} aria-label="Site footer">
       <div className={styles.inner}>
         <div>&copy; {new Date().getFullYear()} Somni</div>
         <nav className={styles.links} aria-label="Footer links">
@@ -28,5 +45,6 @@ export function SiteFooter() {
         For urgent medical issues in Australia, call Triple Zero 000.
       </p>
     </footer>
+    </>
   )
 }

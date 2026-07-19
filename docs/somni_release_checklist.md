@@ -4,17 +4,26 @@ Run this short checklist before merging a major feature or deploying a new build
 This checklist assumes caregiver sharing, balanced schedule adaptation, and notifications are active.
 If any step fails, do not deploy.
 
-> **Current status (17 July 2026): Launch blocked.** The confirmed blockers and their exit
-> criteria are in `docs/Somni_Implementation_Plan_Alpha_1.2.md`. This checklist does not replace
-> the Alpha 1.2 stage gates. A public launch requires the Stage 7 Go decision or an explicitly
-> approved Conditional Go with cohort limits and stop conditions.
+> **Current status (19 July 2026): Stage 7 is complete with a formal No-Go; deployment and any
+> external cohort are blocked.** The code, linked-database, Chromium, and AI benchmark gates are
+> green, but Stage 6 is reopened because the required operational controls/drills are absent.
+> Deployment/schema skew, confirmation-email invite return, resilience/cross-browser evidence,
+> actual provider cost, and professional reviews also remain open. See
+> `docs/Somni_Launch_Readiness_Report_Alpha_1.2.md`. This checklist does not replace those gates.
 
 ## 1. Environment & Config Check
 - [ ] `vercel.json` matches intended behavior (e.g., cron jobs are correctly scheduled).
 - [ ] Stripe API keys and Webhook secrets are correctly populated in production environment variables.
 - [ ] Supabase environment variables are connected.
 - [ ] `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, and `VAPID_SUBJECT` are populated in the production environment.
-- [ ] Apply any new SQL migration files to production Supabase.
+- [ ] `SOMNI_INCLUDE_RETRIEVAL_DEBUG` and `SOMNI_FORCE_BILLING_FAILURE` are unset in production.
+- [ ] Secrets are server-only; no service-role, Stripe, VAPID-private, cron, or evaluation secret
+  appears in a tracked file or `NEXT_PUBLIC_*` variable.
+- [ ] `npx supabase migration list --linked` shows local/linked alignment through
+  `20260719130000_sleep_log_idempotency.sql`.
+- [ ] `npx supabase db lint --linked` reports no schema or function warnings.
+- [ ] Production responses enforce the nonce CSP and security headers described in
+  `docs/security_model.md`; local HTTP remains usable without `upgrade-insecure-requests`.
 
 ## 2. Fast Build & Lint Check
 Run the core static checks locally:
@@ -22,31 +31,40 @@ Run the core static checks locally:
 ```bash
 npm run lint
 npx tsc --noEmit
-npm test -- --run
+npx vitest run
 npm run build
 npm audit --omit=dev
+npm run verify:links
+python -m unittest discover -s somni_eval -p "test_*.py"
 ```
 
 Required result: all code checks pass, and there are no unaccepted critical or high production
 dependency vulnerabilities.
 
 ## 3. Automated Flow Validations (Smoke Tests)
-Run the automated verification scripts against either your local instance or a staging preview:
+Run deterministic verification from the project root:
 
 ```bash
-# Stage 7 adaptive-plan regression pack (fast)
-node scripts/verify-stage7-adaptive-plans.mjs
+npm run verify:stage7:adaptive
 
 # Verify the LLM chunk retrieval isn't broken
 node scripts/verify-stage4-retrieval.mjs
+
+# Verify the evaluation pipeline without calling the app
+python somni_eval/run_eval.py --dry-run --max-questions 5
 ```
 
 Notes:
-- `verify-stage7-adaptive-plans` is the required adaptive-plan safety gate before release.
+- `verify:stage7:adaptive` is the required adaptive-plan safety gate before release.
 - Use the pre-created test credentials in `docs/TEST_ACCOUNTS.md` for manual verification. Do not create a new user account.
-- Do not use `verify-stage5-smoke.mjs`, the old chat/usage/Stripe E2E scripts, onboarding smoke,
-  or caregiver-sharing script as routine release gates until Alpha 1.2 S0.10/S1.5 removes their
-  temporary-user creation. The safe replacement suite must be added here when complete.
+- The old onboarding/chat/usage/Stripe/caregiver scripts were deleted because they created auth
+  users or reset linked fixtures too broadly. Do not run restored copies.
+- Start the built app with `npm run start`, set `CI=1` and `SOMNI_APP_URL` in the second terminal,
+  then run `npx playwright test`. The serial suite uses approved non-production accounts, guarded
+  fixture lookup, and exact cleanup; it must report no auth-user creation or deletion.
+- AI launch evidence additionally requires an authorised, read-only real benchmark with the same
+  untracked `SOMNI_EVAL_SECRET` in the app and runner. Run the 110-question comparable core and
+  the seven Stage 7 extensions as described in `somni_eval/README.md`, then grade the results.
 
 ## 4. Manual Verification (Only if the code touches these)
 If the upcoming release modifies these flows, perform a manual click-test via the UI:
@@ -69,8 +87,14 @@ If the upcoming release modifies these flows, perform a manual click-test via th
 
 ## 5. Launch Decision Evidence
 
-- [ ] Alpha 1.2 Stages 0–6 are complete with passing handoffs.
-- [ ] Stage 7 deep-dive report is linked here: ____________________
+Current outcome: **not satisfied — No-Go**. Items stay unchecked until a fresh exact-SHA review.
+
+- [ ] Alpha 1.2 Stages 0-6 are complete with passing handoffs (Stage 6 is currently Blocked).
+- [ ] The Stage 7 deep-dive report exists and is indexed from `docs/README.md`.
+- [ ] Full AI benchmark, performance evidence, and accessibility/security browser results are attached.
+- [ ] Backup/restore and deployment rollback drills have timestamped evidence and named owners.
+- [ ] Pre-created test credentials are confirmed non-production-only and rotated if reuse or
+  production access is possible.
 - [ ] Decision is **Go** or approved **Conditional Go**.
 - [ ] Conditional-Go cohort, owners, deadlines, monitoring, and stop conditions are recorded.
 - [ ] Deployment and rollback owners are available for the observation window.

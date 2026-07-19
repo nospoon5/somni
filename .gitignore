@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+/playwright-report/
+/test-results/
 
 # next.js
 /.next/
@@ -32,9 +34,14 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 somni_eval/output/devserver/
+somni_eval/output/logs/
+somni_eval/output/state/
+somni_eval/output/results/run_results_*.csv
 
 # env files (can opt-in for committing if needed)
 .env*
+docs/TEST_ACCOUNTS.md
+somni_eval/config.json
 
 # vercel
 .vercel

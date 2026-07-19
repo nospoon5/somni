@@ -228,3 +228,40 @@
     height: 30px;
   }
 }
+
+.details {
+  margin-top: 16px;
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: 14px;
+}
+
+.summaryButton {
+  list-style: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-accent);
+  font-size: 0.9rem;
+  font-weight: 500;
+  outline: none;
+  user-select: none;
+}
+
+.summaryButton::-webkit-details-marker {
+  display: none;
+}
+
+.summaryButton::after {
+  content: '▼';
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.details[open] .summaryButton::after {
+  transform: rotate(180deg);
+}
+
+.detailsContent {
+  animation: fade-up 0.3s ease both;
+}

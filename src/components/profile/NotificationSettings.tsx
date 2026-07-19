@@ -24,11 +24,15 @@ export function NotificationSettings({ initialPreferences }: NotificationSetting
   const [pending, startTransition] = useTransition()
 
   function save(nextPreferences: NotificationPreferencesInput) {
+    const previousPreferences = preferences
     setPreferences(nextPreferences)
     setMessage(null)
     startTransition(async () => {
       const result = await updateNotificationPreferencesAction(nextPreferences)
-      if (result.error) setMessage(result.error)
+      if (result.error) {
+        setMessage('Failed to update notification preferences: ' + result.error)
+        setPreferences(previousPreferences)
+      }
     })
   }
 
@@ -37,11 +41,17 @@ export function NotificationSettings({ initialPreferences }: NotificationSetting
       const registration = await navigator.serviceWorker?.ready.catch(() => null)
       const subscription = registration ? await registration.pushManager.getSubscription() : null
       if (subscription) {
-        await fetch('/api/notifications/subscribe', {
+        const response = await fetch('/api/notifications/subscribe', {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ endpoint: subscription.endpoint }),
         }).catch(() => undefined)
+        
+        if (response && !response.ok) {
+          setMessage('Failed to unsubscribe push alerts. Please try again.')
+          return
+        }
+        
         await subscription.unsubscribe().catch(() => false)
       }
       save({ ...preferences, pushEnabled: false })

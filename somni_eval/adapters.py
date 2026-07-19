@@ -5,12 +5,12 @@ import json
 import socket
 import time
 from dataclasses import dataclass
-from typing import Any, Protocol
+from typing import Protocol
 from urllib.parse import urlparse
 
 import requests
 
-from age_matching import derive_date_of_birth_from_question, extract_implied_gender_from_question
+from age_matching import derive_date_of_birth_from_question
 from configuration import EvalConfig, PersonaAccount
 
 
@@ -76,8 +76,8 @@ class SomniApiAdapter:
         self._base_url = config.transport.base_url.rstrip("/")
         self._chat_url = f"{self._base_url}/api/chat"
         self._supabase_auth_url = f"{config.transport.supabase_url.rstrip('/')}/auth/v1/token?grant_type=password"
-        self._rest_url = f"{config.transport.supabase_url.rstrip('/')}/rest/v1"
         self._session_cache: dict[str, PersonaSession] = {}
+        self._conversation_history: dict[str, list[dict[str, str]]] = {}
         self._http = requests.Session()
         self._http.headers.update({"User-Agent": USER_AGENT})
 
@@ -101,10 +101,22 @@ class SomniApiAdapter:
             persona_session = self._login(persona, self._config.transport.persona_accounts[persona])
             self._session_cache[persona] = persona_session
 
-        self._apply_age_match(persona_session, question_text)
-
         try:
-            return self._post_chat(persona_session.cookie_header, question_text, timeout_seconds, conversation_id)
+            history = self._conversation_history.get(conversation_id, []) if conversation_id else []
+            result = self._post_chat(
+                persona_session.cookie_header,
+                question_text,
+                timeout_seconds,
+                conversation_id,
+                history,
+            )
+            if conversation_id:
+                self._conversation_history[conversation_id] = [
+                    *history,
+                    {"role": "user", "content": question_text},
+                    {"role": "assistant", "content": result.response_text},
+                ][-8:]
+            return result
         except RetryableAdapterError as exc:
             message = str(exc).lower()
             if "401" in message or "unauthorized" in message:
@@ -156,136 +168,14 @@ class SomniApiAdapter:
         cookie_header = f"sb-{project_ref}-auth-token=base64-{encoded_session}"
         return PersonaSession(cookie_header=cookie_header, user_id=user_id)
 
-    def _apply_age_match(self, persona_session: PersonaSession, question_text: str) -> None:
-        derived_dob = derive_date_of_birth_from_question(question_text)
-        implied_gender = extract_implied_gender_from_question(question_text)
-        gender_to_name = {
-            "male": "Ari",
-            "female": "Aria",
-        }
-        desired_name = gender_to_name.get(implied_gender) if implied_gender else None
-
-        if not derived_dob and not implied_gender:
-            return
-
-        rest_headers = {
-            "apikey": self._config.transport.supabase_service_role_key,
-            "Authorization": f"Bearer {self._config.transport.supabase_service_role_key}",
-            "Accept": "application/json",
-        }
-
-        try:
-            baby_response = self._http.get(
-                f"{self._rest_url}/babies",
-                headers={**rest_headers, "Accept-Profile": "public"},
-                params={
-                    "select": "*",
-                    "profile_id": f"eq.{persona_session.user_id}",
-                    "order": "created_at.asc",
-                    "limit": "1",
-                },
-                timeout=30,
-            )
-        except requests.RequestException as exc:
-            raise RetryableAdapterError(f"Failed to load baby profile for age matching: {exc}") from exc
-
-        if baby_response.status_code in (429, 500, 502, 503, 504):
-            raise RetryableAdapterError(
-                f"Temporary failure loading baby profile for age matching: HTTP {baby_response.status_code} {baby_response.text[:200]}"
-            )
-        if baby_response.status_code >= 400:
-            raise FatalAdapterError(
-                f"Could not load baby profile for age matching: HTTP {baby_response.status_code} {baby_response.text[:200]}"
-            )
-
-        babies = baby_response.json()
-        if not isinstance(babies, list) or not babies:
-            raise FatalAdapterError(
-                "Age matching could not find a baby record for the selected persona account."
-            )
-
-        baby_id = str(babies[0].get("id", "")).strip()
-        if not baby_id:
-            raise FatalAdapterError("Age matching found a baby row without an id.")
-
-        update_payload: dict[str, Any] = {}
-        current_dob = str(babies[0].get("date_of_birth", "")).strip()
-        if derived_dob and current_dob != derived_dob:
-            update_payload["date_of_birth"] = derived_dob
-
-        if implied_gender:
-            current_name = str(babies[0].get("name", "")).strip()
-            if desired_name and current_name != desired_name:
-                update_payload["name"] = desired_name
-
-            current_gender = babies[0].get("gender")
-            if not isinstance(current_gender, str) or current_gender.strip().lower() != implied_gender:
-                update_payload["gender"] = implied_gender
-
-        if not update_payload:
-            return
-
-        self._patch_baby_for_age_match(rest_headers, baby_id, update_payload)
-
-    def _patch_baby_for_age_match(
+    def _post_chat(
         self,
-        rest_headers: dict[str, str],
-        baby_id: str,
-        update_payload: dict[str, Any],
-    ) -> None:
-        patch_headers = {
-            **rest_headers,
-            "Accept-Profile": "public",
-            "Content-Type": "application/json",
-            "Prefer": "return=minimal",
-        }
-
-        try:
-            update_response = self._http.patch(
-                f"{self._rest_url}/babies",
-                headers=patch_headers,
-                params={"id": f"eq.{baby_id}"},
-                json=update_payload,
-                timeout=30,
-            )
-        except requests.RequestException as exc:
-            raise RetryableAdapterError(f"Failed to update baby profile for age matching: {exc}") from exc
-
-        if (
-            update_response.status_code >= 400
-            and "gender" in update_payload
-            and _is_missing_gender_column_error(update_response)
-        ):
-            fallback_payload = dict(update_payload)
-            fallback_payload.pop("gender", None)
-            if not fallback_payload:
-                return
-
-            try:
-                update_response = self._http.patch(
-                    f"{self._rest_url}/babies",
-                    headers=patch_headers,
-                    params={"id": f"eq.{baby_id}"},
-                    json=fallback_payload,
-                    timeout=30,
-                )
-            except requests.RequestException as exc:
-                raise RetryableAdapterError(
-                    f"Failed to update baby profile for age matching fallback: {exc}"
-                ) from exc
-
-        if update_response.status_code in (429, 500, 502, 503, 504):
-            raise RetryableAdapterError(
-                "Temporary failure updating baby profile for age matching: "
-                f"HTTP {update_response.status_code} {update_response.text[:200]}"
-            )
-        if update_response.status_code >= 400:
-            raise FatalAdapterError(
-                "Could not update baby profile for age matching: "
-                f"HTTP {update_response.status_code} {update_response.text[:200]}"
-            )
-
-    def _post_chat(self, cookie_header: str, question_text: str, timeout_seconds: int, conversation_id: str = "") -> AdapterResult:
+        cookie_header: str,
+        question_text: str,
+        timeout_seconds: int,
+        conversation_id: str = "",
+        eval_history: list[dict[str, str]] | None = None,
+    ) -> AdapterResult:
         headers = {
             "Content-Type": "application/json",
             "Accept": "text/event-stream",
@@ -293,12 +183,14 @@ class SomniApiAdapter:
         }
         if self._config.transport.send_eval_mode_header:
             headers["x-eval-mode"] = "true"
+            headers["x-somni-eval-secret"] = self._config.transport.eval_secret
 
         request_started_at = time.perf_counter()
         try:
             payload = {"message": question_text}
             if conversation_id:
                 payload["conversationId"] = conversation_id
+                payload["evalHistory"] = eval_history or []
 
             response = self._http.post(
                 self._chat_url,
@@ -522,11 +414,3 @@ def _project_ref_from_supabase_url(supabase_url: str) -> str:
 def _base64url_json(payload: dict[str, object]) -> str:
     raw_bytes = json.dumps(payload, separators=(",", ":"), ensure_ascii=True).encode("utf-8")
     return base64.urlsafe_b64encode(raw_bytes).decode("ascii").rstrip("=")
-
-
-def _is_missing_gender_column_error(response: requests.Response) -> bool:
-    text = response.text.lower()
-    return "gender" in text and (
-        "column" in text
-        and ("does not exist" in text or "unknown" in text or "not found" in text or "not find" in text)
-    )

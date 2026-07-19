@@ -1,10 +1,12 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { logoutAction } from '@/app/auth-actions'
 import { createClient } from '@/lib/supabase/server'
 import { ensureSubscriptionRecord, hasPremiumAccess } from '@/lib/billing/subscriptions'
 import { CaregiverSettings } from '@/components/profile/CaregiverSettings'
 import { NotificationSettings } from '@/components/profile/NotificationSettings'
+import { BabyAndSleepSettings } from '@/components/profile/BabyAndSleepSettings'
+import { DataPrivacyControls } from '@/components/profile/DataPrivacyControls'
+import { LogoutButton } from '@/components/profile/LogoutButton'
 import styles from './page.module.css'
 
 export default async function ProfilePage() {
@@ -38,16 +40,26 @@ export default async function ProfilePage() {
 
   const { data: ownedBaby } = await supabase
     .from('babies')
-    .select('id, name')
+    .select('id, name, date_of_birth, biggest_issue, feeding_type, bedtime_range')
     .eq('profile_id', user.id)
     .order('created_at', { ascending: true })
     .limit(1)
     .maybeSingle()
 
+  let onboardingPreferences = null
+  if (ownedBaby) {
+    const { data: prefs } = await supabase
+      .from('onboarding_preferences')
+      .select('sleep_style_label, typical_wake_time, day_structure, nap_pattern, night_feeds, schedule_preference')
+      .eq('baby_id', ownedBaby.id)
+      .maybeSingle()
+    onboardingPreferences = prefs
+  }
+
   interface DBShareRow {
     id: string
     email: string
-    access_role: 'admin' | 'caregiver'
+    access_role: 'caregiver'
     status: 'pending' | 'accepted'
     profile_id: string | null
     profiles: {
@@ -79,7 +91,7 @@ export default async function ProfilePage() {
     <main className={styles.page}>
       <section className={`${styles.card} card`}>
         <p className={`${styles.eyebrow} text-label`}>Profile</p>
-        <h1 className={`${styles.heading} text-display`}>Account details</h1>
+        <h1 className={`${styles.heading} text-display`}>Account &amp; Settings</h1>
 
         <article className={`${styles.section} card`}>
           <h2 className={`${styles.sectionTitle} text-display`}>Identity</h2>
@@ -112,6 +124,27 @@ export default async function ProfilePage() {
           </div>
         </article>
 
+        {ownedBaby && onboardingPreferences ? (
+          <BabyAndSleepSettings
+            baby={{
+              id: ownedBaby.id,
+              name: ownedBaby.name,
+              dateOfBirth: ownedBaby.date_of_birth,
+              biggestIssue: ownedBaby.biggest_issue || 'falling_asleep',
+              feedingType: ownedBaby.feeding_type || 'breast',
+              bedtimeRange: ownedBaby.bedtime_range || '7pm_8pm',
+            }}
+            preferences={{
+              sleepStyleLabel: onboardingPreferences.sleep_style_label || 'balanced',
+              typicalWakeTime: onboardingPreferences.typical_wake_time || '07:00',
+              dayStructure: onboardingPreferences.day_structure || 'mostly_home_flexible',
+              napPattern: onboardingPreferences.nap_pattern || 'mostly_3_naps',
+              nightFeeds: onboardingPreferences.night_feeds ? 'yes' : 'no',
+              schedulePreference: onboardingPreferences.schedule_preference || 'mix_of_cues_and_anchors',
+            }}
+          />
+        ) : null}
+
         <NotificationSettings
           initialPreferences={{
             pushEnabled: profile.push_enabled,
@@ -132,12 +165,28 @@ export default async function ProfilePage() {
         ) : null}
 
         <article className={`${styles.section} card`}>
+          <h2 className={`${styles.sectionTitle} text-display`}>Support &amp; Legal</h2>
+          <p className="text-body">
+            Need help? Contact support or read our privacy policies and terms of service.
+          </p>
+          <div className={styles.actions}>
+            <Link className="btn-primary" href="/support">
+              Contact Support
+            </Link>
+            <Link className="btn-secondary" href="/privacy">
+              Privacy Policy
+            </Link>
+            <Link className="btn-secondary" href="/terms">
+              Terms of Service
+            </Link>
+          </div>
+        </article>
+
+        <DataPrivacyControls babyId={ownedBaby?.id} />
+
+        <article className={`${styles.section} card`}>
           <h2 className={`${styles.sectionTitle} text-display`}>Session</h2>
-          <form action={logoutAction}>
-            <button className="btn-secondary" type="submit">
-              Sign out
-            </button>
-          </form>
+          <LogoutButton />
         </article>
       </section>
     </main>

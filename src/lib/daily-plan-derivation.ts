@@ -22,11 +22,7 @@ type DailyPlanSelectionInput = {
   planDate: string
 }
 
-export type DailyPlanSelectionSource =
-  | 'saved_daily_plan'
-  | 'profile_derived'
-  | 'age_baseline_fallback'
-  | 'none'
+
 
 function midpointMinutes(window: SleepPlanWakeWindow | undefined, fallbackMinutes: number) {
   if (!window) {

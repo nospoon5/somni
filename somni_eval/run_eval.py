@@ -38,7 +38,11 @@ def main() -> int:
         config = load_config(args)
         ensure_directories(config.paths)
         expected_headers = load_expected_output_headers(config.paths.schema_template_csv)
-        questions = load_questions(config.paths.questions_csv, config.run.max_questions)
+        questions = load_questions(
+            config.paths.questions_csv,
+            config.run.max_questions,
+            args.question_set,
+        )
     except ConfigError as exc:
         print(f"Configuration error: {exc}", file=sys.stderr)
         return 1

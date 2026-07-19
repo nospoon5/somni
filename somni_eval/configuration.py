@@ -60,8 +60,8 @@ class TransportSettings:
     base_url: str
     supabase_url: str
     supabase_anon_key: str
-    supabase_service_role_key: str
     send_eval_mode_header: bool
+    eval_secret: str
     persona_accounts: dict[str, PersonaAccount]
 
 
@@ -109,6 +109,15 @@ def parse_args() -> argparse.Namespace:
         "--dry-run",
         action="store_true",
         help="Do not call the real app. Return a predictable placeholder response instead.",
+    )
+    parser.add_argument(
+        "--question-set",
+        choices=("core", "extensions", "all"),
+        default="core",
+        help=(
+            "Choose the 110-question comparable core benchmark, the seven multi-turn/"
+            "adversarial extensions, or all rows. Default: core."
+        ),
     )
     return parser.parse_args()
 
@@ -185,6 +194,22 @@ def load_config(args: argparse.Namespace) -> EvalConfig:
             ),
         )
 
+    send_eval_mode_header = _read_bool(
+        raw_config, ("transport", "send_eval_mode_header"), default=True
+    )
+    eval_secret = os.environ.get("SOMNI_EVAL_SECRET") or env_defaults.get(
+        "SOMNI_EVAL_SECRET", ""
+    )
+    if not run_settings.dry_run:
+        if not send_eval_mode_header:
+            raise ConfigError(
+                "Real evaluation runs must use authenticated evaluation mode so they remain read-only."
+            )
+        if len(eval_secret) < 32:
+            raise ConfigError(
+                "Set SOMNI_EVAL_SECRET to the same secret used by the local app (at least 32 characters)."
+            )
+
     transport = TransportSettings(
         transport_type=_read_string(
             raw_config, ("transport", "type"), default="somni_api"
@@ -211,16 +236,8 @@ def load_config(args: argparse.Namespace) -> EvalConfig:
             config_path=("transport", "supabase_anon_key"),
             required=not run_settings.dry_run,
         ),
-        supabase_service_role_key=_resolve_env_or_config(
-            raw_config,
-            env_defaults,
-            env_name="SUPABASE_SERVICE_ROLE_KEY",
-            config_path=("transport", "supabase_service_role_key"),
-            required=not run_settings.dry_run,
-        ),
-        send_eval_mode_header=_read_bool(
-            raw_config, ("transport", "send_eval_mode_header"), default=True
-        ),
+        send_eval_mode_header=send_eval_mode_header,
+        eval_secret=eval_secret,
         persona_accounts=persona_accounts,
     )
 

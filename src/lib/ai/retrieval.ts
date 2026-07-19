@@ -14,6 +14,38 @@ const DEFAULT_MATCH_LIMIT = 7
 const MIN_SIMILARITY = 0.3
 const MAX_INTERNAL_MATCH_LIMIT = 12
 
+class SimpleCache<T> {
+  private cache = new Map<string, T>()
+  private maxItems: number
+
+  constructor(maxItems = 50) {
+    this.maxItems = maxItems
+  }
+
+  get(key: string): T | undefined {
+    if (this.cache.has(key)) {
+      const val = this.cache.get(key)!
+      this.cache.delete(key)
+      this.cache.set(key, val)
+      return val
+    }
+    return undefined
+  }
+
+  set(key: string, value: T): void {
+    if (this.cache.has(key)) {
+      this.cache.delete(key)
+    } else if (this.cache.size >= this.maxItems) {
+      const firstKey = this.cache.keys().next().value
+      if (firstKey !== undefined) this.cache.delete(firstKey)
+    }
+    this.cache.set(key, value)
+  }
+}
+
+const embeddingCache = new SimpleCache<number[]>(50)
+const retrievalCache = new SimpleCache<RetrieveChunksResult>(50)
+
 export type SleepMethodology = 'gentle' | 'balanced' | 'fast-track' | 'all'
 
 export type RetrievedCorpusChunk = {
@@ -172,6 +204,10 @@ function scoreChunk(
 }
 
 export async function generateEmbedding(query: string) {
+  const trimmed = query.trim()
+  const cached = embeddingCache.get(trimmed)
+  if (cached) return cached
+
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
     throw new Error('Missing GEMINI_API_KEY for retrieval embedding')
@@ -210,6 +246,7 @@ export async function generateEmbedding(query: string) {
     )
   }
 
+  embeddingCache.set(trimmed, values as number[])
   return values as number[]
 }
 
@@ -304,14 +341,25 @@ export async function retrieveRelevantChunksWithDiagnostics(
     }
   }
 
+  const preferredMethodology = normalizeMethodology(input.methodology)
+  const preferredAgeBand = input.ageBand?.trim() || null
+  const internalLimit = getInternalMatchLimit(limit)
+
+  const cacheKey = JSON.stringify({
+    query: trimmedQuery,
+    ageBand: preferredAgeBand,
+    methodology: preferredMethodology,
+    limit: internalLimit,
+  })
+
+  const cached = retrievalCache.get(cacheKey)
+  if (cached) return cached
+
   const queryEmbedding =
     Array.isArray(input.queryEmbedding) && input.queryEmbedding.length === EMBEDDING_DIMENSION
       ? input.queryEmbedding
       : await generateEmbedding(trimmedQuery)
   const supabase = await createClient()
-  const preferredMethodology = normalizeMethodology(input.methodology)
-  const preferredAgeBand = input.ageBand?.trim() || null
-  const internalLimit = getInternalMatchLimit(limit)
 
   const rpcStartedAt = performance.now()
   const { data, error } = await supabase.rpc('match_corpus_chunks', {
@@ -327,7 +375,7 @@ export async function retrieveRelevantChunksWithDiagnostics(
       .map((row) => toRetrievedChunk(row))
       .filter((row) => row.similarity >= MIN_SIMILARITY)
 
-    return rerankChunks({
+    const result = rerankChunks({
       query: trimmedQuery,
       ageBand: preferredAgeBand,
       methodology: preferredMethodology,
@@ -336,6 +384,8 @@ export async function retrieveRelevantChunksWithDiagnostics(
       candidates: rows,
       timing: { rpcSeconds },
     })
+    retrievalCache.set(cacheKey, result)
+    return result
   }
 
   const isMissingRpc =
@@ -393,7 +443,7 @@ export async function retrieveRelevantChunksWithDiagnostics(
     ((performance.now() - fallbackScoreStartedAt) / 1000).toFixed(3)
   )
 
-  return rerankChunks({
+  const result = rerankChunks({
     query: trimmedQuery,
     ageBand: preferredAgeBand,
     methodology: preferredMethodology,
@@ -402,4 +452,7 @@ export async function retrieveRelevantChunksWithDiagnostics(
     candidates: ranked,
     timing: { rpcSeconds, fallbackFetchSeconds, fallbackScoreSeconds },
   })
+
+  retrievalCache.set(cacheKey, result)
+  return result
 }

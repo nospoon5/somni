@@ -42,30 +42,35 @@ export function SleepScorePanel({
             {sleepScore.tonightFocus}
           </p>
 
-          <div className={styles.metricGrid}>
-            <article className={`${styles.metricCard} card animate-fade-up`}>
-              <span className="text-label">Night sleep</span>
-              <strong className="text-data">{sleepScore.breakdown.nightSleep}/100</strong>
-            </article>
-            <article className={`${styles.metricCard} card animate-fade-up`}>
-              <span className="text-label">Day sleep</span>
-              <strong className="text-data">{sleepScore.breakdown.daySleep}/100</strong>
-            </article>
-            <article className={`${styles.metricCard} card animate-fade-up`}>
-              <span className="text-label">Total sleep</span>
-              <strong className="text-data">{sleepScore.breakdown.totalSleep}/100</strong>
-            </article>
-            <article className={`${styles.metricCard} card animate-fade-up`}>
-              <span className="text-label">Settling</span>
-              <strong className="text-data">{sleepScore.breakdown.settling}/100</strong>
-            </article>
-          </div>
+          <details className={styles.details}>
+            <summary className={styles.summaryButton}>View detailed breakdown</summary>
+            <div className={styles.detailsContent}>
+              <div className={styles.metricGrid}>
+                <article className={`${styles.metricCard} card animate-fade-up`}>
+                  <span className="text-label">Night sleep</span>
+                  <strong className="text-data">{sleepScore.breakdown.nightSleep}/100</strong>
+                </article>
+                <article className={`${styles.metricCard} card animate-fade-up`}>
+                  <span className="text-label">Day sleep</span>
+                  <strong className="text-data">{sleepScore.breakdown.daySleep}/100</strong>
+                </article>
+                <article className={`${styles.metricCard} card animate-fade-up`}>
+                  <span className="text-label">Total sleep</span>
+                  <strong className="text-data">{sleepScore.breakdown.totalSleep}/100</strong>
+                </article>
+                <article className={`${styles.metricCard} card animate-fade-up`}>
+                  <span className="text-label">Settling</span>
+                  <strong className="text-data">{sleepScore.breakdown.settling}/100</strong>
+                </article>
+              </div>
 
-          <p className={styles.scoreMeta}>
-            Age band: {sleepScore.ageBand} | Observed {sleepScore.observedSleepHours}h across{' '}
-            {sleepScore.coverageDays} covered day{sleepScore.coverageDays === 1 ? '' : 's'} in
-            the last 7 days | Target {sleepScore.targetSleepHours}h/day
-          </p>
+              <p className={styles.scoreMeta}>
+                Age band: {sleepScore.ageBand} | Observed {sleepScore.observedSleepHours}h across{' '}
+                {sleepScore.coverageDays} covered day{sleepScore.coverageDays === 1 ? '' : 's'} in
+                the last 7 days | Target {sleepScore.targetSleepHours}h/day
+              </p>
+            </div>
+          </details>
         </>
       ) : sleepScore?.dataState === 'sparse' ? (
         <>
@@ -75,21 +80,26 @@ export function SleepScorePanel({
             {sleepScore.tonightFocus}
           </p>
 
-          <div className={styles.questionCard}>
-            <span className="text-label">Questions that will sharpen Somni&apos;s read</span>
-            <ul className={styles.questionList}>
-              {sleepScore.clarifyingQuestions.map((question) => (
-                <li key={question}>{question}</li>
-              ))}
-            </ul>
-          </div>
+          <details className={styles.details}>
+            <summary className={styles.summaryButton}>View learning details</summary>
+            <div className={styles.detailsContent}>
+              <div className={styles.questionCard}>
+                <span className="text-label">Questions that will sharpen Somni&apos;s read</span>
+                <ul className={styles.questionList}>
+                  {sleepScore.clarifyingQuestions.map((question) => (
+                    <li key={question}>{question}</li>
+                  ))}
+                </ul>
+              </div>
 
-          <p className={styles.scoreMeta}>
-            Age band: {sleepScore.ageBand} | {sleepScore.logCount} log
-            {sleepScore.logCount === 1 ? '' : 's'} across {sleepScore.coverageDays} covered day
-            {sleepScore.coverageDays === 1 ? '' : 's'} | Observed {sleepScore.observedSleepHours}
-            h so far
-          </p>
+              <p className={styles.scoreMeta}>
+                Age band: {sleepScore.ageBand} | {sleepScore.logCount} log
+                {sleepScore.logCount === 1 ? '' : 's'} across {sleepScore.coverageDays} covered day
+                {sleepScore.coverageDays === 1 ? '' : 's'} | Observed {sleepScore.observedSleepHours}
+                h so far
+              </p>
+            </div>
+          </details>
         </>
       ) : (
         <>

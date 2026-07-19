@@ -3,7 +3,7 @@
 import type { FormEvent } from 'react'
 import { useState } from 'react'
 import {
-  DAILY_PLAN_STORAGE_KEY,
+  getDailyPlanStorageKey,
   type DailyPlanStreamPayload,
 } from '@/lib/daily-plan'
 
@@ -42,6 +42,8 @@ type ParsedEvent = {
 }
 
 type UseChatSessionArgs = {
+  profileId: string
+  babyId: string
   babyName: string
   billingEnabled: boolean
   isReadOnly: boolean
@@ -164,6 +166,7 @@ export function useChatSession(args: UseChatSessionArgs) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          babyId: args.babyId,
           message: trimmed,
           conversationId,
         }),
@@ -295,7 +298,10 @@ export function useChatSession(args: UseChatSessionArgs) {
 
             if (typeof window !== 'undefined') {
               try {
-                window.localStorage.setItem(DAILY_PLAN_STORAGE_KEY, JSON.stringify(payload))
+                window.localStorage.setItem(
+                  getDailyPlanStorageKey(args.profileId, args.babyId),
+                  JSON.stringify(payload),
+                )
               } catch {
                 // Ignore browser storage failures and continue chat flow.
               }

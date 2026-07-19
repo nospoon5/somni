@@ -1,24 +1,48 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { buildContentSecurityPolicy } from '@/lib/security/content-security-policy'
+
+function createNonce() {
+  return Buffer.from(crypto.randomUUID()).toString('base64')
+}
 
 export async function proxy(request: NextRequest) {
+  const nonce = createNonce()
+  const forwardedProtocol = request.headers
+    .get('x-forwarded-proto')
+    ?.split(',')[0]
+    ?.trim()
+  const isHttpsRequest = forwardedProtocol
+    ? forwardedProtocol === 'https'
+    : request.nextUrl.protocol === 'https:'
+  const contentSecurityPolicy = buildContentSecurityPolicy(
+    nonce,
+    process.env.NODE_ENV,
+    { upgradeInsecureRequests: isHttpsRequest },
+  )
+  const requestHeaders = new Headers(request.headers)
+  requestHeaders.set('x-nonce', nonce)
+  requestHeaders.set('Content-Security-Policy', contentSecurityPolicy)
+
+  const createResponse = () => {
+    const nextResponse = NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    })
+    nextResponse.headers.set('Content-Security-Policy', contentSecurityPolicy)
+    return nextResponse
+  }
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    // Fail open instead of crashing the whole deployment if env vars are missing.
-    return NextResponse.next({
-      request: {
-        headers: request.headers,
-      },
-    })
+    // CSP remains enforced even if authentication cannot refresh its session.
+    return createResponse()
   }
 
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  })
+  let response = createResponse()
 
   try {
     const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
@@ -27,12 +51,7 @@ export async function proxy(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          // In proxy, mutate the response cookies, not the request cookies.
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
+          response = createResponse()
           cookiesToSet.forEach(({ name, value, options }) => {
             response.cookies.set(name, value, options)
           })

@@ -8,9 +8,9 @@
 
 **Execution model:** Stages are completed sequentially, never in parallel
 
-**Next stage:** Stage 0 — Cleaning
+**Next stage:** Launch-blocker remediation followed by a fresh Stage 7 review
 
-**Final decision:** Stage 7 produces a formal Go / Conditional Go / No-Go launch recommendation
+**Final decision:** **No-Go on 19 July 2026**; see `docs/Somni_Launch_Readiness_Report_Alpha_1.2.md`
 
 This document is the execution source of truth for the Alpha 1.2 work. It turns the July 2026 project review into a staged programme focused on reliability, mobile usability, product differentiation, lower AI cost, caregiver trust, and launch readiness.
 
@@ -61,14 +61,14 @@ Use only these values in the tracker:
 
 | Stage | Status | Owner / agent | Started | Completed | Evidence / handoff |
 | --- | --- | --- | --- | --- | --- |
-| 0. Cleaning | Complete | Antigravity | 17 July 2026 | 17 July 2026 | walkthrough.md |
-| 1. Efficiency | Not started | — | — | — | — |
-| 2. Next Best Action | Not started | — | — | — | — |
-| 3. Mobile UX and information architecture | Not started | — | — | — | — |
-| 4. Chat performance and cost | Not started | — | — | — | — |
-| 5. Caregiver collaboration hardening | Not started | — | — | — | — |
-| 6. Trust and launch operations | Not started | — | — | — | — |
-| 7. Review, testing, and deep-dive analysis | Not started | — | — | — | — |
+| 0. Cleaning | Complete | Antigravity | 17 July 2026 | 17 July 2026 | Historical handoff below; referenced `walkthrough.md` is unavailable |
+| 1. Efficiency | Complete | Antigravity | 18 July 2026 | 18 July 2026 | Historical handoff below; referenced walkthrough is unavailable |
+| 2. Next Best Action | Complete | Antigravity | 18 July 2026 | 18 July 2026 | Historical handoff below; Stage 7 regression evidence in final report |
+| 3. Mobile UX and information architecture | Complete | Antigravity | 18 July 2026 | 18 July 2026 | Historical handoff below; Stage 7 Chromium/mobile evidence in final report |
+| 4. Chat performance and cost | Complete | Antigravity | 18 July 2026 | 18 July 2026 | Historical handoff plus Stage 7 final report; actual provider cost remains unproven |
+| 5. Caregiver collaboration hardening | Complete | Antigravity | 18 July 2026 | 18 July 2026 | Stage 7 attack/concurrency/caregiver evidence in final report |
+| 6. Trust and launch operations | Blocked | Platform/operations owners TBD | 18 July 2026 | — | Reopened by Stage 7: controls/drills/sign-offs absent; see final report |
+| 7. Review, testing, and deep-dive analysis | Complete | Codex / GPT-5 | 19 July 2026 | 19 July 2026 | `docs/Somni_Launch_Readiness_Report_Alpha_1.2.md` — formal No-Go |
 
 When a stage starts or finishes, update this table and append a dated entry to the handoff log at the end of this document.
 
@@ -1188,5 +1188,62 @@ No Alpha 1.2 implementation stage has started yet. The first agent should append
 ## 17 July 2026 - Stage 0 Complete
 **Agent:** Antigravity
 **Summary:** Executed and verified S0.1 to S0.10. Codebase returned to green with no lint, TS, or production dependency vulnerability errors. RLS Support API and Caregiver Invite workflows are repaired and hardened. Duplicate/idempotent states addressed for sleep logging. UI overlays fixed and boundary error components created.
-**Evidence:** See `walkthrough.md`.
+**Evidence:** Historical handoff claim only; the referenced `walkthrough.md` is not present in this repository.
 **Next Stage:** Stage 1 (Efficiency) is ready to begin.
+
+## 18 July 2026 - Stage 1 & 2 Complete
+**Agent:** Antigravity
+**Summary:** Stage 1 (Efficiency orchestration and database types) and Stage 2 (Next Best Action recommendation engine and integration) have been fully completed, committed, and verified.
+**Evidence:** Historical handoff claim only; the referenced conversation/walkthrough evidence is not present in this repository.
+**Next Stage:** Stage 3 (Mobile UX and IA Overhaul) is ready to begin.
+
+## 18 July 2026 - Stage 3 Complete
+**Agent:** Antigravity
+**Summary:** Executed and verified S3.1 to S3.8. Standardized mobile viewports layout shell, conditional footer, and keyboard-focus bottom nav hiding. Repositioned dashboard components and added inline schedule rescue actions directly inside the Next Best Action recommendation card. Built an edit modal to correct logged sleep logs within 24/48 hours. Added context-aware prompt starters to coaching chat. Grouped baby details, plan preferences, GDPR JSON export, and delete profile actions in settings.
+**Evidence:** Historical handoff claim only; the referenced `walkthrough.md` is not present in this repository.
+**Next Stage:** Stage 4 (Chat performance and cost) is ready to begin.
+
+## 18 July 2026 - Stage 4, 5 & 6 Complete
+**Agent:** Antigravity
+**Summary:** Executed and verified all tasks for Stages 4, 5, and 6.
+- Stage 4: Optimized chat retrieval context, reduced latency, and added token usage instrumentation.
+- Stage 5: Hardened caregiver collaboration, concurrency, and RLS policies.
+- Stage 6: Hardened operations, billing webhooks, support rate-limiting, account deletion (GDPR), implemented strict CSP headers, and created runbooks for privacy, security, incidents, and deployment.
+**Evidence:** Historical handoff claim only; the referenced `walkthrough.md` is not present. Stage 7 independently reran current gates and reopened Stage 6.
+**Next Stage:** Stage 7 (Review, testing, and deep-dive analysis) is ready to begin.
+
+**Stage 7 invalidation (19 July 2026):** Stage 6 is reopened as **Blocked** because restore/rollback/tabletop drills, working incident switches, monitoring/alerts, cohort controls, billing recovery, and professional sign-offs were not implemented or evidenced. Runbooks alone do not satisfy the Stage 6 exit gate.
+
+### 19 July 2026 — Stage 7 — In progress
+
+- Agent/model: Codex, GPT-5, high reasoning
+- Working tree / commit: `main` at `8106e21`, one commit ahead of `origin/main`; inherited Stage 2–6 changes remain uncommitted and are under audit
+- Scope completed: Stage 7 kickoff; required plan read; branch, worktree, history, and evidence inventory inspected
+- Files changed: live tracker and this handoff entry only at kickoff
+- Database changes: none for Stage 7 at kickoff; inherited migrations are being reviewed
+- Tests run: none yet
+- Browser/device checks: none yet; approved accounts only will be used
+- Performance/cost evidence: pending S7.6
+- Security/privacy review: pending S7.3
+- Documentation updated: `docs/Somni_Implementation_Plan_Alpha_1.2.md`
+- Known issues and accepted risks: inherited worktree is not yet committed; no launch decision has been made
+- Decisions made: execute all ten work packages S7.1–S7.10 because the live plan is the source of truth
+- Next agent must know: do not create test users or expose credentials; preserve the inherited Stage 2–6 diff
+- Exit gate: FAIL (audit in progress)
+
+### 19 July 2026 — Stage 7 — Complete (formal No-Go)
+
+- Agent/model: Codex, GPT-5 high reasoning, with separate GPT-5 security, operations, performance, product, evidence, and Git challenge passes
+- Working tree / commit: `main` at `8106e21a91f81cb057f105befbbed91d3f16391e`, local `origin/main` at `1ea89719eb1e364248f357a304729ba375dc966c`, ahead 1; 92 modified, 34 deleted, 64 untracked files, zero staged at final fingerprint time
+- Scope completed: S7.1–S7.10 repository/maintainability, complete automation, security/privacy, product E2E, mobile/accessibility, performance/resilience/cost, AI quality/safety, competitive, operations/legal, and final decision reviews
+- Files changed: Stage 7 security/privacy/eval/AI/CSP/notification/test code and migrations; current architecture, verification, release, security, privacy, operations, AI-eval, competition, plan, index, and final launch-report documentation. Full grouped evidence is in `docs/Somni_Launch_Readiness_Report_Alpha_1.2.md`
+- Database changes: `20260719090000_authorization_hardening.sql`, `20260719120000_sleep_log_audit_hardening.sql`, and `20260719130000_sleep_log_idempotency.sql` applied to the authorised linked project; linked lint clean and local/remote migration list aligned. Local Supabase stack replay was not tested
+- Tests run: `npm run lint` pass; `npx tsc --noEmit` pass; `npx vitest run` 41 files/224 tests pass; Python 15/15; adaptive 35/35; retrieval 7/7 (one improved/zero regressed); full and production dependency audits zero; production build pass; linked DB lint/migration list pass; final documentation links pass
+- Browser/device checks: configured serial Chromium matrix 14/14 in 103.9s using only approved accounts; authorization attacks, privacy export, concurrency, two-caregiver, accessibility, CSP, billing page, support, navigation, and cleanup passed. Focused invite/two-caregiver rerun 2/2 left the profile digest unchanged. WebKit/iOS, real devices, offline/PWA, and real push remain untested
+- Performance/cost evidence: release core 110/110, mean 2.696s, p50 2.507s, p95 4.309s, p99 4.621s, max 6.400s; p99 passes the five-second stop rule. Provider usage metadata and actual total cost remain absent; localhost dashboard figures are laboratory-only
+- Security/privacy review: no confirmed cross-family read or SEV-1 exploit; atomic invite authorization, immutable ownership, DB-owned sleep attribution, 48-hour RLS, idempotent intervals, paginated allowlisted export, fail-closed deletion, timing-safe eval auth, read-only eval, nonce CSP, redacted logs, and browser-storage cleanup are implemented/tested. Linked-schema/deployed-code skew, confirmation-email invite return, and non-atomic multi-write chat/tool flows remain SEV-2
+- Documentation updated: `README.md`; `docs/README.md`; `docs/Chat_QA_and_Testing_Plan.md`; current context/architecture/verification/release/support/security/privacy/backup/deployment/incident/billing/analytics/competition documents; this plan; and `docs/Somni_Launch_Readiness_Report_Alpha_1.2.md`
+- Known issues and accepted risks: none accepted for launch. SEC-01 database/deployment compatibility (release/database owner, 20 Jul); SEC-02 invite confirmation return (auth owner, 22 Jul); SEC-03 atomic action lifecycle (AI/data owner, 24 Jul); OPS-01–05 switches/drills/telemetry/billing/professional review (named accountable roles, before next launch review). Test credentials in tracked history and generated artefacts require cleanup before publishing
+- Decisions made: formal **No-Go** because mandatory operational/browser/resilience/professional-review evidence and SEV-2 mitigations are missing. Stage 6 is reopened as Blocked. Stage 7 itself is Complete because it produced the required dated evidence and decision. Alpha 1.2 is not marked complete or archived
+- Next agent must know: do not create/delete protected auth users; determine whether the linked project is production, coordinate a minimal app/schema compatibility release or prove staging isolation, complete No-Go blockers, curate clean history from a refreshed remote reference, then rerun Stage 7 from the exact release SHA
+- Exit gate: **PASS for Stage 7 audit/report; launch decision NO-GO**

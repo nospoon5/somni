@@ -23,6 +23,7 @@ describe('buildChatPrompt', () => {
       bedtimeRange: '7:00-7:30 pm',
       recentSleepSummary: '3 recent logs.',
       scoreSummary: 'Learning state.',
+      nextBestActionSummary: 'No next best action',
       conversationHistory: [],
       retrievedChunks: [],
       latestUserMessage: 'the plan says wake at 7 but he always wakes at 6',
@@ -62,6 +63,7 @@ describe('buildChatPrompt', () => {
       bedtimeRange: null,
       recentSleepSummary: 'No recent sleep logs yet.',
       scoreSummary: 'Learning state.',
+      nextBestActionSummary: 'No next best action',
       conversationHistory: [],
       retrievedChunks: [],
       latestUserMessage: 'He wakes every 45 minutes overnight.',
@@ -76,9 +78,9 @@ describe('buildChatPrompt', () => {
     expect(prompt).toContain('Never use the recurring sound-based hedge.')
     expect(prompt).toContain('CHOOSE THE SMALLEST FORMAT THAT FULLY HELPS')
     expect(prompt).toContain('Ambiguous message: 25 to 50 words, 1 to 2 short sentences')
-    expect(prompt).toContain('Do not default to "[Baby name] is experiencing..."')
+    expect(prompt).toContain('Do not default to "[Baby] is experiencing..."')
     expect(prompt).toContain('NEVER in the first sentence')
-    expect(prompt).toContain('Do not automatically close with "Let me know how tonight goes"')
+    expect(prompt).toContain('Don\'t auto-close with "Let me know"')
     expect(prompt).not.toContain('"sounds like"')
 
     const clarification = buildFocusedAmbiguousClarification('Ari')
@@ -111,14 +113,14 @@ describe('buildChatPrompt', () => {
       bedtimeRange: null,
       recentSleepSummary: 'No recent sleep logs yet.',
       scoreSummary: 'Learning state.',
+      nextBestActionSummary: 'No next best action',
       conversationHistory: [],
       retrievedChunks: [],
       latestUserMessage: 'Can I give my 6-month-old melatonin gummies?',
     })
 
     expect(prompt).toContain('Opening confidence class: medical_safety')
-    expect(prompt).toContain('melatonin, sleep gummies, supplements')
-    expect(prompt).toContain('Never say "you can consider giving"')
+    expect(prompt).toContain('For meds/supplements (Panadol, melatonin, gummies): do not authorise use')
     expect(prompt).toContain('Medication or supplement boundary')
   })
 
@@ -141,6 +143,7 @@ describe('buildChatPrompt', () => {
       bedtimeRange: '7:00-7:30 pm',
       recentSleepSummary: 'No recent sleep logs yet.',
       scoreSummary: 'Learning state.',
+      nextBestActionSummary: 'No next best action',
       conversationHistory: [],
       retrievedChunks: [],
       latestUserMessage: 'Can my 8-month-old sleep with a stuffed animal yet?',
@@ -171,6 +174,7 @@ describe('buildChatPrompt', () => {
       bedtimeRange: '7:00-7:30 pm',
       recentSleepSummary: 'No recent sleep logs yet.',
       scoreSummary: 'Learning state.',
+      nextBestActionSummary: 'No next best action',
       conversationHistory: [],
       retrievedChunks: [],
       latestUserMessage: 'Can she sleep with a stuffed animal yet?',

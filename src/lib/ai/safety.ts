@@ -9,7 +9,7 @@ const EMERGENCY_PATTERNS = [
   /unresponsive/i,
   /passed\s+out/i,
   /seizure/i,
-  /fit\b/i,
+  /\bfit\b/i,
   /choking/i,
   /collapsed/i,
   /feel\s+like\s+shak(?:e|ing)\s+(?:him|her|them|the\s+baby)/i,
@@ -37,8 +37,14 @@ export type SafetyCheckResult = {
   safetyNote: string | null
 }
 
-export function checkUrgentMedicalRisk(message: string) {
+type SafetyContext = {
+  babyAgeWeeks?: number | null
+}
+
+export function checkUrgentMedicalRisk(message: string, context: SafetyContext = {}) {
   const hasFever = FEVER_PATTERN.test(message)
+  const profileIsUnderThreeMonths =
+    typeof context.babyAgeWeeks === 'number' && context.babyAgeWeeks >= 0 && context.babyAgeWeeks < 13
 
   return (
     (hasFever && LETHARGY_PATTERN.test(message)) ||
@@ -48,12 +54,12 @@ export function checkUrgentMedicalRisk(message: string) {
     BLUE_GREY_PATTERN.test(message) ||
     DEHYDRATION_PATTERN.test(message) ||
     SEIZURE_PATTERN.test(message) ||
-    (hasFever && UNDER_THREE_MONTHS_PATTERN.test(message))
+    (hasFever && (UNDER_THREE_MONTHS_PATTERN.test(message) || profileIsUnderThreeMonths))
   )
 }
 
-export function checkEmergencyRisk(message: string): SafetyCheckResult {
-  const isUrgentMedical = checkUrgentMedicalRisk(message)
+export function checkEmergencyRisk(message: string, context: SafetyContext = {}): SafetyCheckResult {
+  const isUrgentMedical = checkUrgentMedicalRisk(message, context)
   if (isUrgentMedical) {
     return {
       isEmergency: true,

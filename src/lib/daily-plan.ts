@@ -1,6 +1,10 @@
 import { getDateStringForTimezone as getDateStringForTimezoneFromUtils } from './date-utils'
 
-export const DAILY_PLAN_STORAGE_KEY = 'somni:daily-plan'
+const DAILY_PLAN_STORAGE_PREFIX = 'somni:daily-plan'
+
+export function getDailyPlanStorageKey(profileId: string, babyId: string) {
+  return `${DAILY_PLAN_STORAGE_PREFIX}:${profileId}:${babyId}`
+}
 
 export const DAILY_PLAN_ORIGINS = [
   'saved_daily_plan',
@@ -398,36 +402,3 @@ export function summarizeDailyPlanForPrompt(plan: DailyPlanRecord | null) {
   return sections.join(' ')
 }
 
-export function buildDailyPlanConfirmation(args: {
-  babyName: string
-  plan: DailyPlanRecord
-}) {
-  const sleepHighlights = args.plan.sleepTargets
-    .slice(0, 2)
-    .map((target) => summarizeSleepTarget(target))
-  const feedHighlights = args.plan.feedTargets
-    .slice(0, 2)
-    .map((target) => summarizeFeedTarget(target))
-
-  const lines = [
-    `I've updated today's dashboard plan for ${args.babyName}.`,
-  ]
-
-  if (sleepHighlights.length > 0) {
-    lines.push(`Sleep anchors now: ${sleepHighlights.join(', ')}.`)
-  }
-
-  if (feedHighlights.length > 0) {
-    lines.push(`Feed anchors: ${feedHighlights.join(', ')}.`)
-  }
-
-  if (args.plan.notes) {
-    lines.push(`I've also saved a note for the day: ${args.plan.notes}.`)
-  }
-
-  lines.push(
-    'Use that as today\'s shared plan, then keep following your baby\'s cues around the edges.'
-  )
-
-  return lines.join('\n\n')
-}

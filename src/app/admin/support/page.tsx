@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { requireAdmin } from '@/lib/admin/guard'
 import { createClient } from '@/lib/supabase/server'
+import { getAllSupportTickets } from '@/lib/repositories/support'
 import { updateTicketStatusAction } from './actions'
 import styles from './page.module.css'
 
@@ -18,10 +19,7 @@ export default async function AdminSupportPage(props: PageProps) {
   const supabase = await createClient()
 
   // 2. Fetch all tickets for statistics and display
-  const { data: allTickets, error: fetchError } = await supabase
-    .from('support_tickets')
-    .select('id, email, category, message, origin_page, status, created_at')
-    .order('created_at', { ascending: false })
+  const { data: allTickets, error: fetchError } = await getAllSupportTickets(supabase)
 
   if (fetchError) {
     console.error('[admin] failed to fetch tickets', fetchError)

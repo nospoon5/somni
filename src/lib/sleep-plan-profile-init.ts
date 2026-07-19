@@ -75,6 +75,23 @@ const DEFAULT_DAY_STRUCTURE: OnboardingDayStructure = 'mostly_home_flexible'
 const DEFAULT_SCHEDULE_PREFERENCE: OnboardingSchedulePreference = 'mix_of_cues_and_anchors'
 const DEFAULT_SLEEP_STYLE: SleepStyleLabel = 'balanced'
 
+export async function readSleepPlanProfile(input: {
+  supabase: Pick<SupabaseClient, 'from'>
+  babyId: string
+}) {
+  const { data, error } = await input.supabase
+    .from('sleep_plan_profiles')
+    .select(PROFILE_SELECT)
+    .eq('baby_id', input.babyId)
+    .maybeSingle()
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  return normalizeSleepPlanProfileRow(data)
+}
+
 const AGE_RULES: AgeRule[] = [
   {
     maxAgeInWeeks: 8,
@@ -476,17 +493,10 @@ export function createInitialSleepPlanProfile(
 }
 
 export async function ensureSleepPlanProfile(input: EnsureSleepPlanProfileInput) {
-  const { data: existingRow, error: existingError } = await input.supabase
-    .from('sleep_plan_profiles')
-    .select(PROFILE_SELECT)
-    .eq('baby_id', input.id)
-    .maybeSingle()
-
-  if (existingError) {
-    throw new Error(existingError.message)
-  }
-
-  const existingProfile = normalizeSleepPlanProfileRow(existingRow)
+  const existingProfile = await readSleepPlanProfile({
+    supabase: input.supabase,
+    babyId: input.id,
+  })
   if (existingProfile) {
     return {
       profile: existingProfile,
@@ -505,6 +515,19 @@ export async function ensureSleepPlanProfile(input: EnsureSleepPlanProfileInput)
     .single()
 
   if (createError) {
+    if (createError.code === '23505') {
+      // Race condition: another request inserted it just now
+      const { data: retryRow, error: retryError } = await input.supabase
+        .from('sleep_plan_profiles')
+        .select(PROFILE_SELECT)
+        .eq('baby_id', input.id)
+        .maybeSingle()
+      
+      if (retryError || !retryRow) {
+        throw new Error('Failed to fetch sleep plan profile after race condition')
+      }
+      return { profile: normalizeSleepPlanProfileRow(retryRow), created: false }
+    }
     throw new Error(createError.message)
   }
 

@@ -1,11 +1,15 @@
 import { redirect } from 'next/navigation'
 import { ChatCoach } from '@/components/chat/ChatCoach'
+import { BabySwitcher } from '@/components/babies/BabySwitcher'
+import { readActiveBabyId, resolveActiveBaby } from '@/lib/babies/active-baby'
 import { createClient } from '@/lib/supabase/server'
 import {
   ensureSubscriptionRecord,
   hasPremiumAccess,
   type SubscriptionRecord,
 } from '@/lib/billing/subscriptions'
+import { sanitizeTimezone } from '@/lib/billing/usage'
+import { getDateStringForTimezone } from '@/lib/date-utils'
 import styles from './page.module.css'
 
 export default async function ChatPage() {
@@ -20,7 +24,7 @@ export default async function ChatPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('onboarding_completed')
+    .select('onboarding_completed, timezone')
     .eq('id', user.id)
     .maybeSingle()
 
@@ -28,16 +32,58 @@ export default async function ChatPage() {
     redirect('/onboarding')
   }
 
-  const { data: baby } = await supabase
+  const timezone = sanitizeTimezone(profile.timezone)
+  const todayPlanDate = getDateStringForTimezone(timezone)
+
+  const preferredBabyId = await readActiveBabyId()
+  const { data: babies } = await supabase
     .from('babies')
-    .select('name')
+    .select('id, name')
     .order('created_at', { ascending: true })
-    .limit(1)
-    .maybeSingle()
+  const baby = resolveActiveBaby(babies ?? [], preferredBabyId)
 
   if (!baby) {
     redirect('/onboarding')
   }
+
+  // Load preferences, latest log, and daily plan for context-aware prompt starters.
+  const [prefRes, planRes, latestLogRes] = await Promise.all([
+    supabase
+      .from('onboarding_preferences')
+      .select('sleep_style_label')
+      .eq('baby_id', baby.id)
+      .maybeSingle(),
+    supabase
+      .from('daily_plans')
+      .select('pending_rescue_targets, rescue_dismissed')
+      .eq('baby_id', baby.id)
+      .eq('plan_date', todayPlanDate)
+      .maybeSingle(),
+    supabase
+      .from('sleep_logs')
+      .select('id, started_at, ended_at, is_night')
+      .eq('baby_id', baby.id)
+      .order('started_at', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ])
+
+  const sleepStyle = prefRes.data?.sleep_style_label || 'balanced'
+  const hasPendingRescue = Boolean(
+    planRes.data?.pending_rescue_targets && !planRes.data.rescue_dismissed
+  )
+
+  const latestLog = latestLogRes.data
+  const activeSleep = latestLog && !latestLog.ended_at ? {
+    id: latestLog.id,
+    startedAt: latestLog.started_at,
+  } : null
+
+  const lastCompletedSleep = latestLog && latestLog.ended_at ? {
+    startedAt: latestLog.started_at,
+    endedAt: latestLog.ended_at,
+    isNight: latestLog.is_night,
+  } : null
 
   const billingEnabled = Boolean(
     process.env.STRIPE_SECRET_KEY &&
@@ -81,7 +127,14 @@ export default async function ChatPage() {
 
   return (
     <main className={styles.page}>
+      <BabySwitcher
+        babies={babies ?? []}
+        activeBabyId={baby.id}
+        returnTo="/chat"
+      />
       <ChatCoach
+        profileId={user.id}
+        babyId={baby.id}
         babyName={baby.name}
         pageEyebrow="Chat"
         pageTitle={`Sleep coaching for ${baby.name}`}
@@ -90,6 +143,12 @@ export default async function ChatPage() {
         hasPremiumAccess={hasPremiumAccess(subscription)}
         isReadOnly={isReadOnly}
         billingDegradedReason={billingDegradedReason}
+        currentState={{
+          sleepStyle,
+          hasPendingRescue,
+          activeSleep,
+          lastCompletedSleep,
+        }}
       />
     </main>
   )

@@ -6,12 +6,47 @@ function isUuid(value: string) {
 }
 
 export type ChatRequestBody = {
+  babyId?: unknown
+  evalHistory?: unknown
   message?: unknown
   conversationId?: unknown
 }
 
+export type EvalHistoryMessage = {
+  role: 'user' | 'assistant'
+  content: string
+}
+
 export function readChatMessage(value: unknown) {
   return typeof value === 'string' ? value : ''
+}
+
+export function readBabyId(value: unknown) {
+  const babyId = typeof value === 'string' ? value.trim() : ''
+  return isUuid(babyId) ? babyId : null
+}
+
+export function readEvalHistory(value: unknown): EvalHistoryMessage[] {
+  if (!Array.isArray(value)) {
+    return []
+  }
+
+  return value
+    .slice(-8)
+    .flatMap((entry): EvalHistoryMessage[] => {
+      if (!entry || typeof entry !== 'object') {
+        return []
+      }
+
+      const role = (entry as { role?: unknown }).role
+      const content = (entry as { content?: unknown }).content
+      if ((role !== 'user' && role !== 'assistant') || typeof content !== 'string') {
+        return []
+      }
+
+      const trimmedContent = content.trim().slice(0, 8_000)
+      return trimmedContent ? [{ role, content: trimmedContent }] : []
+    })
 }
 
 export function resolveConversationId(value: unknown) {

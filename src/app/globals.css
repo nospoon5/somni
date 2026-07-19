@@ -6,7 +6,8 @@
 
   --color-text: #fef0dc;
   --color-text-muted: #9ba3bf;
-  --color-text-faint: #5a6480;
+  --color-text-faint: #8791ae;
+  --color-text-dim: #8791ae;
 
   --color-accent: #e8b44a;
   --color-accent-light: #f5d987;
@@ -220,4 +221,29 @@ main {
 
 .animate-pulse-ring {
   animation: ring-pulse 2s ease infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Mobile virtual keyboard overrides: hide bottom navigation on input focus */
+body:has(input:focus, textarea:focus) [class*="AppBottomNav_wrap"] {
+  display: none !important;
+}
+
+/* Standard accessibility & mobile spacing overrides */
+.btn-primary, .btn-secondary, button, select, input, textarea {
+  min-height: 44px; /* WCAG 2.2 AA touch target size */
+}
+
+.card, .card-glass {
+  transition: transform 0.2s ease;
 }

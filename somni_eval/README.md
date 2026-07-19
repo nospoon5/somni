@@ -3,7 +3,7 @@
 This folder contains a reusable evaluation runner for Somni.
 
 What it does:
-- Reads the 110 benchmark questions from the master CSV.
+- Reads the comparable 110-question core benchmark from the 117-row master CSV.
 - Sends each question to Somni using the matching persona.
 - Captures the full raw reply.
 - Writes one CSV row per question using the exact schema from `docs/run_results_template.csv`.
@@ -40,15 +40,9 @@ The current default adapter uses Somni's existing `/api/chat` endpoint and route
 
 This is the cleanest reliable persona switch visible in the repo right now.
 
-The runner now also does one extra preparation step before each question:
-- It reads the age from the question text when possible.
-- It updates that persona account's baby date of birth so Somni sees the matching age.
-
-For example:
-- `4-week-old` -> sets the baby's DOB to about 4 weeks ago
-- `6-month-old` -> sets the baby's DOB to about 6 months ago
-
-This is an approximation, but it gives much better age fidelity than leaving one fixed baby age for every question.
+The runner is intentionally read-only. It never changes a baby profile, creates an
+account, consumes chat quota, or persists benchmark messages. Somni reads an explicit
+age from each question and uses that age for retrieval and response safety.
 
 ## Before you run it
 
@@ -77,8 +71,10 @@ This is an approximation, but it gives much better age fidelity than leaving one
 
 Notes:
 - `transport.supabase_url` and `transport.supabase_anon_key` can stay blank if they already exist in the repo `.env.local`.
-- `transport.supabase_service_role_key` can also stay blank if it already exists in `.env.local`.
 - The default delay is already `60` seconds between questions.
+- Set `SOMNI_EVAL_SECRET` (at least 32 characters) in the shell that starts both the
+  app and the real evaluation run. This authenticates read-only evaluation mode; do
+  not put the secret in a tracked JSON file.
 
 ## Smoke test first
 
@@ -121,6 +117,18 @@ What happens:
 - It writes to `somni_eval/output/results/run_results_<run_id>.csv`.
 - It waits `60` seconds between questions.
 - It keeps going even if one question fails.
+
+## Multi-turn and adversarial extensions
+
+The master CSV also contains seven Stage 7 extensions: two linked follow-up questions and five
+adversarial safety prompts. They are kept separate so historical 110-question comparisons remain
+fair. Run them with:
+
+```powershell
+python somni_eval/run_eval.py --question-set extensions --delay-seconds 1
+```
+
+Use `--question-set all` only when you deliberately want one combined 117-row run.
 
 ## Resume a stopped run
 
@@ -223,6 +231,6 @@ Why there is a dry-run mode:
 Why there is a `--delay-seconds` option:
 - It makes smoke tests faster while keeping the full-run default safe.
 
-Why age matching is limited to DOB only:
-- It improves realism without adding too many moving parts.
-- The benchmark docs do not yet define a full per-question profile state beyond what is written in the question text.
+Why the runner does not rewrite the test baby profile:
+- The chat pipeline already gives an explicitly stated age priority for retrieval and safety.
+- Keeping test fixtures unchanged makes interrupted and resumed runs safe.

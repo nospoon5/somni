@@ -1125,8 +1125,6 @@ function buildDailyRescueEvaluation(args: {
   }
 
   // Align feed targets to the new sleep anchors.
-  const _originalWakeTime = args.profile.usualWakeTime
-  const _newFirstNap = shiftedSleepTargets.find((t) => !BEDTIME_TARGET_PATTERN.test(t.label))
   const newBedtime = shiftedSleepTargets.find((t) => BEDTIME_TARGET_PATTERN.test(t.label))
   shiftAlignedFeedAnchors(args.profile, {
     wakeDeltaMinutes:

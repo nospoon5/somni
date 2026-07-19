@@ -1,25 +1,25 @@
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { acceptInviteAction } from '@/app/profile/actions'
 import styles from './page.module.css'
 
 type PageProps = {
-  searchParams: Promise<{ id?: string }>
+  searchParams: Promise<{ id?: string; token?: string }>
 }
 
 export default async function AcceptInvitePage(props: PageProps) {
   const searchParams = await props.searchParams
   const shareId = searchParams.id
+  const token = searchParams.token
 
-  if (!shareId) {
+  if (!shareId || !token) {
     return (
       <main className={styles.page}>
         <section className={`${styles.card} card`}>
           <p className={`${styles.eyebrow} text-label`}>Invitation</p>
           <h1 className={`${styles.title} text-display`}>Invalid Link</h1>
           <p className={`${styles.body} text-body`}>
-            This invitation link is missing the required identifier.
+            This invitation link is missing the required identifier or security token.
           </p>
           <div className={styles.actions}>
             <Link className="btn-primary" href="/dashboard">
@@ -40,8 +40,8 @@ export default async function AcceptInvitePage(props: PageProps) {
   if (!user) {
     // We cannot query the share yet because RLS prevents unauthenticated users from reading baby_shares.
     // Instead, we show a generic sign-in prompt and preserve the redirect.
-    const redirectUrl = `/login?redirectTo=${encodeURIComponent(`/invite/accept?id=${shareId}`)}`
-    const signupUrl = `/signup?redirectTo=${encodeURIComponent(`/invite/accept?id=${shareId}`)}`
+    const redirectUrl = `/login?redirectTo=${encodeURIComponent(`/invite/accept?id=${shareId}&token=${token}`)}`
+    const signupUrl = `/signup?redirectTo=${encodeURIComponent(`/invite/accept?id=${shareId}&token=${token}`)}`
     
     return (
       <main className={styles.page}>
@@ -67,81 +67,22 @@ export default async function AcceptInvitePage(props: PageProps) {
     )
   }
 
-  // Fetch invitation details now that the user is authenticated
-  const { data: share, error: shareError } = await supabase
-    .from('baby_shares')
-    .select('id, email, status, baby_id, babies(name, profiles(full_name))')
-    .eq('id', shareId)
-    .maybeSingle()
-
-  if (shareError || !share) {
-    return (
-      <main className={styles.page}>
-        <section className={`${styles.card} card`}>
-          <p className={`${styles.eyebrow} text-label`}>Invitation</p>
-          <h1 className={`${styles.title} text-display`}>Invitation Not Found</h1>
-          <p className={`${styles.body} text-body`}>
-            This invitation does not exist, has expired, or has been revoked.
-          </p>
-          <div className={styles.actions}>
-            <Link className="btn-primary" href="/dashboard">
-              Go to Dashboard
-            </Link>
-          </div>
-        </section>
-      </main>
-    )
-  }
-
-  const baby = share.babies as unknown as {
-    name: string
-    profiles: { full_name: string | null } | null
-  } | null
-  const inviterName = baby?.profiles?.full_name || 'A parent'
-  const babyName = baby?.name || 'their baby'
-
-  if (share.status === 'accepted') {
-    redirect('/dashboard')
-  }
-
-  const isEmailMismatch = user.email?.toLowerCase() !== share.email.toLowerCase()
-
-  if (isEmailMismatch) {
-    return (
-      <main className={styles.page}>
-        <section className={`${styles.card} card`}>
-          <p className={`${styles.eyebrow} text-label`}>Invitation Mismatch</p>
-          <h1 className={`${styles.title} text-display`}>Wrong account</h1>
-          <p className={`${styles.body} text-body`}>
-            This invitation was sent to <strong>{share.email}</strong>, but you are signed in as <strong>{user.email}</strong>.
-          </p>
-          <p className={`${styles.body} text-body`}>
-            Please sign out and sign back in with the correct email address to accept this invitation.
-          </p>
-          <div className={styles.actions}>
-            <Link className="btn-primary" href="/profile">
-              Go to Profile to Sign Out
-            </Link>
-          </div>
-        </section>
-      </main>
-    )
-  }
-
   return (
     <main className={styles.page}>
       <section className={`${styles.card} card`}>
         <p className={`${styles.eyebrow} text-label`}>Invitation</p>
         <h1 className={`${styles.title} text-display`}>Accept invitation</h1>
         <p className={`${styles.body} text-body`}>
-          {inviterName} has invited you to help care for <strong>{babyName}</strong>.
+          A parent has invited you to join their baby&apos;s Somni care team.
         </p>
         <p className={`${styles.body} text-body`}>
-          By accepting, you will be able to view and log sleep sessions, adjust schedules, and chat with Somni for {babyName}.
+          Somni validates the private link, its expiry, and your signed-in email only when
+          you accept. This keeps pending family details hidden from other accounts.
         </p>
         
         <form className={styles.actions} action={acceptInviteAction}>
           <input type="hidden" name="shareId" value={shareId} />
+          <input type="hidden" name="token" value={token} />
           <button className="btn-primary" type="submit">
             Accept Invitation
           </button>

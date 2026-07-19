@@ -2,6 +2,7 @@ import type Stripe from 'stripe'
 import { getStripe, getStripeWebhookSecret, isStripeConfigured } from '@/lib/billing/stripe'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { syncSubscriptionFromStripe } from '@/lib/billing/subscriptions'
+import { createRequestLogger } from '@/lib/observability/logger'
 
 function getProfileIdFromCheckoutSession(session: Stripe.Checkout.Session) {
   const clientReferenceId =
@@ -43,8 +44,10 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 }
 
 export async function POST(request: Request) {
+  const reqLogger = createRequestLogger({ endpoint: '/api/billing/webhook' })
   const webhookSecret = getStripeWebhookSecret()
   if (!isStripeConfigured() || !webhookSecret) {
+    reqLogger.warn('Stripe webhook received but not configured')
     return Response.json(
       { error: 'Stripe webhook handling is not configured yet.' },
       { status: 503 }
@@ -53,6 +56,7 @@ export async function POST(request: Request) {
 
   const signature = request.headers.get('stripe-signature')
   if (!signature) {
+    reqLogger.warn('Missing Stripe signature header')
     return Response.json({ error: 'Missing Stripe signature header.' }, { status: 400 })
   }
 
@@ -65,8 +69,11 @@ export async function POST(request: Request) {
     event = stripe.webhooks.constructEvent(payload, signature, webhookSecret)
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Invalid Stripe signature'
+    reqLogger.warn('Stripe signature validation failed', { error: message })
     return Response.json({ error: message }, { status: 400 })
   }
+
+  reqLogger.info('Stripe webhook received', { type: event.type, id: event.id })
 
   try {
     if (event.type === 'checkout.session.completed') {
@@ -78,12 +85,16 @@ export async function POST(request: Request) {
       event.type === 'customer.subscription.updated' ||
       event.type === 'customer.subscription.deleted'
     ) {
-      await syncSubscriptionFromStripe(event.data.object as Stripe.Subscription)
+      await syncSubscriptionFromStripe(event.data.object as Stripe.Subscription, null, event.created)
     }
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : 'Stripe webhook processing failed unexpectedly'
-    return Response.json({ error: message }, { status: 500 })
+    reqLogger.error(
+      'Stripe webhook processing failed',
+      { type: event.type, id: event.id },
+      error,
+      true,
+    )
+    return Response.json({ error: 'Stripe webhook processing failed.' }, { status: 500 })
   }
 
   return Response.json({ received: true })

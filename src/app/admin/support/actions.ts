@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { requireAdmin } from '@/lib/admin/guard'
 import { createClient } from '@/lib/supabase/server'
+import { updateSupportTicketStatus } from '@/lib/repositories/support'
 
 export type ActionState = {
   error?: string
@@ -29,10 +30,7 @@ export async function updateTicketStatusAction(
     }
     
     const supabase = await createClient()
-    const { error } = await supabase
-      .from('support_tickets')
-      .update({ status: newStatus })
-      .eq('id', ticketId)
+    const { error } = await updateSupportTicketStatus(supabase, ticketId, newStatus)
       
     if (error) {
       console.error('[admin] failed to update ticket status', error)

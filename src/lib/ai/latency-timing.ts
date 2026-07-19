@@ -1,6 +1,24 @@
 import 'server-only'
 
-type TimingMetadata = Record<string, string | number | boolean | null | undefined>
+type TimingMetadata = {
+  conversation_id?: string
+  model_provider?: string
+  model_name?: string
+  eval_mode?: boolean
+  prompt_character_count?: number
+  prompt_token_estimate?: number
+  prompt_tokens?: number
+  completion_tokens?: number
+  model_calls?: number
+  selected_source_count?: number
+  retry_count?: number
+  retry_reason?: string
+  rewrite_reasons?: string
+  response_character_count?: number
+  safety_category?: string
+  outcome?: string
+  [key: string]: string | number | boolean | null | undefined
+}
 
 function secondsFromMs(value: number) {
   return Number((value / 1000).toFixed(3))

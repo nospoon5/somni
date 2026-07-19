@@ -2,12 +2,9 @@
   min-height: 100vh;
   padding: 32px 20px 96px;
   background-image:
-    url('/noise.png'),
     radial-gradient(ellipse at 60% 0%, rgba(18, 22, 39, 0.8) 0%, transparent 60%),
     var(--color-bg);
-  background-size: 200px 200px, auto, auto;
-  background-repeat: repeat, no-repeat, no-repeat;
-  background-blend-mode: overlay, normal, normal;
+  background-repeat: no-repeat, no-repeat;
 }
 
 .hero {

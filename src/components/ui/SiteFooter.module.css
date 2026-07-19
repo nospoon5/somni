@@ -35,3 +35,13 @@
   margin: 10px 0 0;
   max-width: 62rem;
 }
+
+.maintenanceBanner {
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning-text);
+  padding: 12px 18px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-bottom: 1px solid var(--color-warning-border);
+}

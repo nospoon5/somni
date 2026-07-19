@@ -14,6 +14,7 @@ type AuthFormProps = {
   subtitle: string
   submitLabel: string
   mode: 'login' | 'signup'
+  redirectTo?: string | null
 }
 
 const initialState: AuthActionState = {}
@@ -24,11 +25,13 @@ export function AuthForm({
   subtitle,
   submitLabel,
   mode,
+  redirectTo,
 }: AuthFormProps) {
   const [state, formAction, pending] = useActionState(action, initialState)
 
   return (
     <form className={`${styles.form} card`} action={formAction}>
+      {redirectTo ? <input type="hidden" name="redirectTo" value={redirectTo} /> : null}
       <div className={styles.header}>
         <div className={styles.brandRow}>
           <Image

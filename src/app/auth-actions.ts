@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { sanitizeInviteRedirect } from '@/lib/auth/redirect'
 
 export type AuthActionState = {
   error?: string
@@ -19,6 +20,7 @@ export async function loginAction(
 ): Promise<AuthActionState> {
   const email = getString(formData, 'email')
   const password = getString(formData, 'password')
+  const redirectTo = sanitizeInviteRedirect(getString(formData, 'redirectTo'))
 
   if (!email || !password) {
     return { error: 'Please enter both your email and password.' }
@@ -40,6 +42,10 @@ export async function loginAction(
     .eq('id', data.user.id)
     .maybeSingle()
 
+  if (redirectTo) {
+    redirect(redirectTo)
+  }
+
   if (!profile?.onboarding_completed) {
     redirect('/onboarding')
   }
@@ -54,6 +60,7 @@ export async function signupAction(
   const fullName = getString(formData, 'fullName')
   const email = getString(formData, 'email')
   const password = getString(formData, 'password')
+  const redirectTo = sanitizeInviteRedirect(getString(formData, 'redirectTo'))
 
   if (!fullName || !email || !password) {
     return { error: 'Please complete every field before continuing.' }
@@ -71,6 +78,9 @@ export async function signupAction(
       data: {
         full_name: fullName,
       },
+      emailRedirectTo: redirectTo
+        ? `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}${redirectTo}`
+        : undefined,
     },
   })
 
@@ -85,7 +95,7 @@ export async function signupAction(
     }
   }
 
-  redirect('/onboarding')
+  redirect(redirectTo ?? '/onboarding')
 }
 
 export async function logoutAction() {

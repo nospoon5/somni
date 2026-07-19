@@ -35,6 +35,10 @@ export default async function SupportPage() {
             </p>
           </div>
         )}
+
+        <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--color-border)', fontSize: '14px', color: 'var(--color-text-muted)' }}>
+          Having trouble with the form? Email us directly at <a href="mailto:support@somniapp.com" style={{ textDecoration: 'underline' }}>support@somniapp.com</a>.
+        </div>
       </section>
     </main>
   )

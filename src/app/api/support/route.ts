@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { createSupportTicket, getRecentTicketCount } from '@/lib/repositories/support'
+import { createRequestLogger } from '@/lib/observability/logger'
 
 type SupportCategory = 'bug' | 'feedback' | 'billing' | 'other'
 
@@ -22,6 +25,7 @@ function clampText(value: unknown, limit: number) {
 }
 
 export async function POST(request: Request) {
+  const reqLogger = createRequestLogger({ endpoint: '/api/support' })
   const supabase = await createClient()
   const {
     data: { user },
@@ -49,21 +53,54 @@ export async function POST(request: Request) {
     )
   }
 
+  // Rate Limiting Logic: Max 5 tickets per hour
+  // Normal users deliberately cannot SELECT support tickets, so the count runs through the
+  // server-only admin client after the authenticated profile id has been established above.
+  const { count, error: countError } = await getRecentTicketCount(
+    createAdminClient(),
+    user.id,
+    1,
+  )
+  if (countError) {
+    reqLogger.error(
+      'Failed to get recent ticket count',
+      { userId: user.id },
+      countError,
+      true,
+    )
+    return NextResponse.json(
+      { error: 'Unable to verify support request limits right now. Please try again shortly.' },
+      { status: 503 },
+    )
+  } else if (count !== null && count >= 5) {
+    reqLogger.warn('Support rate limit exceeded', { userId: user.id })
+    return NextResponse.json(
+      { error: 'You have reached the maximum number of support requests for now. Please try again later.' },
+      { status: 429 }
+    )
+  }
+
   // Stage 5 beta-readiness: Store in DB for easy manual querying.
-  const { error } = await supabase.from('support_tickets').insert({
+  const { error } = await createSupportTicket(supabase, {
     profile_id: user.id,
-    email: user.email ?? null,
+    email: user.email ?? undefined,
     category: categoryRaw,
     message,
-    origin_page: originPage || null,
-    support_page: supportPage || null,
-    user_agent: userAgent || null,
+    origin_page: originPage || undefined,
+    support_page: supportPage || undefined,
+    user_agent: userAgent || undefined,
   })
 
   if (error) {
-    console.error('Failed to insert support ticket:', error)
+    reqLogger.error(
+      'Failed to insert support ticket',
+      { userId: user.id, category: categoryRaw },
+      error,
+      true,
+    )
     return NextResponse.json({ error: 'Failed to submit support request. Please try again.' }, { status: 500 })
   }
 
+  reqLogger.info('Support ticket created', { userId: user.id, category: categoryRaw })
   return NextResponse.json({ success: true })
 }
