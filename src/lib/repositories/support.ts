@@ -6,23 +6,23 @@ export type SupportTicketInsert = Database['public']['Tables']['support_tickets'
 export type SupportTicketUpdate = Database['public']['Tables']['support_tickets']['Update']
 
 export async function createSupportTicket(
-  supabase: SupabaseClient<Database>,
+  supabase: SupabaseClient,
   ticket: SupportTicketInsert
 ) {
   return await supabase.from('support_tickets').insert(ticket)
 }
 
 export async function getAllSupportTickets(
-  supabase: SupabaseClient<Database>
-) {
+  supabase: SupabaseClient
+): Promise<{ data: SupportTicketRow[] | null; error: any }> {
   return await supabase
     .from('support_tickets')
-    .select('id, email, category, message, origin_page, status, created_at')
+    .select('id, profile_id, email, category, message, origin_page, status, created_at')
     .order('created_at', { ascending: false })
 }
 
 export async function getOpenSupportTickets(
-  supabase: SupabaseClient<Database>
+  supabase: SupabaseClient
 ) {
   return await supabase
     .from('support_tickets')
@@ -32,7 +32,7 @@ export async function getOpenSupportTickets(
 }
 
 export async function updateSupportTicketStatus(
-  supabase: SupabaseClient<Database>,
+  supabase: SupabaseClient,
   ticketId: string,
   status: string
 ) {
@@ -43,7 +43,7 @@ export async function updateSupportTicketStatus(
 }
 
 export async function getRecentTicketCount(
-  supabase: SupabaseClient<Database>,
+  supabase: SupabaseClient,
   profileId: string,
   hours: number
 ) {

@@ -70,7 +70,7 @@ export async function POST(request: Request) {
   const customerId = await ensureStripeCustomerForProfile({
     profileId: user.id,
     email: user.email,
-    fullName: profile?.full_name ?? null,
+    fullName: (profile as { full_name?: string | null } | null)?.full_name ?? null,
     existingCustomerId: subscription.stripe_customer_id,
   })
 

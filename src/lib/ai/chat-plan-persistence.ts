@@ -155,21 +155,21 @@ export async function calculateChatPlanUpdates(args: SaveChatPlanUpdatesArgs) {
             endedAt: normalizedLog.endedAt,
             isNight: normalizedLog.isNight,
             tags: [],
-            notes: normalizedLog.notes ?? undefined,
+            notes: normalizedLog.notes ?? null,
           })
         }
 
-        const adaptationResult = maybeApplyLogDrivenAdaptation({
-          profile: args.currentProfile,
-          logs: adaptationLogs,
-          planDate: args.planDate,
-          timezone: args.timezone,
-        })
+        const adaptationResult = args.currentProfile
+          ? maybeApplyLogDrivenAdaptation({
+              profile: args.currentProfile,
+              currentPlan: args.currentPlan,
+              todayLogs: adaptationLogs,
+              timezone: args.timezone,
+            })
+          : null
         
-        if (adaptationResult?.type === 'rescue_plan_ready') {
+        if (adaptationResult) {
           pendingRescuePlan = adaptationResult
-        } else if (adaptationResult?.type === 'profile_adjusted') {
-          mutationPayloads.profileUpdate = adaptationResult.profileUpdate
         }
       }
     }
