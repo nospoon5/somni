@@ -1,37 +1,12 @@
-import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { extractUpdatedAiMemory } from '@/lib/ai/memory'
-import {
-  hasDailyPlanChanges,
-  mergeDailyPlan,
-  normalizeDailyPlanRow,
-  normalizeDailyPlanUpdateInput,
-  type DailyPlanRecord,
-} from '@/lib/daily-plan'
-import {
-  buildChatPlanUpdateConfirmation,
-  buildDailyPlanChangeEvent,
-  buildProfileChangeEvent,
-  hasSleepPlanProfileChanges,
-  inferChatPlanUpdateSignal,
-  mergeSleepPlanProfile,
-  normalizeSleepPlanProfileUpdateInput,
-  shouldApplyDurableProfileUpdate,
-} from '@/lib/sleep-plan-chat-updates'
-import {
-  buildDailyPlanSnapshot,
-  buildSleepPlanProfileSnapshot,
-  normalizeSleepPlanProfileRow,
-  type SleepPlanProfileRecord,
-} from '@/lib/sleep-plan-profile'
+import type { DailyPlanRecord } from '@/lib/daily-plan'
+import type { SleepPlanProfileRecord } from '@/lib/sleep-plan-profile'
 import type { GeminiFunctionCall } from '@/lib/ai/gemini'
 import { getSleepScoreLookbackStart } from '@/lib/scoring/sleep-score'
 import { maybeApplyLogDrivenAdaptation, type DailyRescuePendingPlan } from '@/lib/sleep-plan-log-adaptation'
 
 type ChatSupabaseClient = Awaited<ReturnType<typeof createClient>>
-
-const SLEEP_PLAN_PROFILE_SELECT =
-  'id, baby_id, age_band, template_key, usual_wake_time, target_bedtime, target_nap_count, wake_window_profile, feed_anchor_profile, schedule_preference, day_structure, adaptation_confidence, learning_state, last_auto_adjusted_at, last_evidence_summary, created_at, updated_at'
 
 type SaveChatPlanUpdatesArgs = {
   supabase: ChatSupabaseClient
@@ -97,23 +72,18 @@ export function normalizeCompletedSleepLogArgs(
 }
 
 export async function calculateChatPlanUpdates(args: SaveChatPlanUpdatesArgs) {
-  let workingPlan = args.currentPlan
-  let workingProfile = args.currentProfile
-  let hasDailyToolChanges = false
-  let hasProfileToolChanges = false
   let hasLoggedSleep = false
   let pendingRescuePlan: DailyRescuePendingPlan | null = null
-  const signal = inferChatPlanUpdateSignal(args.userMessage)
   const completedSleepLogs = new Map<
     GeminiFunctionCall,
     NonNullable<ReturnType<typeof normalizeCompletedSleepLogArgs>>
   >()
 
   const mutationPayloads: {
-    sleepLog: Record<string, any> | null
-    profileUpdate: Record<string, any> | null
-    dailyPlanUpsert: Record<string, any> | null
-    changeEvents: Record<string, any>[]
+    sleepLog: Record<string, unknown> | null
+    profileUpdate: Record<string, unknown> | null
+    dailyPlanUpsert: Record<string, unknown> | null
+    changeEvents: Record<string, unknown>[]
   } = {
     sleepLog: null,
     profileUpdate: null,
@@ -185,6 +155,41 @@ export async function calculateChatPlanUpdates(args: SaveChatPlanUpdatesArgs) {
             endedAt: normalizedLog.endedAt,
             isNight: normalizedLog.isNight,
             tags: [],
+            notes: normalizedLog.notes ?? undefined,
+          })
+        }
+
+        const adaptationResult = maybeApplyLogDrivenAdaptation({
+          profile: args.currentProfile,
+          logs: adaptationLogs,
+          planDate: args.planDate,
+          timezone: args.timezone,
+        })
+        
+        if (adaptationResult?.type === 'rescue_plan_ready') {
+          pendingRescuePlan = adaptationResult
+        } else if (adaptationResult?.type === 'profile_adjusted') {
+          mutationPayloads.profileUpdate = adaptationResult.profileUpdate
+        }
+      }
+    }
+  }
+
+  return {
+    plan: args.currentPlan,
+    profile: args.currentProfile,
+    assistantMessage: null,
+    streamPayload: null,
+    hasLoggedSleep,
+    pendingRescuePlan,
+    mutationPayloads,
+  }
+}
+
+export type PersistAiMemoryArgs = {
+  supabase: ChatSupabaseClient
+  profileId: string
+  babyId: string
   babyName: string
   conversationId: string
   fallbackUserMessage: string

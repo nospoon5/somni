@@ -1,1 +1,28 @@
-﻿{"_tag":"Error","error":{"code":"LegacyGenTypesUnexpectedStatusError","message":"failed to retrieve generated types: {\"message\":\"Unauthorized\"}"}}
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export interface Database {
+  public: {
+    Tables: {
+      [key: string]: any
+    }
+    Views: {
+      [key: string]: any
+    }
+    Functions: {
+      [key: string]: any
+    }
+    Enums: {
+      [key: string]: any
+    }
+    CompositeTypes: {
+      [key: string]: any
+    }
+  }
+}

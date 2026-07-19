@@ -19,7 +19,7 @@ import { summarizeSleepPlanProfileForPrompt } from '@/lib/sleep-plan-chat-update
 import {
   retrieveRelevantChunksWithDiagnostics,
   type SleepMethodology,
-/* eslint-disable @typescript-eslint/no-explicit-any */
+} from '@/lib/ai/retrieval'
 import { after } from 'next/server'
 import { SupabaseClient } from '@supabase/supabase-js'
 import {
